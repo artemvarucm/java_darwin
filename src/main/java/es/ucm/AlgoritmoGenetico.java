@@ -1,5 +1,6 @@
 package es.ucm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AlgoritmoGenetico {
@@ -7,6 +8,7 @@ public class AlgoritmoGenetico {
     private List<Double> fitness;
 
     // Parametros
+    private Integer tamPoblacion;
     private Integer maxGeneraciones;
     private Double probCruce;
     private Double probMutacion;
@@ -17,7 +19,19 @@ public class AlgoritmoGenetico {
     private int pos_mejor;
 
     public AlgoritmoGenetico() {
-        // seleccionar diferentes clases para:
+        // Valores por defecto
+        this(50, 10, 0.5, 0.1, 10);
+    }
+
+    public AlgoritmoGenetico(Integer tamPoblacion, Integer maxGeneraciones, Double probCruce, Double probMutacion, Integer tamTorneo) {
+        this.tamPoblacion = tamPoblacion;
+        this.maxGeneraciones = maxGeneraciones;
+        this.probCruce = probCruce;
+        this.probMutacion = probMutacion;
+        this.tamTorneo = tamTorneo;
+        //this.fitness = new ArrayList<>();
+
+        this.poblacion = new ArrayList<>(tamPoblacion);
     }
 
     public void optimize() {

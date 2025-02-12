@@ -1,0 +1,26 @@
+package es.ucm;
+
+
+import java.util.List;
+
+/**
+ * PROBLEMA 1
+ */
+public class Individuo1 extends Individuo {
+    public Individuo1() {
+        super();
+
+        // x1
+        this.addLimitedGen(-3.0, 12.1, 0.001);
+        // x2
+        this.addLimitedGen(4.1, 5.8, 0.001);
+    }
+
+    public double getFitness() {
+        List<Double> x = this.getFenotipos();
+
+        return 21.5
+                + x.get(0) * Math.sin(4 * Math.PI * x.get(0))
+                + x.get(1) * Math.sin(20 * Math.PI * x.get(1));
+    }
+}

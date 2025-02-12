@@ -3,7 +3,13 @@ package es.ucm;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BooleanGen extends Gen<Double> {
+
+
+/**
+ * El gen que representa una variable de tipo float con un limite de estados que puede tomar
+ * GENOTIPO: Array de bools
+ */
+public class BooleanGen extends Gen {
     private Double min;
     private Double max;
     private Double precision;
