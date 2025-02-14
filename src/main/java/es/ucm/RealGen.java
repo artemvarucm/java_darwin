@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * El gen que representa una variable de tipo float
  * GENOTIPO: Double
  */
-public class RealGen extends Gen {
+public class RealGen extends Gen<Double> {
     private Double genotipo;
 
     public RealGen() {
@@ -34,6 +34,14 @@ public class RealGen extends Gen {
     }
 
     public void printGenotipo() {
-        System.out.println(genotipo);
+        System.out.print(genotipo);
+    }
+
+    protected void set(int index, Double value) {
+        this.genotipo = value;
+    }
+
+    protected Double get(int index) {
+        return this.genotipo;
     }
 }

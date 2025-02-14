@@ -1,6 +1,8 @@
 package es.ucm;
 
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -9,12 +11,12 @@ import java.util.concurrent.ThreadLocalRandom;
  * El gen que representa una variable de tipo float con un limite de estados que puede tomar
  * GENOTIPO: Array de bools
  */
-public class BooleanGen extends Gen {
+public class BooleanGen extends Gen<Boolean> {
     private Double min;
     private Double max;
     private Double precision;
     private Integer tamGen;
-    private boolean[] genotipo;
+    private List<Boolean> genotipo;
 
     public BooleanGen(Double min, Double max, Double precision) {
         this.min = min;
@@ -22,10 +24,18 @@ public class BooleanGen extends Gen {
         this.precision = precision;
 
         this.tamGen = (int) Math.ceil(Math.log10(((max - min) / precision) + 1) / Math.log10(2));
-        this.genotipo = new boolean[tamGen];
+        this.genotipo = Arrays.asList(new Boolean[tamGen]);
 
         // rellenamos con valores aleatorios
         randomInit();
+    }
+
+    protected void set(int index, Boolean value) {
+        this.genotipo.set(index, value);
+    }
+
+    protected Boolean get(int index) {
+        return this.genotipo.get(index);
     }
 
     public Double getFenotipo() {
@@ -52,7 +62,7 @@ public class BooleanGen extends Gen {
         int valorConvertido = (int) ((valor - min) / precision);
 
         for (int i = 0; i < tamGen; i++) {
-            this.genotipo[tamGen - 1 - i] = ((valorConvertido >> i) & 1) == 1;
+            this.set(tamGen - 1 - i, ((valorConvertido >> i) & 1) == 1);
         }
     }
 
@@ -67,7 +77,7 @@ public class BooleanGen extends Gen {
     public int genotipoToInt() {
         int resultado = 0;
         for (int i = 0; i < this.tamGen; i++) {
-            if (this.genotipo[i]) {
+            if (this.get(i)) {
                 // 2^(n - 1 - i)
                 resultado |= (1 << (tamGen - 1 - i));
             }

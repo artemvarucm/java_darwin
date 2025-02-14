@@ -53,7 +53,7 @@ public class AlgoritmoGenetico {
     }
 
     private List<Individuo> random_sample() {
-        return factory.createIndividuos(this.tamPoblacion);
+        return factory.createMany(this.tamPoblacion);
     }
 
     private void fitness_evaluation() {
