@@ -11,8 +11,18 @@
 
 ### IntelliJ Setup
 Setup para que el proyecto funcione correctamente en Eclipse
-Botón derecho sobre la carpeta src/main/java y:
+Botón derecho sobre la carpeta src/main/java
+
+Mark Directory As -> Sources Root
+
 <img src="readme-images%2Fintellij-init.png" width="50%"/>
+
+#### Tests (opcional)
+Botón derecho sobre la carpeta src/test
+
+Mark Directory As -> Test Sources Root
+
+<img src="readme-images%2Fintellij-test.png" width="50%"/>
 
 ### Eclipse Setup
 Setup para que el proyecto funcione correctamente en Eclipse
