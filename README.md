@@ -3,9 +3,16 @@
 
 <h3>Tabla de contenidos</h3>
 
+- <a href="#IntelliJ-Setup">Setup del entorno en IntelliJ</a>
+
 - <a href="#Eclipse-Setup">Setup del entorno en Eclipse</a>
 
 - <a href="#Creación-del-ejecutable">Creación del ejecutable</a>
+
+### IntelliJ Setup
+Setup para que el proyecto funcione correctamente en Eclipse
+Botón derecho sobre la carpeta src/main/java y:
+<img src="readme-images%2Fintellij-init.png" width="50%"/>
 
 ### Eclipse Setup
 Setup para que el proyecto funcione correctamente en Eclipse
