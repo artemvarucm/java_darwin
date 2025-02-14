@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Se usa al crear la población inicial
+ * Fábrica de Individuos, puede crear Individuos de tipo determinado, ej. Individuo1
+ *
+ * Se usa en el opeardor cruce y al crear la población inicial
  */
 public abstract class IndividuoFactory {
     public abstract Individuo createOne();

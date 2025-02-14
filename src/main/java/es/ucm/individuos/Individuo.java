@@ -13,7 +13,7 @@ import java.util.List;
  */
 public abstract class Individuo {
     List<Gen> genes;
-    Boolean maximizar;
+    Boolean maximizar; // indica si necesitamos maximizar o minimizar el fitness
 
     public Individuo() {
         this(true);
@@ -34,7 +34,9 @@ public abstract class Individuo {
         this.genes.add(new RealGen());
     }
 
-    // Devuelve una lista con el fenotipo de cada gen (lista de valores de las variables)
+    /**
+     * Devuelve una lista con el fenotipo de cada gen (lista de valores de las variables)
+     */
     public List<Double> getFenotipos() {
         return this.genes.stream().map(Gen::getFenotipo).toList();
     }
@@ -61,7 +63,17 @@ public abstract class Individuo {
         return total - 1;
     }
 
-    public void copyGenomeElem(int index, Individuo ind) {
+    /**
+     * Actualiza la parte del genotipo actual
+     * en la posicion index a partir de esa parte del genotipo del individuo en el argumento
+     *
+     * Se usa en el operador cruce
+     * Ej:
+     * Genotipo actual: 1011
+     * fillGenotypeElem(2, 1000)
+     * Resultado: 1001
+     */
+    public void fillGenotypeElem(int index, Individuo ind) {
         int total = 0;
         boolean updated = false;
         for (int i = 0; i < this.genes.size(); i++) {
@@ -69,7 +81,7 @@ public abstract class Individuo {
             if (index < total + tamGen) {
                 updated = true;
                 int genIndex = (index - total);
-                this.genes.get(i).updateGen(genIndex, ind.genes.get(i));
+                this.genes.get(i).fillFromGen(genIndex, ind.genes.get(i));
                 break;
             }
 
@@ -77,7 +89,7 @@ public abstract class Individuo {
         }
 
         if (!updated) {
-            throw new RuntimeException("[ERROR]: copyGenomeElem - elemento de genoma no encontrado.");
+            throw new RuntimeException("[ERROR]: fillGenotypeElem - elemento de genoma no encontrado.");
         }
     }
 }

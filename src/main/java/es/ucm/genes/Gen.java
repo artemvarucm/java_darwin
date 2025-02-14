@@ -17,9 +17,27 @@ public abstract class Gen<T> {
     }
 
     public abstract void printGenotipo();
+
+    /**
+     * Actualiza la parte del gen
+     * en la posicion index
+     */
     protected abstract void set(int index, T value);
+
+    /**
+     * Devuelve el valor de la parte del gen
+     * en la posicion index
+     */
     protected abstract T get(int index);
-    public void updateGen(int index, Gen<T> gen2) {
+
+
+    /**
+     * Actualiza la parte del gen actual
+     * en la posicion index a partir de esa parte del gen en el argumento
+     *
+     * Se usa en el operador cruce
+     */
+    public void fillFromGen(int index, Gen<T> gen2) {
         this.set(index, gen2.get(index));
     }
 }

@@ -15,6 +15,21 @@ public class SinglePointCross extends AbstractCross {
         super(factory);
     }
 
+    /**
+     * Recibe los 2 padres, genera un punto de cruce aleatorio
+     * Devuelve 2 hijos,
+     * el primero tiene la primera parte del padre1, la segunda del padre2
+     * el segundo tiene la primera parte del padre2, la segunda del padre1
+     *
+     * Ej.
+     * padre -> 0010
+     * padre2 -> 1000
+     * punto cruce aleatorio -> 1
+     * Resultado:
+     * hijo1 -> 0000
+     * hijo2 -> 1010
+     *
+     */
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
         List<Individuo> result = new ArrayList<>(2);
 
@@ -27,13 +42,13 @@ public class SinglePointCross extends AbstractCross {
         System.out.println("PUNTO DE CRUCE: " + selectedPoint);
 
         for (int i = 0; i <= selectedPoint; i++) {
-            child1.copyGenomeElem(i, parent1);
-            child2.copyGenomeElem(i, parent2);
+            child1.fillGenotypeElem(i, parent1);
+            child2.fillGenotypeElem(i, parent2);
         }
 
         for (int i = selectedPoint + 1; i <= nCrossPts; i++) {
-            child1.copyGenomeElem(i, parent2);
-            child2.copyGenomeElem(i, parent1);
+            child1.fillGenotypeElem(i, parent2);
+            child2.fillGenotypeElem(i, parent1);
         }
 
         result.add(child1);
