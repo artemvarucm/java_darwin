@@ -1,5 +1,9 @@
-package es.ucm;
+package es.ucm.individuos;
 
+
+import es.ucm.genes.BooleanGen;
+import es.ucm.genes.Gen;
+import es.ucm.genes.RealGen;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package es.ucm.factories;
 
-import es.ucm.Individuo;
+import es.ucm.individuos.Individuo;
 
 import java.util.ArrayList;
 import java.util.List;

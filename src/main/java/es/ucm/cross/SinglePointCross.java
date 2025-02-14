@@ -1,6 +1,6 @@
 package es.ucm.cross;
 
-import es.ucm.Individuo;
+import es.ucm.individuos.Individuo;
 import es.ucm.factories.IndividuoFactory;
 
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
 package es.ucm;
 
+import es.ucm.individuos.Individuo1;
 import org.junit.Test;
 
 

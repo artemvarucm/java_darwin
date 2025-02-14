@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.genes;
 
 
 import java.util.Arrays;
@@ -15,7 +15,6 @@ public class BooleanGen extends Gen<Boolean> {
     private Double min;
     private Double max;
     private Double precision;
-    private Integer tamGen;
     private List<Boolean> genotipo;
 
     public BooleanGen(Double min, Double max, Double precision) {
@@ -40,10 +39,6 @@ public class BooleanGen extends Gen<Boolean> {
 
     public Double getFenotipo() {
         return min + precision * genotipoToInt();
-    }
-
-    public int getTamGen() {
-        return this.tamGen;
     }
 
     /**

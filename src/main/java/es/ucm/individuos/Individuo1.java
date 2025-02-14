@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.individuos;
 
 
 import java.util.List;

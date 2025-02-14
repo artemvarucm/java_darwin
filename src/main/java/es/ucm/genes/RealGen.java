@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.genes;
 
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,10 +19,6 @@ public class RealGen extends Gen<Double> {
 
     public Double getFenotipo() {
         return genotipo;
-    }
-
-    public int getTamGen() {
-        return this.tamGen;
     }
 
     /**

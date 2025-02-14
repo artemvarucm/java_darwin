@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.genes;
 
 
 public abstract class Gen<T> {
@@ -10,9 +10,9 @@ public abstract class Gen<T> {
     /**
      * Devuelve el fenotipo del gen, ejemplo si es 11, devuelve 3
      */
-    protected abstract Double getFenotipo();
+    public abstract Double getFenotipo();
 
-    protected int getTamGen() {
+    public int getTamGen() {
         return this.tamGen;
     }
 

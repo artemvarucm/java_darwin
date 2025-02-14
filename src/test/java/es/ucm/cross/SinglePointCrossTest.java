@@ -1,14 +1,12 @@
 package es.ucm.cross;
 
-import es.ucm.Individuo;
-import es.ucm.Individuo1;
+import es.ucm.individuos.Individuo;
+import es.ucm.individuos.Individuo1;
 import es.ucm.factories.Individuo1Factory;
 import es.ucm.factories.IndividuoFactory;
 import org.junit.Test;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class SinglePointCrossTest {
 

@@ -1,7 +1,7 @@
 package es.ucm.factories;
 
-import es.ucm.Individuo;
-import es.ucm.Individuo1;
+import es.ucm.individuos.Individuo;
+import es.ucm.individuos.Individuo1;
 
 
 public class Individuo1Factory extends IndividuoFactory {

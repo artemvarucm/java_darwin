@@ -1,5 +1,6 @@
 package es.ucm;
 
+import es.ucm.genes.BooleanGen;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
