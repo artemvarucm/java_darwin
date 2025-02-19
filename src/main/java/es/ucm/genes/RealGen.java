@@ -8,13 +8,28 @@ import java.util.concurrent.ThreadLocalRandom;
  * GENOTIPO: Double
  */
 public class RealGen extends Gen<Double> {
+    private Double min;
+    private Double max;
     private Double genotipo;
 
-    public RealGen() {
+    public RealGen(Double min, Double max) {
+        this.min = min;
+        this.max = max;
         this.tamGen = 1;
 
         // rellenamos con valor aleatorio
         randomInit();
+    }
+
+    public RealGen(RealGen gen) {
+        this(gen.min, gen.max);
+        // copiamos genotipo
+        this.genotipo = gen.genotipo;
+    }
+
+    @Override
+    public Gen clone() {
+        return new RealGen(this);
     }
 
     public Double getFenotipo() {

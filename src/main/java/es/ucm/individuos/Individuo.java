@@ -12,8 +12,8 @@ import java.util.List;
  * LO MISMO QUE CROMOSOMA, REPRESENTA UNA SOLUCIÓN DEL PROBLEMA
  */
 public abstract class Individuo {
-    List<Gen> genes;
-    Boolean maximizar; // indica si necesitamos maximizar o minimizar el fitness
+    protected List<Gen> genes;
+    protected Boolean maximizar; // indica si necesitamos maximizar o minimizar el fitness
 
     public Individuo() {
         this(true);
@@ -27,12 +27,23 @@ public abstract class Individuo {
     public abstract double getFitness();
     public abstract Individuo copy();
 
+    protected void copyToClone(Individuo ind) {
+        ind.maximizar = this.maximizar;
+
+        List<Gen> copiaGenes = new LinkedList<>();
+        for (Gen gen: genes) {
+            copiaGenes.add(gen.clone());
+        }
+
+        ind.genes = copiaGenes;
+    }
+
     public void addLimitedGen(double min, double max, double precision) {
         this.genes.add(new BooleanGen(min, max, precision));
     }
 
-    public void addUnlimitedGen() {
-        this.genes.add(new RealGen());
+    public void addUnlimitedGen(double min, double max) {
+        this.genes.add(new RealGen(min, max));
     }
 
     /**

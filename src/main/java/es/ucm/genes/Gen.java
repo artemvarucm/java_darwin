@@ -7,6 +7,8 @@ public abstract class Gen<T> {
     public Gen() {
     }
 
+    public abstract Gen clone();
+
     /**
      * Devuelve el fenotipo del gen, ejemplo si es 11, devuelve 3
      */

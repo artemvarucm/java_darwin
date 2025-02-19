@@ -26,6 +26,8 @@ public class Individuo1 extends Individuo {
 
     @Override
     public Individuo copy() {
-        return new Individuo1();
+        Individuo clon = new Individuo1();
+        this.copyToClone(clon);
+        return clon;
     }
 }

@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class TorneoSelectionTest {
 
     @Test
-    public void select() {
+    public void selectDeterminista() {
         List<Individuo> poblacion = new ArrayList<>();
         Individuo par1 = new Individuo1();
         Individuo par2 = new Individuo1();
@@ -26,6 +26,28 @@ public class TorneoSelectionTest {
 
         IndividuoFactory factory = new Individuo1Factory();
         TorneoSelection torneo = new TorneoSelection(factory);
+        List<Individuo> seleccion = torneo.select(poblacion);
+        System.out.println("INDIVIDUOS SELECCIONADOS");
+        for (Individuo ind: seleccion) {
+            ind.printGenotipo();
+        }
+        assertEquals(seleccion.size(), poblacion.size());
+    }
+
+
+    @Test
+    public void selectProbabilistico() {
+        List<Individuo> poblacion = new ArrayList<>();
+        Individuo par1 = new Individuo1();
+        Individuo par2 = new Individuo1();
+        System.out.println("POBLACION INICIAL");
+        par1.printGenotipo();
+        par2.printGenotipo();
+        poblacion.add(par1);
+        poblacion.add(par2);
+
+        IndividuoFactory factory = new Individuo1Factory();
+        TorneoSelection torneo = new TorneoSelection(factory, 3, false);
         List<Individuo> seleccion = torneo.select(poblacion);
         System.out.println("INDIVIDUOS SELECCIONADOS");
         for (Individuo ind: seleccion) {

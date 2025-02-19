@@ -2,6 +2,7 @@ package es.ucm.genes;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,6 +28,12 @@ public class BooleanGen extends Gen<Boolean> {
 
         // rellenamos con valores aleatorios
         randomInit();
+    }
+
+    public BooleanGen(BooleanGen gen) {
+        this(gen.min, gen.max, gen.precision);
+        // copiamos genotipo
+        Collections.copy(this.genotipo, gen.genotipo);
     }
 
     protected void set(int index, Boolean value) {
@@ -79,5 +86,9 @@ public class BooleanGen extends Gen<Boolean> {
         }
 
         return resultado;
+    }
+
+    public Gen clone() {
+        return new BooleanGen(this);
     }
 }
