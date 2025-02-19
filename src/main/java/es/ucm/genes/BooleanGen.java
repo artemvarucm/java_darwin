@@ -88,6 +88,17 @@ public class BooleanGen extends Gen<Boolean> {
         return resultado;
     }
 
+    /**
+     * Mutacion, reemplaza el bit con el inverso
+     * 0 -> 1
+     * 1 -> 0
+     */
+    @Override
+    public void mutate(int index) {
+        Boolean value = this.genotipo.get(index);
+        this.genotipo.set(index, !value);
+    }
+
     public Gen clone() {
         return new BooleanGen(this);
     }

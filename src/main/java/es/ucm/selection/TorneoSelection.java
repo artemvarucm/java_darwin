@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TorneoSelection extends AbstractSelection {
     private int n_participantes;
     private boolean deterministico;
-    private double select_max_probability = 0.5; // solo se usa en el probabilistico (deterministico = false)
+    private double select_min_probability = 0.5; // solo se usa en el probabilistico (deterministico = false)
 
     public TorneoSelection(IndividuoFactory factory) {
         this(factory, 3, true); // por defecto son 3 participantes y determinisitico
@@ -60,7 +60,7 @@ public class TorneoSelection extends AbstractSelection {
         }
         Individuo ganador;
         double p = ThreadLocalRandom.current().nextDouble();
-        if (deterministico || p > this.select_max_probability) {
+        if (deterministico || p > this.select_min_probability) {
             ganador = participantes.get(maxInd);
         } else {
             ganador = participantes.get(minInd);

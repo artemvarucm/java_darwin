@@ -21,6 +21,11 @@ public abstract class Gen<T> {
     public abstract void printGenotipo();
 
     /**
+     * Muta la parte del gen
+     */
+    public abstract void mutate(int index);
+
+    /**
      * Actualiza la parte del gen
      * en la posicion index
      */

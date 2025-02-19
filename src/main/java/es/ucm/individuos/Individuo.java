@@ -67,12 +67,16 @@ public abstract class Individuo {
      * 1;0;1;0;1;0;1 -> devuelve 6
      */
     public int getNumberOfCrossPoints() {
+        return this.getGenotipoLength() - 1;
+    }
+
+    public int getGenotipoLength() {
         int total = 0;
         for (Gen gen: this.genes) {
             total += gen.getTamGen();
         }
 
-        return total - 1;
+        return total;
     }
 
     /**
@@ -102,6 +106,29 @@ public abstract class Individuo {
 
         if (!updated) {
             throw new RuntimeException("[ERROR]: fillGenotypeElem - elemento de genoma no encontrado.");
+        }
+    }
+
+    /**
+     * Muta el elemento del genotipo (busca el gen y la parte del gen que hay que mutar y le aplica la mutacion)
+     */
+    public void mutateGenotypeElem(int index) {
+        int total = 0;
+        boolean updated = false;
+        for (int i = 0; i < this.genes.size(); i++) {
+            int tamGen = this.genes.get(i).getTamGen();
+            if (index < total + tamGen) {
+                updated = true;
+                int genIndex = (index - total);
+                this.genes.get(i).mutate(genIndex);
+                break;
+            }
+
+            total += tamGen;
+        }
+
+        if (!updated) {
+            throw new RuntimeException("[ERROR]: mutateGenotypeElem - elemento de genoma no encontrado.");
         }
     }
 }

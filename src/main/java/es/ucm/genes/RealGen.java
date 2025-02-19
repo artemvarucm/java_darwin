@@ -48,6 +48,11 @@ public class RealGen extends Gen<Double> {
         System.out.print(genotipo);
     }
 
+    @Override
+    public void mutate(int index) {
+        randomInit(); // volvemos a asignar aleatoriamente
+    }
+
     protected void set(int index, Double value) {
         this.genotipo = value;
     }
