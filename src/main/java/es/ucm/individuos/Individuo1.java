@@ -23,4 +23,9 @@ public class Individuo1 extends Individuo {
                 + x.get(0) * Math.sin(4 * Math.PI * x.get(0))
                 + x.get(1) * Math.sin(20 * Math.PI * x.get(1));
     }
+
+    @Override
+    public Individuo copy() {
+        return new Individuo1();
+    }
 }

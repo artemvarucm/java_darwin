@@ -25,6 +25,7 @@ public abstract class Individuo {
     }
 
     public abstract double getFitness();
+    public abstract Individuo copy();
 
     public void addLimitedGen(double min, double max, double precision) {
         this.genes.add(new BooleanGen(min, max, precision));
