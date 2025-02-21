@@ -1,8 +1,6 @@
-package genetic.algorithm.gui;
+package es.ucm;
 
-import es.ucm.AlgoritmoGenetico;
 import es.ucm.factories.*;
-import es.ucm.individuos.*;
 import es.ucm.selection.*;
 import es.ucm.mutation.*;
 import es.ucm.cross.*;
@@ -15,13 +13,12 @@ import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Interfaz gráfica para el simulador de algoritmos genéticos.
  * Permite configurar y ejecutar un algoritmo genético, visualizar resultados y exportarlos.
  */
-public class GeneticAlgorithmUI extends JFrame {
+public class Main extends JFrame {
 
     // Campos de texto para los parámetros del algoritmo
     private JTextField populationSizeField;
@@ -48,7 +45,7 @@ public class GeneticAlgorithmUI extends JFrame {
      * Constructor de la interfaz gráfica.
      * Configura la ventana principal y inicializa los componentes.
      */
-    public GeneticAlgorithmUI() {
+    public Main() {
         setTitle("Genetic Algorithm Simulator"); // Título de la ventana
         setSize(1200, 800); // Tamaño de la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cerrar la aplicación al cerrar la ventana
@@ -194,8 +191,8 @@ public class GeneticAlgorithmUI extends JFrame {
             algorithm.optimize();
 
             // Obtener el mejor individuo y mostrar los resultados
-            Individuo bestIndividual = algorithm.getMejor();
-            resultsArea.setText(bestIndividual.toString());
+            //Individuo bestIndividual = algorithm.getMejor();
+            //resultsArea.setText(bestIndividual.toString());
 
             // Graficar los resultados
             plotAlgorithmResults(algorithm, generations);
@@ -216,14 +213,14 @@ public class GeneticAlgorithmUI extends JFrame {
         switch (individualType) {
             case 0:
                 return new Individuo1Factory();
-            case 1:
-                return new Individuo2Factory();
-            case 2:
-                return new Individuo3Factory();
-            case 3:
-                return new Individuo4AFactory();
-            case 4:
-                return new Individuo5Factory();
+            //case 1:
+            //    return new Individuo2Factory();
+            //case 2:
+            //    return new Individuo3Factory();
+            //case 3:
+            //    return new Individuo4AFactory();
+            //case 4:
+            //    return new Individuo5Factory();
             default:
                 throw new IllegalArgumentException("Invalid individual type");
         }
@@ -368,7 +365,7 @@ public class GeneticAlgorithmUI extends JFrame {
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            GeneticAlgorithmUI frame = new GeneticAlgorithmUI();
+            Main frame = new Main();
             frame.setVisible(true);
         });
     }

@@ -20,7 +20,7 @@ public class SBXCross extends AbstractCross {
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
 
-        for (int i = 0; i < parent1.getGenotipoLength(); i++) {
+        /*for (int i = 0; i < parent1.getGenotipoLength(); i++) {
             double u = ThreadLocalRandom.current().nextDouble();
             double beta = (u <= 0.5) ?
                 Math.pow(2 * u, 1 / (distributionIndex + 1)) :
@@ -31,7 +31,7 @@ public class SBXCross extends AbstractCross {
 
             child1.setGenotipoElem(i, 0.5 * ((value1 + value2) - beta * Math.abs(value2 - value1)));
             child2.setGenotipoElem(i, 0.5 * ((value1 + value2) + beta * Math.abs(value2 - value1)));
-        }
+        }*/
 
         children.add(child1);
         children.add(child2);
