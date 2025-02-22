@@ -40,8 +40,7 @@ public class RealGen extends Gen<Double> {
      * Inicializa aleatoriamente el gen
      */
     private void randomInit() {
-        // FIXME genera un numero entre 0 y 1
-        this.genotipo = ThreadLocalRandom.current().nextDouble();
+        this.genotipo = ThreadLocalRandom.current().nextDouble(this.min, this.max);
     }
 
     public void printGenotipo() {

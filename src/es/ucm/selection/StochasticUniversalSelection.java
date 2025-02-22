@@ -14,23 +14,30 @@ public class StochasticUniversalSelection extends AbstractSelection {
 
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
-        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
-        double distance = totalFitness / poblacion.size();
-        double start = ThreadLocalRandom.current().nextDouble() * distance;
         List<Individuo> seleccionados = new ArrayList<>();
 
+        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
+
+        // Fitness normalizado, para que sume 1 la probabilidad de todos
+        List<Double> normalizedFitness = poblacion.stream()
+                .map(individuo -> individuo.getFitness() / totalFitness)
+                .toList();
+
+        double distance = totalFitness / poblacion.size();
+        double pointer = ThreadLocalRandom.current().nextDouble(distance);
         double acumulado = 0;
-        int index = 0;
-
+        int lastInd = 0;
         for (int i = 0; i < poblacion.size(); i++) {
-            double pointer = start + i * distance;
+            pointer += distance;
 
-            while (acumulado < pointer) {
-                acumulado += poblacion.get(index).getFitness();
-                index = (index + 1) % poblacion.size();
+            for (int ind = lastInd; ind < poblacion.size(); ind++) {
+                if ((acumulado + normalizedFitness.get(ind)) >= pointer) {
+                    seleccionados.add(poblacion.get(ind).copy());
+                    lastInd = ind;
+                    break;
+                }
+                acumulado += normalizedFitness.get(ind);
             }
-
-            seleccionados.add(poblacion.get(index).copy());
         }
 
         return seleccionados;

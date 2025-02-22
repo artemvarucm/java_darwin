@@ -76,9 +76,9 @@ public class Main extends JFrame {
         dimensionsField = new JTextField("2"); // Dimensiones
 
         // ComboBox para seleccionar métodos
-        selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder"});
+        selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Truncation"});
         crossoverMethodComboBox = new JComboBox<>(new String[]{"Single Point", "Uniform", "Arithmetic", "SBX", "BLX"});
-        mutationMethodComboBox = new JComboBox<>(new String[]{"Basic", "Uniform"});
+        mutationMethodComboBox = new JComboBox<>(new String[]{"Uniform"});
         individualTypeComboBox = new JComboBox<>(new String[]{"Individuo 1", "Individuo 2", "Individuo 3", "Individuo 4A", "Individuo 4B", "Individuo 5"});
 
         // Añadir etiquetas y campos al panel de control
@@ -246,7 +246,7 @@ public class Main extends JFrame {
             case 4:
             	return new TruncationSelection(factory, 0.5); // Umbral de truncamiento
             case 5:
-            	return new RemainderSelection(factory); // Por restos
+            	return new RemainderTruncateSelection(factory, 0.5); // Por restos + truncamiento
             default:
                 throw new IllegalArgumentException("Invalid selection method");
         }
@@ -284,8 +284,6 @@ public class Main extends JFrame {
         int mutationType = mutationMethodComboBox.getSelectedIndex();
         switch (mutationType) {
             case 0:
-                return new SimpleMutate(mutationRate);
-            case 1:
                 return new UniformMutate(mutationRate);
             default:
                 throw new IllegalArgumentException("Invalid mutation method");
