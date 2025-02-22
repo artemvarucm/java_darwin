@@ -1,0 +1,13 @@
+package es.ucm;
+
+import es.ucm.individuos.Individuo2;
+import org.junit.Test;
+
+public class Individuo2Test {
+
+    @Test
+    public void getFitness() {
+        Individuo2 a = new Individuo2();
+        System.out.println(a.getFitness());
+    }
+}

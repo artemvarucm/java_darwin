@@ -79,7 +79,7 @@ public class Main extends JFrame {
         selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Truncation"});
         crossoverMethodComboBox = new JComboBox<>(new String[]{"Single Point", "Uniform", "Arithmetic", "SBX", "BLX"});
         mutationMethodComboBox = new JComboBox<>(new String[]{"Uniform"});
-        individualTypeComboBox = new JComboBox<>(new String[]{"Individuo 1", "Individuo 2", "Individuo 3", "Individuo 4A", "Individuo 4B", "Individuo 5"});
+        individualTypeComboBox = new JComboBox<>(new String[]{"Individuo 1", "Individuo 2", "Individuo 3", "Individuo 4", "Individuo 5"});
 
         // Añadir etiquetas y campos al panel de control
         controlPanel.add(new JLabel("Population Size:"));
@@ -179,7 +179,7 @@ public class Main extends JFrame {
             int individualType = individualTypeComboBox.getSelectedIndex();
 
             // Obtener la fábrica de individuos según el tipo seleccionado
-            IndividuoFactory factory = getIndividuoFactory(individualType);
+            IndividuoFactory factory = getIndividuoFactory(individualType, dimensions);
 
             // Obtener los métodos de selección, cruce y mutación
             AbstractSelection selectionMethod = getSelectionMethod(factory); // Usa AbstractSelection
@@ -209,18 +209,18 @@ public class Main extends JFrame {
      * @param individualType El índice del tipo de individuo seleccionado.
      * @return La fábrica de individuos correspondiente.
      */
-    private IndividuoFactory getIndividuoFactory(int individualType) {
+    private IndividuoFactory getIndividuoFactory(int individualType, int dimension) {
         switch (individualType) {
             case 0:
                 return new Individuo1Factory();
-            //case 1:
-            //    return new Individuo2Factory();
-            //case 2:
-            //    return new Individuo3Factory();
-            //case 3:
-            //    return new Individuo4AFactory();
-            //case 4:
-            //    return new Individuo5Factory();
+            case 1:
+                return new Individuo2Factory();
+            case 2:
+                return new Individuo3Factory();
+            case 3:
+                return new Individuo4Factory(dimension);
+            case 4:
+                return new Individuo5Factory(dimension);
             default:
                 throw new IllegalArgumentException("Invalid individual type");
         }
