@@ -262,7 +262,7 @@ public class Main extends JFrame {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
         switch (crossoverType) {
             case 0:
-                return new UniformCross(factory);
+                return new UniformCross(factory, 0.5);
             case 1:
                 return new ArithmeticCross(factory);
             case 2:
