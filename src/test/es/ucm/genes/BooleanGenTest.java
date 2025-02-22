@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.genes;
 
 import es.ucm.genes.BooleanGen;
 import org.junit.Test;

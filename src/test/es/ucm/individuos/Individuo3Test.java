@@ -1,4 +1,4 @@
-package es.ucm;
+package es.ucm.individuos;
 
 import es.ucm.individuos.Individuo3;
 import org.junit.Test;
