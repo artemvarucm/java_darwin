@@ -36,11 +36,11 @@ public class BooleanGen extends Gen<Boolean> {
         Collections.copy(this.genotipo, gen.genotipo);
     }
 
-    protected void set(int index, Boolean value) {
+    public void set(int index, Boolean value) {
         this.genotipo.set(index, value);
     }
 
-    protected Boolean get(int index) {
+    public Boolean get(int index) {
         return this.genotipo.get(index);
     }
 

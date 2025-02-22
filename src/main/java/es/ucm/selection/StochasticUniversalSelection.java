@@ -23,7 +23,7 @@ public class StochasticUniversalSelection extends AbstractSelection {
                 .map(individuo -> individuo.getFitness() / totalFitness)
                 .toList();
 
-        double distance = 1 / poblacion.size();
+        double distance = 1. / poblacion.size();
         double pointer = ThreadLocalRandom.current().nextDouble(distance);
         double acumulado = 0;
         int lastInd = 0;

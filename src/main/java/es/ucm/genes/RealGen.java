@@ -52,11 +52,11 @@ public class RealGen extends Gen<Double> {
         randomInit(); // volvemos a asignar aleatoriamente
     }
 
-    protected void set(int index, Double value) {
+    public void set(int index, Double value) {
         this.genotipo = value;
     }
 
-    protected Double get(int index) {
+    public Double get(int index) {
         return this.genotipo;
     }
 }

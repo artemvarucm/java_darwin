@@ -5,6 +5,7 @@ import es.ucm.genes.BooleanGen;
 import es.ucm.genes.Gen;
 import es.ucm.genes.RealGen;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,6 +81,33 @@ public abstract class Individuo {
     }
 
     /**
+     * Para un índice GLOBAL del genotipo, devueve una lista
+     *     el primer valor es el índice del gen
+     *     el segundo valor es el índice LOCAL dentro del gen
+     * Ej:
+     * Genotipo actual: 1011 (2 genes de 2 bits, 10 y 11)
+     * findGeneIndex(2)
+     * Resultado: [1, 0]
+     */
+    private List<Integer> findGenIndex(int index) {
+        int total = 0;
+        for (int gen = 0; gen < this.genes.size(); gen++) {
+            int tamGen = this.genes.get(gen).getTamGen();
+            if (index < total + tamGen) {
+                int localIndex = index - total;
+
+                List<Integer> result = new ArrayList<>();
+                result.add(gen);
+                result.add(localIndex);
+                return result;
+            }
+            total += tamGen;
+        }
+
+        throw new RuntimeException("[ERROR]: Elemento de genotipo no encontrado.");
+    }
+
+    /**
      * Actualiza la parte del genotipo actual
      * en la posicion index a partir de esa parte del genotipo del individuo en el argumento
      *
@@ -90,23 +118,10 @@ public abstract class Individuo {
      * Resultado: 1001
      */
     public void fillGenotypeElem(int index, Individuo ind) {
-        int total = 0;
-        boolean updated = false;
-        for (int i = 0; i < this.genes.size(); i++) {
-            int tamGen = this.genes.get(i).getTamGen();
-            if (index < total + tamGen) {
-                updated = true;
-                int genIndex = (index - total);
-                this.genes.get(i).fillFromGen(genIndex, ind.genes.get(i));
-                break;
-            }
-
-            total += tamGen;
-        }
-
-        if (!updated) {
-            throw new RuntimeException("[ERROR]: fillGenotypeElem - elemento de genoma no encontrado.");
-        }
+        List<Integer> genInfo = this.findGenIndex(index);
+        int gen = genInfo.get(0);
+        int localIndex = genInfo.get(1);
+        this.genes.get(gen).fillFromGen(localIndex, ind.genes.get(gen));
     }
 
     /**
@@ -117,22 +132,9 @@ public abstract class Individuo {
             throw new IllegalArgumentException("Índice fuera de rango: " + index);
         }
 
-        int total = 0;
-        boolean updated = false;
-        for (int i = 0; i < this.genes.size(); i++) {
-            int tamGen = this.genes.get(i).getTamGen();
-            if (index < total + tamGen) {
-                updated = true;
-                int genIndex = (index - total);
-                this.genes.get(i).mutate(genIndex);
-                break;
-            }
-
-            total += tamGen;
-        }
-
-        if (!updated) {
-            throw new RuntimeException("[ERROR]: mutateGenotypeElem - elemento de genoma no encontrado.");
-        }
+        List<Integer> genInfo = this.findGenIndex(index);
+        int gen = genInfo.get(0);
+        int localIndex = genInfo.get(1);
+        this.genes.get(gen).mutate(localIndex);
     }
 }

@@ -2,21 +2,21 @@ package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class UniformMutate extends AbstractMutate {
-    private double mutationRate;
-
-    public UniformMutate(double mutationRate) {
-        this.mutationRate = mutationRate;
+    protected double mutate_probability;
+    public UniformMutate(double mutate_probability) {
+        this.mutate_probability = mutate_probability;
     }
 
     @Override
-    public void mutate(Individuo individuo) {
-        Random random = new Random();
-        for (int i = 0; i < individuo.getGenotipoLength(); i++) {
-            if (random.nextDouble() < mutationRate) {
-                individuo.mutateGenotypeElem(i); // Solo muta si el índice es válido
+    public void mutate(Individuo ind) {
+        for (int i = 0; i < ind.getGenotipoLength(); i++) {
+            double p = ThreadLocalRandom.current().nextDouble();
+            if (p < mutate_probability) {
+                // System.out.println("MUTACION DEL INDICE " + i);
+                ind.mutateGenotypeElem(i);
             }
         }
     }
