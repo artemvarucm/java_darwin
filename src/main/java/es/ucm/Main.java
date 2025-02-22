@@ -271,12 +271,14 @@ public class Main extends JFrame {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
         switch (crossoverType) {
             case 0:
-                return new UniformCross(factory, 0.5);
+                return new SinglePointCross(factory);
             case 1:
-                return new ArithmeticCross(factory, 0.5);
+                return new UniformCross(factory, 0.5);
             case 2:
-                return new SBXCross(factory, 2.0); // Índice de distribución para SBX
+                return new ArithmeticCross(factory, 0.5);
             case 3:
+                return new SBXCross(factory, 2.0); // Índice de distribución para SBX
+            case 4:
                 return new BLXCross(factory, 0.5); // Alpha para BLX
             default:
                 throw new IllegalArgumentException("Invalid crossover method");

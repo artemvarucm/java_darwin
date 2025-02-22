@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * IMPORTANTE: SOLO CRUZA GENES REALES, LOS BOOLEANS LOS INICIALIZA RANDOM !
+ */
 public class BLXCross extends AbstractCross {
     private double alpha;
 
@@ -19,7 +22,7 @@ public class BLXCross extends AbstractCross {
         List<Individuo> result = new ArrayList<>();
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
-
+        System.out.println("CRUCE");
         int nRealGenes = parent1.getRealGenes().size();
         for (int i = 0; i < nRealGenes; i++) {
             double value1 = parent1.getRealGenes().get(i).get(0);
@@ -30,8 +33,8 @@ public class BLXCross extends AbstractCross {
 
             double lowerBound = cMin - (cMax - cMin) * alpha;
             double upperBound = cMax + (cMax - cMin) * alpha;
-            child1.getRealGenes().get(i).set(0, ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
-            child2.getRealGenes().get(i).set(0, ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
+            child1.getRealGenes().get(i).set(0, lowerBound == upperBound ? lowerBound : ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
+            child2.getRealGenes().get(i).set(0, lowerBound == upperBound ? lowerBound : ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
         }
 
         result.add(child1);

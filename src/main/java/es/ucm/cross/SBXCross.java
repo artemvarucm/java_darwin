@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * IMPORTANTE: SOLO CRUZA GENES REALES, LOS BOOLEANS LOS INICIALIZA RANDOM !
+ */
 public class SBXCross extends AbstractCross {
     private double distributionIndex;
 

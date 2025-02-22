@@ -5,6 +5,9 @@ import es.ucm.factories.IndividuoFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * IMPORTANTE: SOLO CRUZA GENES REALES, LOS BOOLEANS LOS INICIALIZA RANDOM !
+ */
 public class ArithmeticCross extends AbstractCross {
     private double alpha;
     public ArithmeticCross(IndividuoFactory factory, double alpha) {
