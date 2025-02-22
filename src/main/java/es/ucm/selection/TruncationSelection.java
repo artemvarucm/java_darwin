@@ -17,11 +17,15 @@ public class TruncationSelection extends AbstractSelection {
 
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
-        if (poblacion.size() <= 1) {
-            return poblacion;
+        List<Individuo> seleccionados = new ArrayList<>();
+
+        if (poblacion.isEmpty()) {
+            return seleccionados;
+        } else if (poblacion.size() == 1) {
+            seleccionados.add(poblacion.get(0).copy());
+            return seleccionados;
         }
 
-        List<Individuo> seleccionados = new ArrayList<>();
         int limitePosicion = (int) (poblacion.size() * truncationThreshold);
 
         // Ordenamos por el fitness
