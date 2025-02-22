@@ -60,7 +60,6 @@ public class BooleanGen extends Gen<Boolean> {
      * Cambia el genotipo guardando el valor float
      */
     private void setGenotipoFromFloat(double valor) {
-        // FIXME añadir comprobacion de estar entre maximo y minimo
         int valorConvertido = (int) ((valor - min) / precision);
 
         for (int i = 0; i < tamGen; i++) {

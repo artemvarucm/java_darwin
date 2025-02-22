@@ -6,7 +6,6 @@ import es.ucm.individuos.Individuo;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TruncationSelection extends AbstractSelection {
     private double truncationThreshold;
@@ -18,6 +17,10 @@ public class TruncationSelection extends AbstractSelection {
 
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
+        if (poblacion.size() <= 1) {
+            return poblacion;
+        }
+
         List<Individuo> seleccionados = new ArrayList<>();
         int limitePosicion = (int) (poblacion.size() * truncationThreshold);
 
