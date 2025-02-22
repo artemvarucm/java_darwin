@@ -113,6 +113,10 @@ public abstract class Individuo {
      * Muta el elemento del genotipo (busca el gen y la parte del gen que hay que mutar y le aplica la mutacion)
      */
     public void mutateGenotypeElem(int index) {
+        if (index < 0 || index >= getGenotipoLength()) {
+            throw new IllegalArgumentException("Índice fuera de rango: " + index);
+        }
+
         int total = 0;
         boolean updated = false;
         for (int i = 0; i < this.genes.size(); i++) {

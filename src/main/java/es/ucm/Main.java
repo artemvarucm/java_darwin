@@ -1,6 +1,7 @@
 package es.ucm;
 
 import es.ucm.factories.*;
+import es.ucm.individuos.Individuo;
 import es.ucm.selection.*;
 import es.ucm.mutation.*;
 import es.ucm.cross.*;
@@ -182,23 +183,31 @@ public class Main extends JFrame {
             IndividuoFactory factory = getIndividuoFactory(individualType, dimensions);
 
             // Obtener los métodos de selección, cruce y mutación
-            AbstractSelection selectionMethod = getSelectionMethod(factory); // Usa AbstractSelection
-            AbstractCross crossoverMethod = getCrossoverMethod(factory);     // Usa AbstractCross
-            AbstractMutate mutationMethod = getMutationMethod(mutationRate); // Usa AbstractMutate
+            AbstractSelection selectionMethod = getSelectionMethod(factory);
+            AbstractCross crossoverMethod = getCrossoverMethod(factory);
+            AbstractMutate mutationMethod = getMutationMethod(mutationRate);
 
             // Crear y ejecutar el algoritmo genético
             AlgoritmoGenetico algorithm = new AlgoritmoGenetico(factory, populationSize);
+            algorithm.setMaxGeneraciones(generations);
+            algorithm.setProbCruce(crossoverRate);
+            algorithm.setProbMutacion(mutationRate);
+            algorithm.setElitismRate(elitismRate);
+            algorithm.setSelectionMethod(selectionMethod);
+            algorithm.setCrossoverMethod(crossoverMethod);
+            algorithm.setMutationMethod(mutationMethod);
+
             algorithm.optimize();
 
             // Obtener el mejor individuo y mostrar los resultados
-            //Individuo bestIndividual = algorithm.getMejor();
-            //resultsArea.setText(bestIndividual.toString());
+            Individuo bestIndividual = algorithm.getMejor();
+            resultsArea.setText("Best Fitness: " + bestIndividual.getFitness() + "\n");
+            resultsArea.append("Best Solution: " + bestIndividual.getFenotipos().toString() + "\n");
 
             // Graficar los resultados
             plotAlgorithmResults(algorithm, generations);
         } catch (Exception ex) {
-            // Mostrar un mensaje de error si hay algún problema
-            JOptionPane.showMessageDialog(this, "Invalid input parameters", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
@@ -302,22 +311,14 @@ public class Main extends JFrame {
             generationNumbers[i] = i;
         }
 
-        double[] bestFitness = new double[generations];
-        double[] averageFitness = new double[generations];
-        double[] absoluteBest = new double[generations];
-
-        // Aquí se deberían calcular los valores de fitness, media y mejor absoluto
-        // Este es un ejemplo simplificado
-        for (int i = 0; i < generations; i++) {
-            bestFitness[i] = i * 0.1;
-            averageFitness[i] = i * 0.05;
-            absoluteBest[i] = i * 0.2;
-        }
+        double[] bestFitness = algorithm.getBestFitnessHistory();
+        double[] averageFitness = algorithm.getAverageFitnessHistory();
+        double[] absoluteBest = algorithm.getAbsoluteBestHistory();
 
         plotPanel.removeAllPlots();
-        plotPanel.addLinePlot("Best Fitness", generationNumbers, bestFitness);
-        plotPanel.addLinePlot("Average Fitness", generationNumbers, averageFitness);
-        plotPanel.addLinePlot("Absolute Best", generationNumbers, absoluteBest);
+        plotPanel.addLinePlot("Best Fitness", Color.RED, generationNumbers, bestFitness);
+        plotPanel.addLinePlot("Absolute Best", Color.BLUE, generationNumbers, absoluteBest);
+        plotPanel.addLinePlot("Average Fitness", Color.GREEN, generationNumbers, averageFitness);
     }
 
     /**
