@@ -16,25 +16,28 @@ public class SBXCross extends AbstractCross {
 
     @Override
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        List<Individuo> children = new ArrayList<>();
+        List<Individuo> result = new ArrayList<>();
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
 
-        /*for (int i = 0; i < parent1.getGenotipoLength(); i++) {
-            double u = ThreadLocalRandom.current().nextDouble();
-            double beta = (u <= 0.5) ?
-                Math.pow(2 * u, 1 / (distributionIndex + 1)) :
-                Math.pow(1 / (2 * (1 - u)), 1 / (distributionIndex + 1));
+        int nRealGenes = parent1.getRealGenes().size();
+        for (int i = 0; i < nRealGenes; i++) {
+            double value1 = parent1.getRealGenes().get(i).get(0);
+            double value2 = parent2.getRealGenes().get(i).get(0);
 
-            double value1 = parent1.getGenotipoElem(i);
-            double value2 = parent2.getGenotipoElem(i);
+            double power = 1. / (distributionIndex + 1);
+            double randomVal = ThreadLocalRandom.current().nextDouble();
+            double beta = (randomVal <= 0.5) ?
+                    Math.pow(2 * randomVal, power) :
+                    Math.pow(1 / (2 * (1 - randomVal)), power);
 
-            child1.setGenotipoElem(i, 0.5 * ((value1 + value2) - beta * Math.abs(value2 - value1)));
-            child2.setGenotipoElem(i, 0.5 * ((value1 + value2) + beta * Math.abs(value2 - value1)));
-        }*/
 
-        children.add(child1);
-        children.add(child2);
-        return children;
+            child1.getRealGenes().get(i).set(0, 0.5 * ((1 + beta) * value1 + (1 - beta) * value2));
+            child1.getRealGenes().get(i).set(0, 0.5 * ((1 - beta) * value1 + (1 + beta) * value2));
+        }
+
+        result.add(child1);
+        result.add(child2);
+        return result;
     }
 }

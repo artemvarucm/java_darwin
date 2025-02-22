@@ -273,7 +273,7 @@ public class Main extends JFrame {
             case 0:
                 return new UniformCross(factory, 0.5);
             case 1:
-                return new ArithmeticCross(factory);
+                return new ArithmeticCross(factory, 0.5);
             case 2:
                 return new SBXCross(factory, 2.0); // Índice de distribución para SBX
             case 3:

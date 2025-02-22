@@ -16,22 +16,26 @@ public class BLXCross extends AbstractCross {
 
     @Override
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        List<Individuo> children = new ArrayList<>();
+        List<Individuo> result = new ArrayList<>();
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
 
-        /*for (int i = 0; i < parent1.getGenotipoLength(); i++) {
-            double value1 = parent1.getGenotipoElem(i);
-            double value2 = parent2.getGenotipoElem(i);
-            double min = Math.min(value1, value2) - alpha * Math.abs(value2 - value1);
-            double max = Math.max(value1, value2) + alpha * Math.abs(value2 - value1);
+        int nRealGenes = parent1.getRealGenes().size();
+        for (int i = 0; i < nRealGenes; i++) {
+            double value1 = parent1.getRealGenes().get(i).get(0);
+            double value2 = parent2.getRealGenes().get(i).get(0);
 
-            child1.setGenotipoElem(i, ThreadLocalRandom.current().nextDouble(min, max));
-            child2.setGenotipoElem(i, ThreadLocalRandom.current().nextDouble(min, max));
-        }*/
+            double cMin = Math.min(value1, value2);
+            double cMax = Math.max(value1, value2);
 
-        children.add(child1);
-        children.add(child2);
-        return children;
+            double lowerBound = cMin - (cMax - cMin) * alpha;
+            double upperBound = cMax + (cMax - cMin) * alpha;
+            child1.getRealGenes().get(i).set(0, ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
+            child2.getRealGenes().get(i).set(0, ThreadLocalRandom.current().nextDouble(lowerBound, upperBound));
+        }
+
+        result.add(child1);
+        result.add(child2);
+        return result;
     }
 }

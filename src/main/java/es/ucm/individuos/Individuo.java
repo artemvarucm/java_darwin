@@ -55,9 +55,12 @@ public abstract class Individuo {
     }
 
     public void printGenotipo() {
+        System.out.print("[ ");
         for (Gen gen: this.genes) {
             gen.printGenotipo();
+            System.out.print(" ");
         }
+        System.out.print("]");
         System.out.println();
     }
 
@@ -136,5 +139,20 @@ public abstract class Individuo {
         int gen = genInfo.get(0);
         int localIndex = genInfo.get(1);
         this.genes.get(gen).mutate(localIndex);
+    }
+
+    /**
+     * Devuelve todos los genes de tipo RealGen del individuo
+     * (usado en cruces Aritmetico, BLX, SBX)
+     */
+    public List<RealGen> getRealGenes() {
+        List<RealGen> genesReales = new ArrayList<>();
+        for (Gen gen: this.genes) {
+            if (gen instanceof RealGen) {
+                genesReales.add((RealGen) gen);
+            }
+        }
+
+        return genesReales;
     }
 }
