@@ -41,13 +41,14 @@ public class RankingSelection extends AbstractSelection {
 
             for (int ind = 0; ind < poblacion.size(); ind++) {
                 // Probabilidad segun ranking
-                acumulado += rankingProb(i, poblacion.size(), presionSelectiva);
+                acumulado += rankingProb(ind, poblacion.size(), presionSelectiva);
                 if (acumulado >= randomValue) {
                     seleccionados.add(poblacion.get(ind).copy());
                     break;
                 }
             }
         }
+
 
         return seleccionados;
     }
