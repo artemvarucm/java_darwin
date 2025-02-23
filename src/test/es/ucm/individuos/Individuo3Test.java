@@ -7,7 +7,7 @@ public class Individuo3Test {
 
     @Test
     public void getFitness() {
-        Individuo3 a = new Individuo3();
+        Individuo3 a = new Individuo3(0.0001);
         System.out.println(a.getFitness());
     }
 }

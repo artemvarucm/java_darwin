@@ -13,11 +13,11 @@ public class UniformCrossTest {
 
     @Test
     public void crossTest() {
-        Individuo par1 = new Individuo1();
-        Individuo par2 = new Individuo1();
+        Individuo par1 = new Individuo1(0.0001);
+        Individuo par2 = new Individuo1(0.0001);
         par1.printGenotipo();
         par2.printGenotipo();
-        IndividuoFactory factory = new Individuo1Factory();
+        IndividuoFactory factory = new Individuo1Factory(0.0001);
 
         AbstractCross crosser = new UniformCross(factory, 0.5);
         List<Individuo> hijos = crosser.cross(par1, par2);

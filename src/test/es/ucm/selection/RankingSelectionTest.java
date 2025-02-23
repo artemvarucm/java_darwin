@@ -11,7 +11,8 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class RouletteSelectionTest {
+public class RankingSelectionTest {
+
     @Test
     public void select1() {
         selectN(1);
@@ -34,7 +35,7 @@ public class RouletteSelectionTest {
         }
 
         IndividuoFactory factory = new Individuo1Factory(0.0001);
-        RouletteSelection selector = new RouletteSelection(factory);
+        RankingSelection selector = new RankingSelection(factory);
         List<Individuo> seleccion = selector.select(poblacion);
         System.out.println("INDIVIDUOS SELECCIONADOS");
         for (Individuo ind: seleccion) {

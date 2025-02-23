@@ -27,13 +27,13 @@ public class StochasticUniversalSelectionTest {
 
         System.out.println("POBLACION INICIAL");
         for (int i = 0; i < N; i++) {
-            Individuo ind = new Individuo1();
+            Individuo ind = new Individuo1(0.0001);
             ind.printGenotipo();
             System.out.println(ind.getFitness());
             poblacion.add(ind);
         }
 
-        IndividuoFactory factory = new Individuo1Factory();
+        IndividuoFactory factory = new Individuo1Factory(0.0001);
         StochasticUniversalSelection selector = new StochasticUniversalSelection(factory);
         List<Individuo> seleccion = selector.select(poblacion);
         System.out.println("INDIVIDUOS SELECCIONADOS");

@@ -31,6 +31,7 @@ public class AlgoritmoGenetico {
     private double[] bestFitnessHistory; // Mejor fitness por generación
     private double[] averageFitnessHistory; // Fitness medio por generación
     private double[] absoluteBestHistory; // Mejor fitness absoluto
+    private double[] presionSelectiva; // Presion selectiva (bestFitnessHistory[i] / averageFitnessHistory[i])
 
     // Mejor individuo
     private Individuo mejor;
@@ -84,6 +85,7 @@ public class AlgoritmoGenetico {
         bestFitnessHistory = new double[maxGeneraciones];
         averageFitnessHistory = new double[maxGeneraciones];
         absoluteBestHistory = new double[maxGeneraciones];
+        presionSelectiva = new double[maxGeneraciones];
 
         // Evolución del algoritmo
         for (int generacion = 0; generacion < maxGeneraciones; generacion++) {
@@ -176,6 +178,7 @@ public class AlgoritmoGenetico {
         }
         averageFitnessHistory[generacion] = sumaFitness / tamPoblacion;
 
+        presionSelectiva[generacion] = bestFitnessHistory[generacion] / averageFitnessHistory[generacion];
         // Mejor fitness absoluto
         absoluteBestHistory[generacion] = mejorFitness;
     }
@@ -195,5 +198,8 @@ public class AlgoritmoGenetico {
     public double[] getAbsoluteBestHistory() {
         return absoluteBestHistory;
     }
-    
+
+    public double[] getPresionSelectiva() {
+        return presionSelectiva;
+    }
 }
