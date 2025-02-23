@@ -7,6 +7,7 @@ import es.ucm.cross.AbstractCross;
 import es.ucm.mutation.AbstractMutate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AlgoritmoGenetico {
@@ -165,7 +166,8 @@ public class AlgoritmoGenetico {
 
     private void registrarHistorial(int generacion) {
         // Mejor fitness de la generación
-        bestFitnessHistory[generacion] = mejorFitness;
+        Boolean maximizar = poblacion.get(0).getMaximizar();
+        bestFitnessHistory[generacion] = maximizar ? Collections.max(fitness) : Collections.min(fitness);
 
         // Fitness medio de la generación
         double sumaFitness = 0.0;

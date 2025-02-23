@@ -29,7 +29,11 @@ public class TruncationSelection extends AbstractSelection {
         int limitePosicion = (int) (poblacion.size() * truncationThreshold);
 
         // Ordenamos por el fitness
-        poblacion.sort(Comparator.comparingDouble(Individuo::getFitness).reversed());
+        if (poblacion.get(0).getMaximizar()) {
+            poblacion.sort(Comparator.comparingDouble(Individuo::getFitness).reversed());
+        } else {
+            poblacion.sort(Comparator.comparingDouble(Individuo::getFitness));
+        }
 
         for (int i = 0; i < poblacion.size(); i++) {
             // Solo seleccionamos individuos por encima del límite

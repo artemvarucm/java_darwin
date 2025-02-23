@@ -39,7 +39,7 @@ public class SinglePointCross extends AbstractCross {
         int nCrossPts = parent1.getNumberOfCrossPoints();
         int selectedPoint = ThreadLocalRandom.current().nextInt(0, nCrossPts);
 
-        System.out.println("PUNTO DE CRUCE: " + selectedPoint);
+        //System.out.println("PUNTO DE CRUCE: " + selectedPoint);
 
         for (int i = 0; i <= selectedPoint; i++) {
             child1.fillGenotypeElem(i, parent1);

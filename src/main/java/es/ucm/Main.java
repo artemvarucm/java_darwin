@@ -80,7 +80,7 @@ public class Main extends JFrame {
         selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Truncation"});
         crossoverMethodComboBox = new JComboBox<>(new String[]{"Single Point", "Uniform", "Arithmetic", "SBX", "BLX"});
         mutationMethodComboBox = new JComboBox<>(new String[]{"Uniform"});
-        individualTypeComboBox = new JComboBox<>(new String[]{"Individuo 1", "Individuo 2", "Individuo 3", "Individuo 4", "Individuo 5"});
+        individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1", "Problema 2", "Problema 3", "Problema 4", "Problema 5"});
 
         // Añadir etiquetas y campos al panel de control
         controlPanel.add(new JLabel("Population Size:"));
@@ -103,7 +103,7 @@ public class Main extends JFrame {
         controlPanel.add(crossoverMethodComboBox);
         controlPanel.add(new JLabel("Mutation Method:"));
         controlPanel.add(mutationMethodComboBox);
-        controlPanel.add(new JLabel("Individual Type:"));
+        controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
 
         // Botón para iniciar el algoritmo
@@ -143,7 +143,7 @@ public class Main extends JFrame {
         JPanel resultsPanel = new JPanel(new BorderLayout());
         resultsPanel.setBorder(BorderFactory.createTitledBorder("Results"));
 
-        resultsArea = new JTextArea();
+        resultsArea = new JTextArea(5, 2);
         resultsArea.setEditable(false); // El área de texto no es editable
         JScrollPane scrollPane = new JScrollPane(resultsArea); // Añadir scroll al área de texto
         resultsPanel.add(scrollPane, BorderLayout.CENTER);
@@ -318,9 +318,10 @@ public class Main extends JFrame {
         double[] absoluteBest = algorithm.getAbsoluteBestHistory();
 
         plotPanel.removeAllPlots();
-        plotPanel.addLinePlot("Best Fitness", Color.RED, generationNumbers, bestFitness);
-        plotPanel.addLinePlot("Absolute Best", Color.BLUE, generationNumbers, absoluteBest);
-        plotPanel.addLinePlot("Average Fitness", Color.GREEN, generationNumbers, averageFitness);
+        plotPanel.setAxisLabels("N. GENERACIÓN", "VALOR FUNCIÓN");
+        plotPanel.addLinePlot("Mejor Absoluto", Color.RED, generationNumbers, absoluteBest);
+        plotPanel.addLinePlot("Mejor Generación", Color.BLUE, generationNumbers, bestFitness);
+        plotPanel.addLinePlot("Media Generación", Color.GREEN, generationNumbers, averageFitness);
     }
 
     /**
