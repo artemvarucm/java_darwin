@@ -25,6 +25,10 @@ public abstract class Individuo {
         this.genes = new LinkedList<>();
     }
 
+    public Boolean getMaximizar() {
+        return this.maximizar;
+    }
+
     public abstract double getFitness();
     public abstract Individuo copy();
 

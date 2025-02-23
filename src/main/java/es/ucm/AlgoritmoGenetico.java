@@ -72,25 +72,24 @@ public class AlgoritmoGenetico {
 
     public void optimize() {
         // Inicializar la población
-        this.poblacion = random_sample();
-        this.fitness_evaluation();
+        poblacion = random_sample();
+        // Inicializar mejor individuo
+        mejor = poblacion.get(0).copy();
+        mejorFitness = mejor.getFitness();
+
+        fitness_evaluation();
 
         // Inicializar historial de fitness
         bestFitnessHistory = new double[maxGeneraciones];
         averageFitnessHistory = new double[maxGeneraciones];
         absoluteBestHistory = new double[maxGeneraciones];
 
-        // Inicializar mejor individuo
-        mejor = poblacion.get(0);
-        mejorFitness = mejor.getFitness();
-
         // Evolución del algoritmo
         for (int generacion = 0; generacion < maxGeneraciones; generacion++) {
             System.out.printf("GENERACION: %d%n", generacion);
 
             // Selección
-            List<Individuo> seleccionados = selectionMethod.select(poblacion);
-            this.poblacion = seleccionados;
+            this.poblacion = selectionMethod.select(poblacion);
 
             // Cruce
             List<Individuo> descendientes = new ArrayList<>();
@@ -116,9 +115,7 @@ public class AlgoritmoGenetico {
 
             // Mutación
             for (Individuo individuo : poblacion) {
-                if (Math.random() < probMutacion) {
-                    mutationMethod.mutate(individuo);
-                }
+                mutationMethod.mutate(individuo);
             }
 
             // Elitismo
@@ -143,8 +140,11 @@ public class AlgoritmoGenetico {
             fitness.add(fit);
 
             // Actualizar mejor individuo
-            if (fit < mejorFitness) {
-                mejor = individuo;
+            if (individuo.getMaximizar() && fit > mejorFitness) {
+                mejor = individuo.copy();
+                mejorFitness = fit;
+            } else if (!individuo.getMaximizar() && fit < mejorFitness) {
+                mejor = individuo.copy();
                 mejorFitness = fit;
             }
         }
