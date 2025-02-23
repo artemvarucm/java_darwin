@@ -8,19 +8,20 @@ import es.ucm.mutation.AbstractMutate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class AlgoritmoGenetico {
     private IndividuoFactory factory;
     private List<Individuo> poblacion;
+    private List<Individuo> elite; // guarda la élite para después reemplazar los peores.
     private List<Double> fitness;
 
     // Parámetros del algoritmo
     private int tamPoblacion;
     private int maxGeneraciones;
     private double probCruce;
-    private double probMutacion;
-    private double elitismRate;
+    private int tamElite;
 
     // Métodos de selección, cruce y mutación
     private AbstractSelection selectionMethod;
@@ -42,6 +43,7 @@ public class AlgoritmoGenetico {
         this.tamPoblacion = tamPoblacion;
         this.poblacion = new ArrayList<>(tamPoblacion);
         this.fitness = new ArrayList<>(tamPoblacion);
+        this.elite = new ArrayList<>();
     }
 
     public void setMaxGeneraciones(int maxGeneraciones) {
@@ -52,12 +54,8 @@ public class AlgoritmoGenetico {
         this.probCruce = probCruce;
     }
 
-    public void setProbMutacion(double probMutacion) {
-        this.probMutacion = probMutacion;
-    }
-
     public void setElitismRate(double elitismRate) {
-        this.elitismRate = elitismRate;
+        this.tamElite = (int) (tamPoblacion * elitismRate);
     }
 
     public void setSelectionMethod(AbstractSelection selectionMethod) {
@@ -90,6 +88,8 @@ public class AlgoritmoGenetico {
         // Evolución del algoritmo
         for (int generacion = 0; generacion < maxGeneraciones; generacion++) {
             System.out.printf("GENERACION: %d%n", generacion);
+            // guardamos la élite
+            this.saveElite();
 
             // Selección
             this.poblacion = selectionMethod.select(poblacion);
@@ -121,8 +121,8 @@ public class AlgoritmoGenetico {
                 mutationMethod.mutate(individuo);
             }
 
-            // Elitismo
-            aplicarElitismo();
+            // Reemplazamos los peores con la elite
+            this.replaceWorstWithElite();
 
             // Evaluación de fitness
             fitness_evaluation();
@@ -130,6 +130,37 @@ public class AlgoritmoGenetico {
             // Registrar datos históricos
             registrarHistorial(generacion);
         }
+    }
+
+    private void saveElite() {
+        // para no reordenar la poblacion, guardamos una lista ordenada aparte
+        List<Individuo> sortedList;
+        boolean maximizar = poblacion.get(0).getMaximizar();
+        if (maximizar) {
+            sortedList = poblacion.stream().sorted(Comparator.comparingDouble(Individuo::getFitness).reversed()).toList();
+        } else {
+            sortedList = poblacion.stream().sorted(Comparator.comparingDouble(Individuo::getFitness)).toList();
+        }
+
+        this.elite.clear();
+        for (int i = 0; i < tamElite; i++) {
+            this.elite.add(sortedList.get(i).copy());
+        }
+    }
+
+    private void replaceWorstWithElite() {
+        // para no reordenar la poblacion, guardamos una lista ordenada aparte
+        boolean maximizar = poblacion.get(0).getMaximizar();
+        if (maximizar) { // if inverso al de saveElite
+            poblacion.sort(Comparator.comparingDouble(Individuo::getFitness));
+        } else {
+            poblacion.sort(Comparator.comparingDouble(Individuo::getFitness).reversed());
+        }
+
+        for (int i = 0; i < tamElite; i++) {
+            poblacion.set(i, this.elite.get(i));
+        }
+        this.elite.clear();
     }
 
     private List<Individuo> random_sample() {
@@ -153,18 +184,6 @@ public class AlgoritmoGenetico {
         }
     }
 
-    private void aplicarElitismo() {
-        int numElitistas = (int) (elitismRate * tamPoblacion);
-        if (numElitistas > 0) {
-            // Ordenar la población actual por fitness
-            poblacion.sort((a, b) -> Double.compare(a.getFitness(), b.getFitness()));
-
-            // Reemplazar los peores descendientes con los mejores individuos de la población actual
-            for (int i = 0; i < numElitistas; i++) {
-                poblacion.set(i, poblacion.get(i).copy());
-            }
-        }
-    }
 
     private void registrarHistorial(int generacion) {
         // Mejor fitness de la generación

@@ -191,7 +191,6 @@ public class Main extends JFrame {
             AlgoritmoGenetico algorithm = new AlgoritmoGenetico(factory, populationSize);
             algorithm.setMaxGeneraciones(generations);
             algorithm.setProbCruce(crossoverRate);
-            algorithm.setProbMutacion(mutationRate);
             algorithm.setElitismRate(elitismRate);
             algorithm.setSelectionMethod(selectionMethod);
             algorithm.setCrossoverMethod(crossoverMethod);
