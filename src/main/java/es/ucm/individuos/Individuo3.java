@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class Individuo3 extends Individuo {
 
-    public Individuo3() {
-        super(false); // Minimizar el fitness
+    public Individuo3(double precision) {
+        super(precision, false); // Minimizar el fitness
 
         // x1 ∈ [-10, 10]
-        this.addLimitedGen(-10.0, 10.0, 0.0000001);
+        this.addLimitedGen(-10.0, 10.0, precision);
         // x2 ∈ [-10, 10]
-        this.addLimitedGen(-10.0, 10.0, 0.0000001);
+        this.addLimitedGen(-10.0, 10.0, precision);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Individuo3 extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new Individuo3();
+        Individuo clon = new Individuo3(precision);
         this.copyToClone(clon);
         return clon;
     }

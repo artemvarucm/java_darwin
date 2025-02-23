@@ -16,12 +16,11 @@ public abstract class Individuo {
     protected List<Gen> genes;
     protected Boolean maximizar; // indica si necesitamos maximizar o minimizar el fitness
 
-    public Individuo() {
-        this(true);
-    }
+    protected Double precision;
 
-    public Individuo(Boolean maximizar) {
+    public Individuo(Double precision, Boolean maximizar) {
         this.maximizar = maximizar;
+        this.precision = precision;
         this.genes = new LinkedList<>();
     }
 

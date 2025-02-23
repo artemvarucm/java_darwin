@@ -180,7 +180,7 @@ public class Main extends JFrame {
             int individualType = individualTypeComboBox.getSelectedIndex();
 
             // Obtener la fábrica de individuos según el tipo seleccionado
-            IndividuoFactory factory = getIndividuoFactory(individualType, dimensions);
+            IndividuoFactory factory = getIndividuoFactory(individualType, precision, dimensions);
 
             // Obtener los métodos de selección, cruce y mutación
             AbstractSelection selectionMethod = getSelectionMethod(factory);
@@ -218,16 +218,16 @@ public class Main extends JFrame {
      * @param individualType El índice del tipo de individuo seleccionado.
      * @return La fábrica de individuos correspondiente.
      */
-    private IndividuoFactory getIndividuoFactory(int individualType, int dimension) {
+    private IndividuoFactory getIndividuoFactory(int individualType, double precision, int dimension) {
         switch (individualType) {
             case 0:
-                return new Individuo1Factory();
+                return new Individuo1Factory(precision);
             case 1:
-                return new Individuo2Factory();
+                return new Individuo2Factory(precision);
             case 2:
-                return new Individuo3Factory();
+                return new Individuo3Factory(precision);
             case 3:
-                return new Individuo4Factory(dimension);
+                return new Individuo4Factory(precision, dimension);
             case 4:
                 return new Individuo5Factory(dimension);
             default:

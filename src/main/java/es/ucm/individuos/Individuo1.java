@@ -7,13 +7,13 @@ import java.util.List;
  * PROBLEMA 1
  */
 public class Individuo1 extends Individuo {
-    public Individuo1() {
-        super();
+    public Individuo1(double precision) {
+        super(precision, true);
 
         // x1
-        this.addLimitedGen(-3.0, 12.1, 0.001);
+        this.addLimitedGen(-3.0, 12.1, precision);
         // x2
-        this.addLimitedGen(4.1, 5.8, 0.001);
+        this.addLimitedGen(4.1, 5.8, precision);
     }
 
     public double getFitness() {
@@ -26,7 +26,7 @@ public class Individuo1 extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new Individuo1();
+        Individuo clon = new Individuo1(precision);
         this.copyToClone(clon);
         return clon;
     }

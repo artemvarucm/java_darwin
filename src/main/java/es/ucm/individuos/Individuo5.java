@@ -11,7 +11,7 @@ public class Individuo5 extends Individuo {
     private final int m = 10; // Parámetro m fijo
 
     public Individuo5(int dimension) {
-        super(false); // Minimizar el fitness
+        super(null, false); // Minimizar el fitness
         this.dimension = dimension;
 
         // Añadir genes reales para cada variable xi ∈ [0, π]

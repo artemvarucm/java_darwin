@@ -10,13 +10,13 @@ public class Individuo4 extends Individuo {
     private int dimension; // Parámetro d (dimensión)
     private final int m = 10; // Parámetro m fijo
 
-    public Individuo4(int dimension) {
-        super(false); // Minimizar el fitness
+    public Individuo4(double precision, int dimension) {
+        super(precision, false); // Minimizar el fitness
         this.dimension = dimension;
 
         // Añadir genes para cada variable xi ∈ [0, π]
         for (int i = 0; i < dimension; i++) {
-            this.addLimitedGen(0.0, Math.PI, 0.0000001);
+            this.addLimitedGen(0.0, Math.PI, precision);
         }
     }
 
@@ -37,7 +37,7 @@ public class Individuo4 extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new Individuo4(this.dimension);
+        Individuo clon = new Individuo4(precision, dimension);
         this.copyToClone(clon);
         return clon;
     }
