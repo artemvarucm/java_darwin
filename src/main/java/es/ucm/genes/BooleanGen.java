@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BooleanGen extends Gen<Boolean> {
     private Double min;
     private Double max;
-    private Double precision;
+    private Double precision; // precision pasada como parámetro, difiere de la precisión real
     private List<Boolean> genotipo;
 
     public BooleanGen(Double min, Double max, Double precision) {
@@ -23,7 +23,7 @@ public class BooleanGen extends Gen<Boolean> {
         this.max = max;
         this.precision = precision;
 
-        this.tamGen = (int) Math.ceil(Math.log10(((max - min) / precision) + 1) / Math.log10(2));
+        this.tamGen = (int) (Math.log10(((max - min) / precision) + 1) / Math.log10(2));
         this.genotipo = Arrays.asList(new Boolean[tamGen]);
 
         // rellenamos con valores aleatorios
@@ -45,7 +45,7 @@ public class BooleanGen extends Gen<Boolean> {
     }
 
     public Double getFenotipo() {
-        return min + precision * genotipoToInt();
+        return min + (genotipoToInt() * (max - min)) / (Math.pow(2, this.tamGen) - 1);
     }
 
     /**
