@@ -317,14 +317,12 @@ public class Main extends JFrame {
         double[] bestFitness = algorithm.getBestFitnessHistory();
         double[] averageFitness = algorithm.getAverageFitnessHistory();
         double[] absoluteBest = algorithm.getAbsoluteBestHistory();
-        double[] presionSelectiva = algorithm.getPresionSelectiva();
 
         plotPanel.removeAllPlots();
         plotPanel.setAxisLabels("N. GENERACIÓN", "VALOR FUNCIÓN");
         plotPanel.addLinePlot("Mejor Absoluto", Color.BLUE, generationNumbers, absoluteBest);
         plotPanel.addLinePlot("Mejor Generación", Color.RED, generationNumbers, bestFitness);
         plotPanel.addLinePlot("Media Generación", Color.GREEN, generationNumbers, averageFitness);
-        plotPanel.addLinePlot("Presión selectiva", Color.BLACK, generationNumbers, presionSelectiva);
     }
 
     /**
