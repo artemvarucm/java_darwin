@@ -77,7 +77,7 @@ public class Main extends JFrame {
         dimensionsField = new JTextField("2"); // Dimensiones
 
         // ComboBox para seleccionar métodos
-        selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Truncation", "Ranking"});
+        selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Roulette", "Ranking"});
         crossoverMethodComboBox = new JComboBox<>(new String[]{"Single Point", "Uniform", "Arithmetic", "SBX", "BLX"});
         mutationMethodComboBox = new JComboBox<>(new String[]{"Uniform"});
         individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1", "Problema 2", "Problema 3", "Problema 4", "Problema 5"});
@@ -254,7 +254,7 @@ public class Main extends JFrame {
             case 4:
             	return new TruncationSelection(factory, 0.5); // Umbral de truncamiento
             case 5:
-            	return new RemainderTruncateSelection(factory, 0.5); // Por restos + truncamiento
+            	return new RemainderRouletteSelection(factory); // Por restos + ruleta
             case 6:
                 return new RankingSelection(factory);
             default:
