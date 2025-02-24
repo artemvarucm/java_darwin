@@ -4,6 +4,7 @@ import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,9 +32,10 @@ public class RankingSelection extends AbstractSelection {
             poblacion.sort(Comparator.comparingDouble(Individuo::getFitness));
         }
 
-        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
+        List<Double> normalizedFitness = getAdjustedAndNormalizedFitness(poblacion);
+        double totalFitness = normalizedFitness.stream().mapToDouble(ind -> ind).sum();
         double avgFitness = totalFitness / poblacion.size();
-        double presionSelectiva = poblacion.get(0).getFitness() / avgFitness; // best / avg
+        double presionSelectiva = normalizedFitness.get(0) / avgFitness; // best / avg
 
         for (int i = 0; i < poblacion.size(); i++) {
             double randomValue = ThreadLocalRandom.current().nextDouble(); // random entre 0 y 1

@@ -321,8 +321,8 @@ public class Main extends JFrame {
 
         plotPanel.removeAllPlots();
         plotPanel.setAxisLabels("N. GENERACIÓN", "VALOR FUNCIÓN");
-        plotPanel.addLinePlot("Mejor Absoluto", Color.RED, generationNumbers, absoluteBest);
-        plotPanel.addLinePlot("Mejor Generación", Color.BLUE, generationNumbers, bestFitness);
+        plotPanel.addLinePlot("Mejor Absoluto", Color.BLUE, generationNumbers, absoluteBest);
+        plotPanel.addLinePlot("Mejor Generación", Color.RED, generationNumbers, bestFitness);
         plotPanel.addLinePlot("Media Generación", Color.GREEN, generationNumbers, averageFitness);
         plotPanel.addLinePlot("Presión selectiva", Color.BLACK, generationNumbers, presionSelectiva);
     }

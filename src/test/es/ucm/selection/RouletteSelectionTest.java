@@ -1,9 +1,11 @@
 package es.ucm.selection;
 
 import es.ucm.factories.Individuo1Factory;
+import es.ucm.factories.Individuo2Factory;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.Individuo1;
+import es.ucm.individuos.Individuo2;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,13 +29,13 @@ public class RouletteSelectionTest {
 
         System.out.println("POBLACION INICIAL");
         for (int i = 0; i < N; i++) {
-            Individuo ind = new Individuo1(0.0001);
+            Individuo ind = new Individuo2(0.0001);
             ind.printGenotipo();
             System.out.println(ind.getFitness());
             poblacion.add(ind);
         }
 
-        IndividuoFactory factory = new Individuo1Factory(0.0001);
+        IndividuoFactory factory = new Individuo2Factory(0.0001);
         RouletteSelection selector = new RouletteSelection(factory);
         List<Individuo> seleccion = selector.select(poblacion);
         System.out.println("INDIVIDUOS SELECCIONADOS");

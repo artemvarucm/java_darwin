@@ -15,19 +15,17 @@ public class RemainderTruncateSelection extends AbstractSelection {
 
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
-        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
         List<Individuo> seleccionados = new ArrayList<>();
         List<Individuo> segunda_vuelta = new ArrayList<>(); // los que no se seleccionaron por restos
-
+        List<Double> normalizedFitness = getAdjustedAndNormalizedFitness(poblacion);
         // SELECCION POR RESTOS DE LOS QUE SE PUEDA
-        for (Individuo ind : poblacion) {
-            double fitnessNormalizado = ind.getFitness() / totalFitness;
-            int nCopias = (int) (fitnessNormalizado * poblacion.size());
+        for (int i = 0; i < poblacion.size(); i++) {
+            int nCopias = (int) (normalizedFitness.get(i) * poblacion.size());
             if (nCopias == 0) {
-                segunda_vuelta.add(ind);
+                segunda_vuelta.add(poblacion.get(i));
             } else {
-                for (int i = 0; i < nCopias; i++) {
-                    seleccionados.add(ind.copy());
+                for (int c = 0; c < nCopias; c++) {
+                    seleccionados.add(poblacion.get(i).copy());
                 }
             }
         }

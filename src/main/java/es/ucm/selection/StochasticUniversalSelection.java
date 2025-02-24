@@ -15,13 +15,7 @@ public class StochasticUniversalSelection extends AbstractSelection {
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
         List<Individuo> seleccionados = new ArrayList<>();
-
-        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
-
-        // Fitness normalizado, para que sume 1 la probabilidad de todos
-        List<Double> normalizedFitness = poblacion.stream()
-                .map(individuo -> individuo.getFitness() / totalFitness)
-                .toList();
+        List<Double> normalizedFitness = getAdjustedAndNormalizedFitness(poblacion);
 
         double distance = 1. / poblacion.size();
         double pointer = ThreadLocalRandom.current().nextDouble(distance);

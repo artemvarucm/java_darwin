@@ -2,6 +2,9 @@ package es.ucm.selection;
 
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,13 +18,7 @@ public class RouletteSelection extends AbstractSelection {
     @Override
     public List<Individuo> select(List<Individuo> poblacion) {
         List<Individuo> seleccionados = new ArrayList<>();
-
-        double totalFitness = poblacion.stream().mapToDouble(Individuo::getFitness).sum();
-
-        // Fitness normalizado, para que sume 1 la probabilidad de todos
-        List<Double> normalizedFitness = poblacion.stream()
-                .map(individuo -> individuo.getFitness() / totalFitness)
-                .toList();
+        List<Double> normalizedFitness = getAdjustedAndNormalizedFitness(poblacion);
 
         for (int i = 0; i < poblacion.size(); i++) {
             double randomValue = ThreadLocalRandom.current().nextDouble(); // random entre 0 y 1
