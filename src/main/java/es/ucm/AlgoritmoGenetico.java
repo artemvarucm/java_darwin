@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class AlgoritmoGenetico {
     private IndividuoFactory factory;
@@ -99,8 +100,9 @@ public class AlgoritmoGenetico {
             for (int i = 0; i < poblacion.size() - 1; i += 2) {
                 Individuo parent1 = poblacion.get(i);
                 Individuo parent2 = poblacion.get(i + 1);
+                double randomVal = ThreadLocalRandom.current().nextDouble(); // entre 0 y 1
 
-                if (Math.random() < probCruce) {
+                if (randomVal < probCruce) {
                     List<Individuo> hijos = crossoverMethod.cross(parent1, parent2);
                     descendientes.addAll(hijos);
                 } else {

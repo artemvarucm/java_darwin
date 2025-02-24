@@ -28,6 +28,15 @@ public abstract class Individuo {
         return this.maximizar;
     }
 
+    public double getAdjustedFitness(double minFitness, double maxFitness) {
+        // 1.05 para todos tengan alguna probabilidad de ser elegido, incluso el peor
+        if (maximizar) {
+            return getFitness() + (1.05 * Math.abs(minFitness));
+        } else {
+            return (1.05 * maxFitness) - getFitness();
+        }
+    }
+
     public abstract double getFitness();
     public abstract Individuo copy();
 

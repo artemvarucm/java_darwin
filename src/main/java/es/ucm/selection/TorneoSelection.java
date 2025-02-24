@@ -59,9 +59,6 @@ public class TorneoSelection extends AbstractSelection {
             }
         }
         Individuo ganador;
-        // fixme añadir desplazamiento
-        // fixme añadir torneo
-        // fixme añadir parámetros UI
         double p = ThreadLocalRandom.current().nextDouble();
         boolean maximizar = participantes.get(0).getMaximizar();
         int mejorInd = maximizar ? maxInd : minInd;
