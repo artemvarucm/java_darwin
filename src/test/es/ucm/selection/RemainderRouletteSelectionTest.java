@@ -1,10 +1,8 @@
 package es.ucm.selection;
 
-import es.ucm.factories.Individuo1Factory;
 import es.ucm.factories.Individuo2Factory;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.Individuo1;
 import es.ucm.individuos.Individuo2;
 import org.junit.Test;
 
@@ -13,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class RemainderTruncateSelectionTest {
+public class RemainderRouletteSelectionTest {
     @Test
     public void select1() {
         selectN(1);
@@ -36,7 +34,7 @@ public class RemainderTruncateSelectionTest {
         }
 
         IndividuoFactory factory = new Individuo2Factory(0.0001);
-        RemainderTruncateSelection selector = new RemainderTruncateSelection(factory, 0.5);
+        RemainderRouletteSelection selector = new RemainderRouletteSelection(factory);
         List<Individuo> seleccion = selector.select(poblacion);
         System.out.println("INDIVIDUOS SELECCIONADOS");
         for (Individuo ind: seleccion) {
