@@ -201,7 +201,16 @@ public class Main extends JFrame {
             // Obtener el mejor individuo y mostrar los resultados
             Individuo bestIndividual = algorithm.getMejor();
             resultsArea.setText("Best Fitness: " + bestIndividual.getFitness() + "\n");
-            resultsArea.append("Best Solution: " + bestIndividual.getFenotipos().toString() + "\n");
+
+            resultsArea.append("Best Solution: \n");
+            int i = 1;
+            for (Double var: bestIndividual.getFenotipos()) {
+                resultsArea.append(String.format("x%d = %.8f;   ", i, var));
+                if (i % 5 == 0) {
+                    resultsArea.append("\n");
+                }
+                i++;
+            }
 
             // Graficar los resultados
             plotAlgorithmResults(algorithm, generations);
