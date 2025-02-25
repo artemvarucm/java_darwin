@@ -33,7 +33,7 @@ public abstract class Individuo {
         if (maximizar) {
             return getFitness() + (1.05 * Math.abs(minFitness));
         } else {
-            return (1.05 * maxFitness) - getFitness();
+            return maxFitness - (1.05 * getFitness());
         }
     }
 

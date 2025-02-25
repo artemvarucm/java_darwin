@@ -22,7 +22,6 @@ public class BLXCross extends AbstractCross {
         List<Individuo> result = new ArrayList<>();
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
-        System.out.println("CRUCE");
         int nRealGenes = parent1.getRealGenes().size();
         for (int i = 0; i < nRealGenes; i++) {
             double value1 = parent1.getRealGenes().get(i).get(0);

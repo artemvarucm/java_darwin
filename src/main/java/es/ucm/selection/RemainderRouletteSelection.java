@@ -39,7 +39,7 @@ public class RemainderRouletteSelection extends AbstractSelection {
 
                 for (int ind = 0; ind < segunda_vuelta.size(); ind++) {
                     acumulado += normalizedFitnessRuleta.get(ind);
-                    if (acumulado >= randomValue) {
+                    if (acumulado >= randomValue || ind == poblacion.size() - 1) {
                         seleccionados.add(segunda_vuelta.get(ind).copy());
                         break;
                     }

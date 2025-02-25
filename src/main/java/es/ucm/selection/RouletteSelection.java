@@ -26,7 +26,7 @@ public class RouletteSelection extends AbstractSelection {
 
             for (int ind = 0; ind < poblacion.size(); ind++) {
                 acumulado += normalizedFitness.get(ind);
-                if (acumulado >= randomValue) {
+                if (acumulado >= randomValue || ind == poblacion.size() - 1) {
                     seleccionados.add(poblacion.get(ind).copy());
                     break;
                 }
