@@ -222,6 +222,8 @@ public class Main extends JFrame {
      */
     private IndividuoFactory getIndividuoFactory(int individualType) {
         switch (individualType) {
+            case 0:
+                return new IndividuoAspiradoraFactory();
             default:
                 throw new IllegalArgumentException("Invalid individual type");
         }
