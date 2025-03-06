@@ -4,6 +4,7 @@ import es.ucm.factories.IndividuoAspiradoraFactory;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoAspiradora;
+import es.ucm.mansion.MansionMap;
 import org.junit.Test;
 
 import java.util.List;
@@ -13,8 +14,8 @@ public class OXCrossTest {
 
     @Test
     public void crossTest1() {
-        Individuo par1 = new IndividuoAspiradora();
-        Individuo par2 = new IndividuoAspiradora();
+        Individuo par1 = new IndividuoAspiradora(new MansionMap());
+        Individuo par2 = new IndividuoAspiradora(new MansionMap());
         par1.printGenotipo();
         par2.printGenotipo();
         IndividuoFactory factory = new IndividuoAspiradoraFactory();

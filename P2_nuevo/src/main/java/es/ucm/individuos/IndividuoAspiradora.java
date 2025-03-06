@@ -1,6 +1,9 @@
 package es.ucm.individuos;
 
 
+import es.ucm.mansion.AbstractMansionMap;
+import es.ucm.mansion.objects.Room;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -9,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * Problema de la aspiradora
  */
 public class IndividuoAspiradora extends Individuo {
-    protected Integer NUM_ROOMS = 20;
-    public IndividuoAspiradora() {
-        // fixme como parametro deberia de tener el mapa (para calcular el fitness)
+    protected AbstractMansionMap map;
+    public IndividuoAspiradora(AbstractMansionMap map) {
         super(null, false);
+        this.map = map;
         this.fillRandomPermutation();
     }
 
@@ -21,11 +24,12 @@ public class IndividuoAspiradora extends Individuo {
      */
     public void fillRandomPermutation() {
         List<Integer> source = new LinkedList<>();
-        for (int i = 0; i < NUM_ROOMS; i++) {
-            source.add(i);
+        List<Room> rooms = map.getRooms();
+        for (Room r: rooms) {
+            source.add(r.getId());
         }
 
-        for (int i = 0; i < NUM_ROOMS; i++) {
+        for (int i = 0; i < rooms.size(); i++) {
             int roomInd = source.size() == 1 ? 0 : ThreadLocalRandom.current().nextInt(0, source.size());
             this.addIntegerGen(source.get(roomInd));
             source.remove(roomInd);
@@ -33,14 +37,13 @@ public class IndividuoAspiradora extends Individuo {
     }
 
     public double getFitness() {
-        List<Number> x = this.getFenotipos();
-
-        return 0;
+        List<Number> roomOrder = this.getFenotipos();
+        return map.calculateFitness(roomOrder);
     }
 
     @Override
     public Individuo copy() {
-        Individuo clon = new IndividuoAspiradora();
+        Individuo clon = new IndividuoAspiradora(this.map);
         this.copyToClone(clon);
         return clon;
     }

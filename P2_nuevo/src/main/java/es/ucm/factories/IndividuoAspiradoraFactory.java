@@ -2,9 +2,8 @@ package es.ucm.factories;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoAspiradora;
+import es.ucm.mansion.MansionMap;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Fábrica de Individuos, puede crear Individuos de tipo determinado, ej. Individuo1
@@ -13,6 +12,6 @@ import java.util.List;
  */
 public class IndividuoAspiradoraFactory extends IndividuoFactory {
     public Individuo createOne() {
-        return new IndividuoAspiradora();
+        return new IndividuoAspiradora(new MansionMap());
     }
 }
