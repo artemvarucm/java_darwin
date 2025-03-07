@@ -274,7 +274,7 @@ public class Main extends JFrame {
         switch (crossoverType) {
             case 0:
                 return new OXCross(factory);
-            /*case 1:
+            case 1:
                 return new PMXCross(factory);
             case 2:
                 return new OXPPCross(factory);
@@ -285,7 +285,7 @@ public class Main extends JFrame {
             case 5:
                 return new ERXCross(factory);
             case 6:
-                return new CustomCross(factory);*/
+                return new CustomCross(factory);
             default:
                 throw new IllegalArgumentException("Invalid crossover method");
         }
@@ -302,8 +302,16 @@ public class Main extends JFrame {
         switch (mutationType) {
             case 0:
                 return new SwapMutate();
+            case 1:
+                return new InsertionMutate();
+            case 2:
+                return new InversionMutate();
+            case 3:
+                return new HeuristicMutate();
+            case 4:
+                return new ScrambleMutate();
             default:
-                throw new IllegalArgumentException("Invalid mutation method");
+                throw new IllegalArgumentException("Método de mutación no válido");
         }
     }
 
