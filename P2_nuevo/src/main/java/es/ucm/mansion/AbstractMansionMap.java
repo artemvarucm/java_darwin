@@ -1,5 +1,6 @@
 package es.ucm.mansion;
 
+import es.ucm.mansion.busqueda.AEstrellaBusquedaCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
 import es.ucm.mansion.objects.Obstacle;
 import es.ucm.mansion.objects.Room;
@@ -18,6 +19,7 @@ public abstract class AbstractMansionMap {
     private int baseRow, baseCol; // coordenadas base
     private AbstractMansionObject[][] grid; // toma 3 valores: null(vacio), room, obstacle
 
+    private AEstrellaBusquedaCamino buscadorCamino; // para calcular el fitness
     public AbstractMansionMap(int nRows, int nCols, int baseRow, int baseCol) {
         this.nRows = nRows;
         this.nCols = nCols;
@@ -25,6 +27,7 @@ public abstract class AbstractMansionMap {
         this.baseCol = baseCol;
         this.rooms = new HashMap<>();
         this.grid = new AbstractMansionObject[nRows][nCols];
+        this.buscadorCamino = new AEstrellaBusquedaCamino(this);
     }
 
     public void addRoom(Room room) {
@@ -44,12 +47,16 @@ public abstract class AbstractMansionMap {
         }
     }
 
-    public int getBaseRow() {
-        return baseRow;
+    public int getNRows() {
+        return nRows;
     }
 
-    public int getBaseCol() {
-        return baseCol;
+    public int getNCols() {
+        return nCols;
+    }
+
+    public AbstractMansionObject[][] getGrid() {
+        return grid;
     }
 
     public String getStringRepresentation() {
@@ -84,22 +91,24 @@ public abstract class AbstractMansionMap {
         return result;
     }
 
-    private double calculateCostAtoB(int rowA, int colA, int rowB, int colB) {
-        // fixme, manhattan para probar, reempoazar con A* para tener en cuenta obstaculos
-        return Math.abs(rowA - rowB) + Math.abs(colA - colB);
-    }
 
     public double calculateFitness(List<Number> roomOrder) {
         double totalCost = 0;
         int rowA = baseRow;
         int colA = baseCol;
+        int rowB, colB;
         for (Number id: roomOrder) {
-            int rowB = rooms.get(id).getRow();
-            int colB = rooms.get(id).getCol();
-            totalCost += calculateCostAtoB(rowA, colA, rowB, colB);
+            rowB = rooms.get(id).getRow();
+            colB = rooms.get(id).getCol();
+            totalCost += this.buscadorCamino.calculateCostAtoB(rowA, colA, rowB, colB);
             rowA = rowB;
             colA = colB;
         }
+
+        // además tiene que volver a la base también
+        rowB = baseRow;
+        colB = baseCol;
+        totalCost += this.buscadorCamino.calculateCostAtoB(rowA, colA, rowB, colB);
 
         return totalCost;
     }
