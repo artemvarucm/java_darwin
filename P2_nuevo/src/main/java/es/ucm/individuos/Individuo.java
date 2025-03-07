@@ -158,6 +158,20 @@ public abstract class Individuo {
         this.genes.get(gen).mutate(localIndex);
     }
 
+    public String getSolutionString() {
+        int i = 1;
+        StringBuilder result = new StringBuilder();
+        for (Number var: this.getFenotipos()) {
+            result.append(String.format("x%d = %s;   ", i, var));
+            if (i % 5 == 0) {
+                result.append("\n");
+            }
+            i++;
+        }
+
+        return result.toString();
+    }
+
     /**
      * Devuelve todos los genes de tipo IntegerGen del individuo
      */

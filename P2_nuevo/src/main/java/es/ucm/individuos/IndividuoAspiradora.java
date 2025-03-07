@@ -36,6 +36,16 @@ public class IndividuoAspiradora extends Individuo {
         }
     }
 
+    @Override
+    public String getSolutionString() {
+        StringBuilder result = new StringBuilder();
+        for (Number var: this.getFenotipos()) {
+            result.append(String.format("%s ->", var));
+        }
+
+        return result.toString();
+    }
+
     public double getFitness() {
         List<Number> roomOrder = this.getFenotipos();
         return map.calculateFitness(roomOrder);

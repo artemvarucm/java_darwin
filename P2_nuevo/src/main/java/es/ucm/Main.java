@@ -210,14 +210,7 @@ public class Main extends JFrame {
             resultsArea.setText("Best Fitness: " + bestIndividual.getFitness() + "\n");
 
             resultsArea.append("Best Solution: \n");
-            int i = 1;
-            for (Number var: bestIndividual.getFenotipos()) {
-                resultsArea.append(String.format("x%d = %s;   ", i, var));
-                if (i % 5 == 0) {
-                    resultsArea.append("\n");
-                }
-                i++;
-            }
+            resultsArea.append(bestIndividual.getSolutionString());
 
             // Graficar los resultados
             plotAlgorithmResults(algorithm, generations);
