@@ -15,11 +15,11 @@ public class AEstrellaBusquedaCamino {
     }
 
 
-    public double calculateCostAtoB(int rowA, int colA, int rowB, int colB) {
+    public Double calculateCostAtoB(int rowA, int colA, int rowB, int colB) {
         List<NodoCamino> nodos = calculatePathFromAtoB(rowA, colA, rowB, colB);
         if (isNull(nodos)) {
             // no existe camino entre los dos puntos
-            return Integer.MAX_VALUE;
+            return Double.POSITIVE_INFINITY;
         }
 
         // el ultimo nodo tiene el coste completo
@@ -32,47 +32,63 @@ public class AEstrellaBusquedaCamino {
     public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB) {
         List<NodoCamino> nodosAbiertos = new ArrayList<>();
         List<NodoCamino> nodosCerrados = new ArrayList<>();
-        nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB)); // nodo inicial
+        // Nodo inicial
+        nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB, null));
 
+        // System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
         while (!nodosAbiertos.isEmpty()) {
-
-            NodoCamino current = new NodoCamino(rowA - 1, colA - 1, rowB, colB);
+            NodoCamino current = getNodeWithMinCost(nodosAbiertos);
             if (current.checkGoal()) {
-                // devolver la solución y el coste real
+                // devolver la solución
                 return current.reconstructPath();
             }
-
+            // System.out.println("Expandiendo: " + current.getCurrentRow() + ", " + current.getCurrentCol());
             nodosAbiertos.remove(current);
             nodosCerrados.add(current);
+            // 4 movimientos posibles (left, right, up, down)
+            for (MovementEnum move: MovementEnum.values()) {
+                int row = current.getCurrentRow() + move.rowDelta;
+                int col = current.getCurrentCol() + move.colDelta;
+                if (
+                    (col >= mapa.getNCols() || col < 0)
+                        ||
+                    (row >= mapa.getNRows() || row < 0)
+                        ||
+                    (!isNull(mapa.getGrid()[row][col]) && mapa.getGrid()[row][col] instanceof Obstacle)
+                ) {
+                    // movimiento inválido, saltar
+                    continue;
+                }
 
-            /* 4 movimientos posibles (derecha, izquierda, arriba, abajo)
-            heuristica(rowA - 1, colA - 1, rowB, colB);
-            heuristica(rowA - 1, colA + 1, rowB, colB);
-            heuristica(rowA + 1, colA - 1, rowB, colB);
-            heuristica(rowA + 1, colA + 1, rowB, colB);
-             */
+                NodoCamino nodo = new NodoCamino(row, col, rowB, colB, current);
+                // si el nodo está cerrado, NO lo añadimos
+                if (!nodosCerrados.contains(nodo)) {
+                    if (nodosAbiertos.contains(nodo)) {
+                        NodoCamino existente = nodosAbiertos.get(nodosAbiertos.indexOf(nodo));
+                        if (existente.getTotalEstimatedCost() < existente.getTotalEstimatedCost()) {
+                            nodosAbiertos.remove(existente);
+                            nodosAbiertos.add(nodo);
+                            //System.out.println("Añadido: " + nodo.getCurrentRow() + ", " + nodo.getCurrentCol());
+                        }
+                    } else {
+                        nodosAbiertos.add(nodo);
+                        //System.out.println("Añadido: " + nodo.getCurrentRow() + ", " + nodo.getCurrentCol());
+                    }
+                }
+            }
         }
 
         return null; // no hay ningún camino
     }
 
-    private double getTotalEstimatedCost(NodoCamino nodo) {
-        int row = nodo.getCurrentRow();
-        int col = nodo.getCurrentCol();
-        if (col >= mapa.getNCols() || col < 0) {
-            // col fuera del tablero - invalido
-            return Integer.MAX_VALUE;
-        }
-        else if (row >= mapa.getNCols() || row < 0) {
-            // row fuera del tablero - invalido
-            return Integer.MAX_VALUE;
-        }
-        else if (!isNull(mapa.getGrid()[row][col]) && mapa.getGrid()[row][col] instanceof Obstacle) {
-            // si es obstaculo, no puede pasar por ahí
-            return Integer.MAX_VALUE;
+    private NodoCamino getNodeWithMinCost(List<NodoCamino> nodos) {
+        NodoCamino minimo = nodos.get(0);
+        for (NodoCamino n: nodos) {
+            if (minimo.getTotalEstimatedCost() > n.getTotalEstimatedCost()) {
+                minimo = n;
+            }
         }
 
-        // suma el coste real de ir del comienzo al nodo actual y la heuristica para ir al objetivo
-        return nodo.getHeuristica() + nodo.getRealCostFromStart();
+        return minimo;
     }
 }

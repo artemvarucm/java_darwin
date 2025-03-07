@@ -1,5 +1,7 @@
 package es.ucm.mansion.busqueda;
 
+import es.ucm.mansion.AbstractMansionMap;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,25 +16,24 @@ public class NodoCamino {
     private double realCostFromStart;
     private NodoCamino prevNode;
 
-    public NodoCamino(int currentRow, int currentCol, int objectiveRow, int objectiveCol) {
+    public NodoCamino(int currentRow, int currentCol, int objectiveRow, int objectiveCol, NodoCamino prevNode) {
         this.currentRow = currentRow;
         this.currentCol = currentCol;
         this.objectiveRow = objectiveRow;
         this.objectiveCol = objectiveCol;
-        this.prevNode = null;
+        this.prevNode = prevNode;
+        this.realCostFromStart = isNull(prevNode) ? 0 : prevNode.realCostFromStart + 1;
     }
 
     public Boolean checkGoal() {
         return currentRow == objectiveRow && currentCol == objectiveCol;
     }
 
-    public int getCurrentRow() {
-        return currentRow;
+    public Double getTotalEstimatedCost() {
+        // suma el coste real de ir del comienzo al nodo actual y la heuristica para ir al objetivo
+        return this.getHeuristica() + this.getRealCostFromStart();
     }
 
-    public int getCurrentCol() {
-        return currentCol;
-    }
 
     public double getRealCostFromStart() {
         return this.realCostFromStart;
@@ -57,5 +58,23 @@ public class NodoCamino {
 
         // se autoañade a la lista
         result.add(this);
+    }
+
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    public int getCurrentCol() {
+        return currentCol;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NodoCamino)) {
+            return false;
+        }
+
+        NodoCamino nodo = (NodoCamino) obj;
+        return nodo.currentRow == this.currentRow && nodo.currentCol == this.currentCol;
     }
 }
