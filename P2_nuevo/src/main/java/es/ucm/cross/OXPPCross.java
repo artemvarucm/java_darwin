@@ -42,7 +42,7 @@ public class OXPPCross extends AbstractCross {
             if (child1Set.contains(parent2.getIntGenes().get(i).getFenotipo()))
                 continue;
             // Encuentra la siguiente posición vacía en child1 (recorremos de 0 a n-1)
-            while (child1.getIntGenes().get(pointer).getFenotipo() != -1 && pointer < n) {
+            while (pointer < n && child1.getIntGenes().get(pointer).getFenotipo() != -1) {
                 pointer++;
             }
             if (pointer < n) {

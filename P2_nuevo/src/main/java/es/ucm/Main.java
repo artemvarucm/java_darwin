@@ -3,9 +3,13 @@ package es.ucm;
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
 import es.ucm.mansion.MansionMap;
-import es.ucm.selection.*;
+import es.ucm.mansion.objects.Room;
+import es.ucm.mansion.busqueda.AEstrellaBusquedaCamino;
+import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mutation.*;
+import es.ucm.selection.*;
 import es.ucm.cross.*;
+import es.ucm.MansionMapPanel;
 import org.math.plot.Plot2DPanel;
 
 import javax.swing.*;
@@ -15,10 +19,11 @@ import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * Interfaz gráfica para el simulador de algoritmos genéticos.
- * Permite configurar y ejecutar un algoritmo genético, visualizar resultados y exportarlos.
  */
 public class Main extends JFrame {
 
@@ -43,49 +48,70 @@ public class Main extends JFrame {
     // Panel para graficar la evolución del algoritmo
     private Plot2DPanel plotPanel;
 
-    private JTextPane mansionPane; // fixme ahora imprime texto
+    // Panel para representar el mapa con gráficos
+    private MansionMapPanel mapPanelGraphics;
+
+    // Referencia al objeto MansionMap (para poder actualizar el panel cada vez que se calcule la ruta)
+    private MansionMap mansion;
 
     /**
      * Constructor de la interfaz gráfica.
-     * Configura la ventana principal y inicializa los componentes.
      */
     public Main() {
-        setTitle("Genetic Algorithm Simulator"); // Título de la ventana
-        setSize(1200, 800); // Tamaño de la ventana
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Cerrar la aplicación al cerrar la ventana
-        setLocationRelativeTo(null); // Centrar la ventana en la pantalla
-
-        initComponents(); // Inicializar los componentes de la interfaz
+        setTitle("Genetic Algorithm Simulator");
+        setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        initComponents();
     }
 
     /**
      * Inicializa los componentes de la interfaz gráfica.
      */
     private void initComponents() {
-        // Panel principal con un diseño BorderLayout
+        // Panel principal con BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen interno
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panel de control para los parámetros del algoritmo
-        JPanel controlPanel = new JPanel(new GridLayout(0, 2, 10, 10)); // Diseño de cuadrícula
-        controlPanel.setBorder(BorderFactory.createTitledBorder("Parameters")); // Borde con título
+        // Panel de control para configurar parámetros
+        JPanel controlPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        controlPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 
-        // Campos de texto para los parámetros
-        populationSizeField = new JTextField("100"); // Tamaño de la población
-        generationsField = new JTextField("100"); // Número de generaciones
-        mutationRateField = new JTextField("0.05"); // Tasa de mutación
-        crossoverRateField = new JTextField("0.6"); // Tasa de cruce
-        elitismRateField = new JTextField("0.1"); // Tasa de elitismo
-        precisionField = new JTextField("0.001"); // Precisión
-        dimensionsField = new JTextField("2"); // Dimensiones
+        populationSizeField = new JTextField("100");
+        generationsField = new JTextField("100");
+        mutationRateField = new JTextField("0.05");
+        crossoverRateField = new JTextField("0.6");
+        elitismRateField = new JTextField("0.1");
+        precisionField = new JTextField("0.001");
+        dimensionsField = new JTextField("2");
 
-        // ComboBox para seleccionar métodos
-        selectionMethodComboBox = new JComboBox<>(new String[]{"Roulette", "Tournament Deterministic", "Tournament Probabilistic", "Stochastic Universal", "Truncation", "Remainder + Roulette", "Ranking"});
-        crossoverMethodComboBox = new JComboBox<>(new String[]{"OX (Orden)", "PMX (Emparejamiento parcial)", "OXPP (Orden pos. prioritario)", "CX (Ciclos)", "CO (Cod. ordinal)", "ERX (Recomb. ruletas)", "Custom Mutation"});
-        mutationMethodComboBox = new JComboBox<>(new String[]{"Swap", "Insertion", "Inversion", "Heuristic", "Custom Mutation"});
+        selectionMethodComboBox = new JComboBox<>(new String[]{
+            "Roulette", 
+            "Tournament Deterministic", 
+            "Tournament Probabilistic", 
+            "Stochastic Universal", 
+            "Truncation", 
+            "Remainder + Roulette", 
+            "Ranking"
+        });
+        crossoverMethodComboBox = new JComboBox<>(new String[]{
+            "OX (Orden)", 
+            "PMX (Emparejamiento parcial)", 
+            "OXPP (Orden pos. prioritario)", 
+            "CX (Ciclos)", 
+            "CO (Cod. ordinal)", 
+            "ERX (Recomb. ruletas)", 
+            "Custom Mutation"
+        });
+        mutationMethodComboBox = new JComboBox<>(new String[]{
+            "Swap", 
+            "Insertion", 
+            "Inversion", 
+            "Heuristic", 
+            "Custom Mutation"
+        });
         individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1"});
 
-        // Añadir etiquetas y campos al panel de control
         controlPanel.add(new JLabel("Population Size:"));
         controlPanel.add(populationSizeField);
         controlPanel.add(new JLabel("Number of Generations:"));
@@ -105,80 +131,61 @@ public class Main extends JFrame {
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
 
-        // Botón para iniciar el algoritmo
+        // Botones de control
         JButton startButton = new JButton("Start");
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startAlgorithm(); // Ejecutar el algoritmo al hacer clic
-            }
-        });
-
-        // Botón para resetear los campos
+        startButton.addActionListener(e -> startAlgorithm());
         JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetFields(); // Resetear los campos al hacer clic
-            }
-        });
-
-        // Botón para exportar los resultados
+        resetButton.addActionListener(e -> resetFields());
         JButton exportButton = new JButton("Export Results");
-        exportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportResults(); // Exportar resultados al hacer clic
-            }
-        });
+        exportButton.addActionListener(e -> exportResults());
 
-        // Panel para los botones
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.add(startButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(exportButton);
 
-        // Panel para mostrar los resultadosx
+        // Área de texto para mostrar resultados
         JPanel resultsPanel = new JPanel(new BorderLayout());
         resultsPanel.setBorder(BorderFactory.createTitledBorder("Results"));
-
         resultsArea = new JTextArea(10, 2);
-        resultsArea.setEditable(false); // El área de texto no es editable
-        JScrollPane scrollPane = new JScrollPane(resultsArea); // Añadir scroll al área de texto
+        resultsArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(resultsArea);
         resultsPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Panel para graficar la evolución del algoritmo
+        // Panel para graficar la evolución
         plotPanel = new Plot2DPanel();
         plotPanel.setBorder(BorderFactory.createTitledBorder("Evolution Plot"));
-        plotPanel.addLegend("SOUTH"); // Leyenda en la parte inferior
+        plotPanel.addLegend("SOUTH");
 
-        // Añadir paneles al panel principal
+        // Añadir paneles al principal
         mainPanel.add(controlPanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(resultsPanel, BorderLayout.SOUTH);
 
-        // Panel para cambiar de vistas (grafico/mapa)
+        // Panel con pestañas: uno para el gráfico y otro para el mapa gráfico
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("GRAFICO", plotPanel);
-        // fixme solo muestra el mapa (SIN RUTA)
-        JPanel pane = new JPanel();
-        this.mansionPane = new JTextPane();
-        mansionPane.setText(new MansionMap().getStringRepresentation());
-        pane.add(mansionPane);
-        tabPane.addTab("MAPA", pane);
 
-        // Añadir el panel de gráficos a la derecha
+        // Creamos la mansión y el MapPanel para visualizarla.
+        mansion = new MansionMap();
+        // Inicialmente sin ruta, se actualizará al finalizar la ejecución.
+        mapPanelGraphics = new MansionMapPanel(mansion, null);
+        mapPanelGraphics.setPreferredSize(new Dimension(500, 500));
+
+        JPanel mapaPanel = new JPanel(new BorderLayout());
+        mapaPanel.add(mapPanelGraphics, BorderLayout.CENTER);
+        tabPane.addTab("MAPA", mapaPanel);
+
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, tabPane);
-        splitPane.setResizeWeight(0.5); // Dividir el espacio equitativamente
-        add(splitPane); // Añadir el split pane a la ventana
+        splitPane.setResizeWeight(0.5);
+        add(splitPane);
     }
 
     /**
-     * Inicia el algoritmo genético con los parámetros configurados.
+     * Ejecuta el algoritmo genético y actualiza la interfaz con la mejor ruta obtenida.
      */
     private void startAlgorithm() {
         try {
-            // Obtener los valores de los campos de texto
             int populationSize = Integer.parseInt(populationSizeField.getText());
             int generations = Integer.parseInt(generationsField.getText());
             double mutationRate = Double.parseDouble(mutationRateField.getText());
@@ -186,15 +193,11 @@ public class Main extends JFrame {
             double elitismRate = Double.parseDouble(elitismRateField.getText());
             int individualType = individualTypeComboBox.getSelectedIndex();
 
-            // Obtener la fábrica de individuos según el tipo seleccionado
             IndividuoFactory factory = getIndividuoFactory(individualType);
-
-            // Obtener los métodos de selección, cruce y mutación
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
 
-            // Crear y ejecutar el algoritmo genético
             AlgoritmoGenetico algorithm = new AlgoritmoGenetico(factory, populationSize);
             algorithm.setMaxGeneraciones(generations);
             algorithm.setProbCruce(crossoverRate);
@@ -202,18 +205,23 @@ public class Main extends JFrame {
             algorithm.setSelectionMethod(selectionMethod);
             algorithm.setCrossoverMethod(crossoverMethod);
             algorithm.setMutationMethod(mutationMethod);
-
             algorithm.optimize();
 
-            // Obtener el mejor individuo y mostrar los resultados
             Individuo bestIndividual = algorithm.getMejor();
-            resultsArea.setText("Best Fitness: " + bestIndividual.getFitness() + "\n");
+            StringBuilder sb = new StringBuilder();
+            sb.append("Mejor ruta encontrada:\n");
+            sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
+            sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
+            sb.append("------------------------------------------------------------------\n");
+            resultsArea.setText(sb.toString());
 
-            resultsArea.append("Best Solution: \n");
-            resultsArea.append(bestIndividual.getSolutionString());
+            // Actualizamos el mapa gráfico con la ruta calculada
+            Set<String> routeCells = calcularCeldasRuta(bestIndividual);
+            mapPanelGraphics.setRouteCells(routeCells);
 
-            // Graficar los resultados
+            // Graficar evolución del algoritmo
             plotAlgorithmResults(algorithm, generations);
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -221,53 +229,102 @@ public class Main extends JFrame {
     }
 
     /**
-     * Obtiene la fábrica de individuos según el tipo seleccionado.
+     * Calcula las celdas de la ruta a partir de la solución del individuo.
+     * Se asume que la solución es una cadena con identificadores de habitación separados por "→".
      *
-     * @param individualType El índice del tipo de individuo seleccionado.
-     * @return La fábrica de individuos correspondiente.
+     * @param bestIndividual El mejor individuo obtenido.
+     * @return Un Set de cadenas con el formato "fila,col" representando cada celda de la ruta.
+     */
+    private Set<String> calcularCeldasRuta(Individuo bestIndividual) {
+        Set<String> routeCells = new HashSet<>();
+        // Se crea el buscador A* usando la mansión (se asume que 'mansion' implementa AbstractMansionMap)
+        AEstrellaBusquedaCamino buscador = new AEstrellaBusquedaCamino(mansion);
+        List<int[]> routePoints = new ArrayList<>();
+        // Añadir la base inicial (7,7)
+        routePoints.add(new int[]{7, 7});
+
+        String solution = bestIndividual.getSolutionString().trim();
+        if (!solution.isEmpty()) {
+            // Se usa una expresión regular para separar por "->" considerando posibles espacios
+            String[] tokens = solution.split("\\s*->\\s*");
+            for (String token : tokens) {
+                if (!token.isEmpty()) {
+                    int roomId = Integer.parseInt(token.trim());
+                    Room room = findRoomById(mansion, roomId);
+                    if (room != null) {
+                        routePoints.add(new int[]{room.getRow(), room.getCol()});
+                    }
+                }
+            }
+        }
+        // Regresar a la base
+        routePoints.add(new int[]{7, 7});
+
+        // Para cada par de puntos, obtener el camino y agregar sus celdas
+        for (int k = 0; k < routePoints.size() - 1; k++) {
+            int[] start = routePoints.get(k);
+            int[] end = routePoints.get(k + 1);
+            // Usamos calculatePathFromAtoB que retorna una lista de NodoCamino
+            List<NodoCamino> nodoPath = buscador.calculatePathFromAtoB(start[0], start[1], end[0], end[1]);
+            if (nodoPath != null) {
+                for (NodoCamino nodo : nodoPath) {
+                    routeCells.add(nodo.getCurrentRow() + "," + nodo.getCurrentCol());
+                }
+            }
+        }
+        return routeCells;
+    }
+
+    /**
+     * Busca una habitación en el mapa según su id.
+     */
+    private Room findRoomById(MansionMap mansion, int roomId) {
+        for (Room r : mansion.getRooms()) {
+            if (r.getId() == roomId)
+                return r;
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene la fábrica de individuos según el tipo seleccionado.
      */
     private IndividuoFactory getIndividuoFactory(int individualType) {
         switch (individualType) {
             case 0:
                 return new IndividuoAspiradoraFactory();
             default:
-                throw new IllegalArgumentException("Invalid individual type");
+                throw new IllegalArgumentException("Tipo de individuo no válido");
         }
     }
 
     /**
-     * Obtiene el método de selección según la opción seleccionada.
-     *
-     * @param factory La fábrica de individuos.
-     * @return El método de selección correspondiente.
+     * Obtiene el método de selección según la opción elegida.
      */
     private AbstractSelection getSelectionMethod(IndividuoFactory factory) {
         int selectionType = selectionMethodComboBox.getSelectedIndex();
         switch (selectionType) {
             case 0:
-            	return new RouletteSelection(factory);
+                return new RouletteSelection(factory);
             case 1:
-                return new TorneoSelection(factory, 3, true); // Toreno Determinista
+                return new TorneoSelection(factory, 3, true);
             case 2:
-                return new TorneoSelection(factory, 3, false); // Torneo Probabilistico
+                return new TorneoSelection(factory, 3, false);
             case 3:
-            	return new StochasticUniversalSelection(factory);
+                return new StochasticUniversalSelection(factory);
             case 4:
-            	return new TruncationSelection(factory, 0.5); // Umbral de truncamiento
+                return new TruncationSelection(factory, 0.5);
             case 5:
-            	return new RemainderRouletteSelection(factory); // Por restos + ruleta
+                return new RemainderRouletteSelection(factory);
             case 6:
                 return new RankingSelection(factory);
             default:
-                throw new IllegalArgumentException("Invalid selection method");
+                throw new IllegalArgumentException("Método de selección no válido");
         }
     }
 
     /**
-     * Obtiene el método de cruce según la opción seleccionada.
-     *
-     * @param factory La fábrica de individuos.
-     * @return El método de cruce correspondiente.
+     * Obtiene el método de cruce según la opción elegida.
      */
     private AbstractCross getCrossoverMethod(IndividuoFactory factory) {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
@@ -287,15 +344,12 @@ public class Main extends JFrame {
             case 6:
                 return new CustomCross(factory);
             default:
-                throw new IllegalArgumentException("Invalid crossover method");
+                throw new IllegalArgumentException("Método de cruce no válido");
         }
     }
 
     /**
-     * Obtiene el método de mutación según la opción seleccionada.
-     *
-     * @param mutationRate La tasa de mutación.
-     * @return El método de mutación correspondiente.
+     * Obtiene el método de mutación según la opción elegida.
      */
     private AbstractMutate getMutationMethod(double mutationRate) {
         int mutationType = mutationMethodComboBox.getSelectedIndex();
@@ -316,30 +370,26 @@ public class Main extends JFrame {
     }
 
     /**
-     * Grafica los resultados del algoritmo genético.
-     *
-     * @param algorithm    El algoritmo genético.
-     * @param generations  El número de generaciones.
+     * Grafica la evolución del algoritmo para cada generación.
      */
     private void plotAlgorithmResults(AlgoritmoGenetico algorithm, int generations) {
         double[] generationNumbers = new double[generations];
         for (int i = 0; i < generations; i++) {
             generationNumbers[i] = i;
         }
-
         double[] bestFitness = algorithm.getBestFitnessHistory();
         double[] averageFitness = algorithm.getAverageFitnessHistory();
         double[] absoluteBest = algorithm.getAbsoluteBestHistory();
 
         plotPanel.removeAllPlots();
-        plotPanel.setAxisLabels("N. GENERACIÓN", "VALOR FUNCIÓN");
+        plotPanel.setAxisLabels("Generación", "Fitness");
         plotPanel.addLinePlot("Mejor Absoluto", Color.BLUE, generationNumbers, absoluteBest);
         plotPanel.addLinePlot("Mejor Generación", Color.RED, generationNumbers, bestFitness);
         plotPanel.addLinePlot("Media Generación", Color.GREEN, generationNumbers, averageFitness);
     }
 
     /**
-     * Resetea los campos de la interfaz gráfica.
+     * Resetea los campos de la interfaz.
      */
     private void resetFields() {
         populationSizeField.setText("100");
@@ -358,7 +408,7 @@ public class Main extends JFrame {
     }
 
     /**
-     * Exporta los resultados a un archivo de texto.
+     * Exporta los resultados a un archivo.
      */
     private void exportResults() {
         JFileChooser fileChooser = new JFileChooser();
@@ -366,18 +416,16 @@ public class Main extends JFrame {
         if (option == JFileChooser.APPROVE_OPTION) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileChooser.getSelectedFile()))) {
                 writer.write(resultsArea.getText());
-                JOptionPane.showMessageDialog(this, "Results exported successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Los resultados se exportaron correctamente!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error exporting results", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al exportar los resultados", "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
         }
     }
 
     /**
-     * Método principal para ejecutar la interfaz gráfica.
-     *
-     * @param args Argumentos de la línea de comandos (no se utilizan).
+     * Método principal.
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
