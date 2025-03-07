@@ -52,18 +52,28 @@ public abstract class AbstractMansionMap {
         return baseCol;
     }
 
-    public void printMap() {
+    public String getStringRepresentation() {
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < nRows; i++) {
             for (int j = 0; j < nCols; j++) {
-                String str = "  ";
+                String str = "   ";
 
                 if (!isNull(grid[i][j]))
                     str = grid[i][j].toString();
 
-                System.out.printf("|%1$2%s", str);
+                result.append(String.format("|%1$2s", str));
             }
-            System.out.println("|");
+            result.append("|\n");
+            for (int j = 0; j < nCols; j++) {
+                result.append("--");
+            }
+            result.append("\n");
         }
+
+        return result.toString();
+    }
+    public void printMap() {
+        System.out.println(getStringRepresentation());
     }
 
     public List<Room> getRooms() {

@@ -2,6 +2,7 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
+import es.ucm.mansion.MansionMap;
 import es.ucm.selection.*;
 import es.ucm.mutation.*;
 import es.ucm.cross.*;
@@ -41,6 +42,8 @@ public class Main extends JFrame {
 
     // Panel para graficar la evolución del algoritmo
     private Plot2DPanel plotPanel;
+
+    private JTextPane mansionPane; // fixme ahora imprime texto
 
     /**
      * Constructor de la interfaz gráfica.
@@ -135,11 +138,11 @@ public class Main extends JFrame {
         buttonPanel.add(resetButton);
         buttonPanel.add(exportButton);
 
-        // Panel para mostrar los resultados
+        // Panel para mostrar los resultadosx
         JPanel resultsPanel = new JPanel(new BorderLayout());
         resultsPanel.setBorder(BorderFactory.createTitledBorder("Results"));
 
-        resultsArea = new JTextArea(5, 2);
+        resultsArea = new JTextArea(10, 2);
         resultsArea.setEditable(false); // El área de texto no es editable
         JScrollPane scrollPane = new JScrollPane(resultsArea); // Añadir scroll al área de texto
         resultsPanel.add(scrollPane, BorderLayout.CENTER);
@@ -154,8 +157,18 @@ public class Main extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(resultsPanel, BorderLayout.SOUTH);
 
+        // Panel para cambiar de vistas (grafico/mapa)
+        JTabbedPane tabPane = new JTabbedPane();
+        tabPane.addTab("GRAFICO", plotPanel);
+        // fixme solo muestra el mapa (SIN RUTA)
+        JPanel pane = new JPanel();
+        this.mansionPane = new JTextPane();
+        mansionPane.setText(new MansionMap().getStringRepresentation());
+        pane.add(mansionPane);
+        tabPane.addTab("MAPA", pane);
+
         // Añadir el panel de gráficos a la derecha
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, plotPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, tabPane);
         splitPane.setResizeWeight(0.5); // Dividir el espacio equitativamente
         add(splitPane); // Añadir el split pane a la ventana
     }
