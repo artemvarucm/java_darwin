@@ -1,6 +1,7 @@
 package es.ucm.mansion;
 
 import es.ucm.mansion.busqueda.AEstrellaBusquedaCamino;
+import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
 import es.ucm.mansion.objects.Obstacle;
 import es.ucm.mansion.objects.Room;
@@ -55,6 +56,14 @@ public abstract class AbstractMansionMap {
         return nCols;
     }
 
+    public int getBaseRow() {
+        return baseRow;
+    }
+
+    public int getBaseCol() {
+        return baseCol;
+    }
+
     public AbstractMansionObject[][] getGrid() {
         return grid;
     }
@@ -91,6 +100,31 @@ public abstract class AbstractMansionMap {
         return result;
     }
 
+
+    public List<NodoCamino> calculatePath(List<Number> roomOrder) {
+        List<NodoCamino> result = new ArrayList<>();
+        int rowA = baseRow;
+        int colA = baseCol;
+        int rowB, colB;
+        for (Number id: roomOrder) {
+            rowB = rooms.get(id).getRow();
+            colB = rooms.get(id).getCol();
+            result.addAll(this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB));
+            // eliminamos el nodo final
+            // porque lo meteremos como primero en la siguiente iteración
+            result.remove(result.size() - 1);
+
+            rowA = rowB;
+            colA = colB;
+        }
+
+        // además tiene que volver a la base también
+        rowB = baseRow;
+        colB = baseCol;
+        result.addAll(this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB));
+
+        return result;
+    }
 
     public double calculateFitness(List<Number> roomOrder) {
         double totalCost = 0;

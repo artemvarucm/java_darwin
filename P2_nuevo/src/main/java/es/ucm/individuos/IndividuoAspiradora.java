@@ -39,9 +39,11 @@ public class IndividuoAspiradora extends Individuo {
     @Override
     public String getSolutionString() {
         StringBuilder result = new StringBuilder();
+        result.append("B");
         for (Number var: this.getFenotipos()) {
-            result.append(String.format("%s ->", var));
+            result.append(String.format(" -> %s", var));
         }
+        result.append(" -> B");
 
         return result.toString();
     }

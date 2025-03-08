@@ -1,25 +1,26 @@
 package es.ucm;
 
 import es.ucm.mansion.MansionMap;
+import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
 import es.ucm.mansion.objects.Obstacle;
 import es.ucm.mansion.objects.Room;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
+import java.util.List;
 
 public class MansionMapPanel extends JPanel {
     private MansionMap mansion;
-    private Set<String> routeCells; // Formato "fila,col", ej: "7,7" para la base
+    private List<NodoCamino> routeCells;
 
-    public MansionMapPanel(MansionMap mansion, Set<String> routeCells) {
+    public MansionMapPanel(MansionMap mansion, List<NodoCamino> routeCells) {
         this.mansion = mansion;
         this.routeCells = routeCells;
     }
     
     // Permite actualizar la ruta para redibujar el panel
-    public void setRouteCells(Set<String> routeCells) {
+    public void setRouteCells(List<NodoCamino> routeCells) {
         this.routeCells = routeCells;
         repaint();
     }
@@ -36,15 +37,28 @@ public class MansionMapPanel extends JPanel {
         int nCols = mansion.getNCols();
         int cellWidth = getWidth() / nCols;
         int cellHeight = getHeight() / nRows;
-        
+
+        // pintamos el fondo de blanco
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        // pintamos la ruta
+        if (routeCells != null) {
+            g2d.setColor(Color.YELLOW);
+            for (NodoCamino nodo: routeCells) {
+                // X son las columnas, Y son las filas
+                g2d.fillRect(nodo.getCurrentCol() * cellWidth, nodo.getCurrentRow() * cellHeight, cellWidth, cellHeight);
+            }
+        }
+
         for (int i = 0; i < nRows; i++) {
             for (int j = 0; j < nCols; j++) {
-                int x = j * cellWidth;
+                int x = j * cellWidth; // X son las columnas, Y son las filas
                 int y = i * cellHeight;
                 AbstractMansionObject obj = mansion.getGrid()[i][j];
                 
                 // Si es la base
-                if(i == 7 && j == 7) {
+                if(i == mansion.getBaseRow() && j == mansion.getBaseCol()) {
                     g2d.setColor(Color.GREEN);
                     g2d.fillRect(x, y, cellWidth, cellHeight);
                     g2d.setColor(Color.BLACK);
@@ -60,16 +74,6 @@ public class MansionMapPanel extends JPanel {
                         g2d.drawString(String.valueOf(room.getId()), x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
                     } else if (obj instanceof Obstacle) {
                         g2d.setColor(Color.DARK_GRAY);
-                        g2d.fillRect(x, y, cellWidth, cellHeight);
-                    }
-                }
-                // Si no hay objeto, comprobamos si es parte de la ruta
-                else {
-                    if (routeCells != null && routeCells.contains(i + "," + j)) {
-                        g2d.setColor(Color.YELLOW);
-                        g2d.fillRect(x, y, cellWidth, cellHeight);
-                    } else {
-                        g2d.setColor(Color.WHITE);
                         g2d.fillRect(x, y, cellWidth, cellHeight);
                     }
                 }

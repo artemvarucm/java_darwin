@@ -216,8 +216,8 @@ public class Main extends JFrame {
             resultsArea.setText(sb.toString());
 
             // Actualizamos el mapa gráfico con la ruta calculada
-            Set<String> routeCells = calcularCeldasRuta(bestIndividual);
-            mapPanelGraphics.setRouteCells(routeCells);
+            List<Number> roomOrder = bestIndividual.getFenotipos();
+            mapPanelGraphics.setRouteCells(mansion.calculatePath(roomOrder));
 
             // Graficar evolución del algoritmo
             plotAlgorithmResults(algorithm, generations);
@@ -226,53 +226,6 @@ public class Main extends JFrame {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * Calcula las celdas de la ruta a partir de la solución del individuo.
-     * Se asume que la solución es una cadena con identificadores de habitación separados por "→".
-     *
-     * @param bestIndividual El mejor individuo obtenido.
-     * @return Un Set de cadenas con el formato "fila,col" representando cada celda de la ruta.
-     */
-    private Set<String> calcularCeldasRuta(Individuo bestIndividual) {
-        Set<String> routeCells = new HashSet<>();
-        // Se crea el buscador A* usando la mansión (se asume que 'mansion' implementa AbstractMansionMap)
-        AEstrellaBusquedaCamino buscador = new AEstrellaBusquedaCamino(mansion);
-        List<int[]> routePoints = new ArrayList<>();
-        // Añadir la base inicial (7,7)
-        routePoints.add(new int[]{7, 7});
-
-        String solution = bestIndividual.getSolutionString().trim();
-        if (!solution.isEmpty()) {
-            // Se usa una expresión regular para separar por "->" considerando posibles espacios
-            String[] tokens = solution.split("\\s*->\\s*");
-            for (String token : tokens) {
-                if (!token.isEmpty()) {
-                    int roomId = Integer.parseInt(token.trim());
-                    Room room = findRoomById(mansion, roomId);
-                    if (room != null) {
-                        routePoints.add(new int[]{room.getRow(), room.getCol()});
-                    }
-                }
-            }
-        }
-        // Regresar a la base
-        routePoints.add(new int[]{7, 7});
-
-        // Para cada par de puntos, obtener el camino y agregar sus celdas
-        for (int k = 0; k < routePoints.size() - 1; k++) {
-            int[] start = routePoints.get(k);
-            int[] end = routePoints.get(k + 1);
-            // Usamos calculatePathFromAtoB que retorna una lista de NodoCamino
-            List<NodoCamino> nodoPath = buscador.calculatePathFromAtoB(start[0], start[1], end[0], end[1]);
-            if (nodoPath != null) {
-                for (NodoCamino nodo : nodoPath) {
-                    routeCells.add(nodo.getCurrentRow() + "," + nodo.getCurrentCol());
-                }
-            }
-        }
-        return routeCells;
     }
 
     /**
@@ -404,6 +357,7 @@ public class Main extends JFrame {
         mutationMethodComboBox.setSelectedIndex(0);
         individualTypeComboBox.setSelectedIndex(0);
         resultsArea.setText("");
+        mapPanelGraphics.setRouteCells(null);
         plotPanel.removeAllPlots();
     }
 
