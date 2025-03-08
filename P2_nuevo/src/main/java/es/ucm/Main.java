@@ -41,6 +41,7 @@ public class Main extends JFrame {
     private JComboBox<String> crossoverMethodComboBox;
     private JComboBox<String> mutationMethodComboBox;
     private JComboBox<String> individualTypeComboBox;
+    private JComboBox<String> fitnessFunctionComboBox; // Nuevo ComboBox para seleccionar la función de fitness
 
     // Área de texto para mostrar resultados
     private JTextArea resultsArea;
@@ -112,6 +113,13 @@ public class Main extends JFrame {
         });
         individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1"});
 
+        // Nuevo ComboBox para seleccionar la función de fitness
+        fitnessFunctionComboBox = new JComboBox<>(new String[]{
+            "Fitness Original", 
+            "Fitness con Penalización por Obstáculos", 
+            "Fitness con Penalización por Giros"
+        });
+
         controlPanel.add(new JLabel("Population Size:"));
         controlPanel.add(populationSizeField);
         controlPanel.add(new JLabel("Number of Generations:"));
@@ -130,6 +138,8 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
+        controlPanel.add(new JLabel("Función de Fitness:"));
+        controlPanel.add(fitnessFunctionComboBox);
 
         // Botones de control
         JButton startButton = new JButton("Start");
@@ -192,6 +202,7 @@ public class Main extends JFrame {
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
             int individualType = individualTypeComboBox.getSelectedIndex();
+            int fitnessFunction = fitnessFunctionComboBox.getSelectedIndex() + 1; // Obtener la función de fitness seleccionada
 
             IndividuoFactory factory = getIndividuoFactory(individualType);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
@@ -356,6 +367,7 @@ public class Main extends JFrame {
         crossoverMethodComboBox.setSelectedIndex(0);
         mutationMethodComboBox.setSelectedIndex(0);
         individualTypeComboBox.setSelectedIndex(0);
+        fitnessFunctionComboBox.setSelectedIndex(0); // Resetear la función de fitness
         resultsArea.setText("");
         mapPanelGraphics.setRouteCells(null);
         plotPanel.removeAllPlots();
