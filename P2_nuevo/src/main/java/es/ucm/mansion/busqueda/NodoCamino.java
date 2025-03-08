@@ -42,6 +42,46 @@ public class NodoCamino {
     public double getHeuristica() {
         return Math.abs(objectiveRow - currentRow) + Math.abs(objectiveCol - currentCol);
     }
+    
+    /*
+     * public double getHeuristica() {
+        // Distancia Manhattan tradicional
+        double manhattanDistance = Math.abs(objectiveRow - currentRow) + Math.abs(objectiveCol - currentCol);
+
+        // Penalización por densidad de obstáculos
+        double obstaclePenalty = calculateObstacleDensityPenalty();
+
+        // Distancia euclidiana
+        double euclideanDistance = Math.sqrt(Math.pow(objectiveRow - currentRow, 2) + Math.pow(objectiveCol - currentCol, 2));
+
+        // Penalización si la distancia Manhattan es mayor que la euclidiana
+        double deviationPenalty = Math.max(0, manhattanDistance - euclideanDistance) * 0.2;
+
+        return manhattanDistance + obstaclePenalty + deviationPenalty;
+    }
+
+    private double calculateObstacleDensityPenalty() {
+        double penalty = 0.0;
+        int deltaRow = Integer.signum(objectiveRow - currentRow);
+        int deltaCol = Integer.signum(objectiveCol - currentCol);
+
+        // Verificar celdas en la dirección del objetivo
+        int row = currentRow + deltaRow;
+        int col = currentCol + deltaCol;
+        while (row != objectiveRow || col != objectiveCol) {
+            if (row >= 0 && row < mansionMap.getNRows() && col >= 0 && col < mansionMap.getNCols()) {
+                if (mansionMap.getGrid()[row][col] instanceof Obstacle) {
+                    penalty += 0.5; // Penalización por cada obstáculo en la dirección
+                }
+            }
+            row += deltaRow;
+            col += deltaCol;
+        }
+
+        return penalty;
+    }
+     * 
+     * */
 
     public List<NodoCamino> reconstructPath() {
         List<NodoCamino> result= new LinkedList<>(); // tiene que ser vacía
