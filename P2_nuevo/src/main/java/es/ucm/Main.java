@@ -117,7 +117,8 @@ public class Main extends JFrame {
         fitnessFunctionComboBox = new JComboBox<>(new String[]{
             "Fitness Original", 
             "Fitness con Penalización por Obstáculos", 
-            "Fitness con Penalización por Giros"
+            "Fitness con Penalización por Giros",
+            "Fitness Multicriterio"
         });
 
         controlPanel.add(new JLabel("Population Size:"));

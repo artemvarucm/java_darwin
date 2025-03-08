@@ -122,6 +122,51 @@ public class IndividuoAspiradora extends Individuo {
 
         return fitness + penalty;
     }
+    
+    private double calculateFitnessMultiCriteria(List<Number> roomOrder) {
+        double fitness = map.calculateFitness(roomOrder); // Fitness original (distancia)
+        AEstrellaBusquedaCamino aStar = new AEstrellaBusquedaCamino(map);
+        double obstaclePenalty = 0.0;
+        double turnPenalty = 0.0;
+        double deviationPenalty = 0.0;
+
+        for (int i = 0; i < roomOrder.size() - 1; i++) {
+            final int index = i;
+            Room room1 = map.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+            Room room2 = map.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index + 1).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+
+            // Penalización por proximidad a obstáculos
+            double distance = aStar.calculateCostAtoB(room1.getRow(), room1.getCol(), room2.getRow(), room2.getCol());
+            if (distance > 1.0) {
+                obstaclePenalty += distance * 0.1;
+            }
+
+            // Penalización por cambios de dirección
+            if (i > 0) {
+                Room prevRoom = map.getRooms().stream()
+                        .filter(r -> r.getId() == roomOrder.get(index - 1).intValue())
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+                int prevDirection = getDirection(prevRoom, room1);
+                int currDirection = getDirection(room1, room2);
+                if (prevDirection != currDirection) {
+                    turnPenalty += 1.0;
+                }
+            }
+
+            // Penalización por desviación de la distancia euclidiana
+            double euclideanDistance = Math.sqrt(Math.pow(room2.getRow() - room1.getRow(), 2) + Math.pow(room2.getCol() - room1.getCol(), 2));
+            deviationPenalty += Math.max(0, distance - euclideanDistance) * 0.2;
+        }
+
+        return fitness + obstaclePenalty + turnPenalty + deviationPenalty;
+    }
 
     private int getDirection(Room from, Room to) {
         if (from.getRow() == to.getRow()) {
