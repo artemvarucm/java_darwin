@@ -10,75 +10,59 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PMXCross extends AbstractCross {
-
     public PMXCross(IndividuoFactory factory) {
         super(factory);
     }
 
     @Override
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        int n = parent1.getIntGenes().size();
-        // Selecciona dos puntos de corte (aseguramos que sean diferentes)
-        int cut1 = ThreadLocalRandom.current().nextInt(0, n);
-        int cut2 = ThreadLocalRandom.current().nextInt(0, n);
-        while (cut1 == cut2) {
-            cut2 = ThreadLocalRandom.current().nextInt(0, n);
+        List<Individuo> result = new ArrayList<>(2);
+        Individuo child1 = this.factory.createOne();
+        Individuo child2 = this.factory.createOne();
+
+        int nIntGenes = parent1.getIntGenes().size();
+        int randomValue1 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        int randomValue2 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+
+        if (randomValue1 > randomValue2) {
+            int temp = randomValue1;
+            randomValue1 = randomValue2;
+            randomValue2 = temp;
         }
-        int start = Math.min(cut1, cut2);
-        int end = Math.max(cut1, cut2);
-        
-        // Prepara arrays para los hijos
-        int[] child1Arr = new int[n];
-        int[] child2Arr = new int[n];
-        // Inicializa con un valor inválido (por ejemplo, -1)
-        for (int i = 0; i < n; i++) {
-            child1Arr[i] = -1;
-            child2Arr[i] = -1;
-        }
-        
-        // Copia el segmento central y crea el mapeo
+
+        // Mapeo de los segmentos cruzados
         Map<Integer, Integer> mapping1 = new HashMap<>();
         Map<Integer, Integer> mapping2 = new HashMap<>();
-        for (int i = start; i <= end; i++) {
-            int p1Gene = parent1.getIntGenes().get(i).getFenotipo();
-            int p2Gene = parent2.getIntGenes().get(i).getFenotipo();
-            child1Arr[i] = p1Gene;
-            child2Arr[i] = p2Gene;
-            mapping1.put(p2Gene, p1Gene);
-            mapping2.put(p1Gene, p2Gene);
+
+        for (int i = randomValue1; i <= randomValue2; i++) {
+            int gene1 = parent1.getIntGenes().get(i).getFenotipo();
+            int gene2 = parent2.getIntGenes().get(i).getFenotipo();
+
+            child1.getIntGenes().get(i).set(0, gene2);
+            child2.getIntGenes().get(i).set(0, gene1);
+
+            mapping1.put(gene2, gene1);
+            mapping2.put(gene1, gene2);
         }
-        
-        // Función auxiliar para resolver mapeo
-        // Para child1: se toman genes de parent2, y se resuelve si ya están en el segmento.
-        for (int i = 0; i < n; i++) {
-            if (i >= start && i <= end) continue;
-            int candidate = parent2.getIntGenes().get(i).getFenotipo();
-            // Mientras exista mapeo, se sigue la cadena
-            while (mapping1.containsKey(candidate)) {
-                candidate = mapping1.get(candidate);
+
+        // Completar el resto de los genes
+        for (int i = 0; i < nIntGenes; i++) {
+            if (i < randomValue1 || i > randomValue2) {
+                int gene1 = parent1.getIntGenes().get(i).getFenotipo();
+                int gene2 = parent2.getIntGenes().get(i).getFenotipo();
+
+                while (mapping1.containsKey(gene1)) {
+                    gene1 = mapping1.get(gene1);
+                }
+                while (mapping2.containsKey(gene2)) {
+                    gene2 = mapping2.get(gene2);
+                }
+
+                child1.getIntGenes().get(i).set(0, gene1);
+                child2.getIntGenes().get(i).set(0, gene2);
             }
-            child1Arr[i] = candidate;
         }
-        
-        // Para child2: se toman genes de parent1, y se resuelve el mapeo inverso.
-        for (int i = 0; i < n; i++) {
-            if (i >= start && i <= end) continue;
-            int candidate = parent1.getIntGenes().get(i).getFenotipo();
-            while (mapping2.containsKey(candidate)) {
-                candidate = mapping2.get(candidate);
-            }
-            child2Arr[i] = candidate;
-        }
-        
-        // Actualiza los hijos usando la fábrica y actualizando los genes
-        Individuo child1 = factory.createOne();
-        Individuo child2 = factory.createOne();
-        for (int i = 0; i < n; i++) {
-            child1.getIntGenes().get(i).set(0, child1Arr[i]);
-            child2.getIntGenes().get(i).set(0, child2Arr[i]);
-        }
-        
-        List<Individuo> result = new ArrayList<>(2);
+
         result.add(child1);
         result.add(child2);
         return result;

@@ -101,7 +101,7 @@ public class Main extends JFrame {
             "CX (Ciclos)", 
             "CO (Cod. ordinal)", 
             "ERX (Recomb. ruletas)", 
-            "Custom Mutation"
+            "Custom Cross"
         });
         mutationMethodComboBox = new JComboBox<>(new String[]{
             "Swap", 

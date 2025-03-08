@@ -1,75 +1,46 @@
 package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.genes.IntegerGen;
+import es.ucm.individuos.IndividuoAspiradora;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Mutación heurística que intenta mejorar el fitness del individuo
+ */
 public class HeuristicMutate extends AbstractMutate {
+
     @Override
     public void mutate(Individuo ind) {
-        List<IntegerGen> intGenes = ind.getIntGenes();
-        int n = intGenes.size();
-        if (n < 2)
-            return;
-        
-        // Obtiene la permutación actual
-        List<Integer> currentPermutation = new ArrayList<>();
-        for (IntegerGen g : intGenes) {
-            currentPermutation.add(g.getFenotipo());
+        if (!(ind instanceof IndividuoAspiradora)) {
+            throw new IllegalArgumentException("HeuristicMutate solo funciona con IndividuoAspiradora");
         }
-        
-        double bestFitness = ind.getFitness();
-        int bestInsertPos = -1;
-        
-        // Se elige aleatoriamente el índice del gen a mover
-        int indexToMove = ThreadLocalRandom.current().nextInt(0, n);
-        Integer geneValue = currentPermutation.get(indexToMove);
-        // Se remueve de la posición original
-        currentPermutation.remove(indexToMove);
-        
-        // Itera por todas las posiciones posibles para insertar el gen
-        for (int pos = 0; pos <= currentPermutation.size(); pos++) {
-            List<Integer> tempPermutation = new ArrayList<>(currentPermutation);
-            tempPermutation.add(pos, geneValue);
-            
-            // Crea un clon del individuo y actualiza la permutación
-            Individuo tempInd = ind.copy();
-            List<IntegerGen> tempIntGenes = tempInd.getIntGenes();
-            for (int i = 0; i < tempIntGenes.size(); i++) {
-                tempIntGenes.get(i).set(0, tempPermutation.get(i));
-            }
-            double tempFitness = tempInd.getFitness();
-            
-            // Según se maximice o minimice se actualiza la mejor posicion
-            if (!ind.getMaximizar() && tempFitness < bestFitness) {
-                bestFitness = tempFitness;
-                bestInsertPos = pos;
-            } else if (ind.getMaximizar() && tempFitness > bestFitness) {
-                bestFitness = tempFitness;
-                bestInsertPos = pos;
-            }
+
+        IndividuoAspiradora aspiradora = (IndividuoAspiradora) ind;
+        int nIntGenes = aspiradora.getIntGenes().size();
+
+        // Seleccionamos dos posiciones aleatorias para intercambiar
+        int randomValue1 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        int randomValue2 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        while (randomValue1 == randomValue2) {
+            randomValue2 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
         }
-        
-        // Si se encontró alguna mejora, se actualiza el individuo original
-        if (bestInsertPos != -1) {
-            // Se reconstruye la permutación final:
-            List<Integer> finalPermutation = new ArrayList<>();
-            // Se vuelve a obtener la permutación actual
-            List<Integer> originalPermutation = new ArrayList<>();
-            for (IntegerGen g : intGenes) {
-                originalPermutation.add(g.getFenotipo());
-            }
-            originalPermutation.remove(indexToMove);
-            originalPermutation.add(bestInsertPos, geneValue);
-            finalPermutation = originalPermutation;
-            
-            // Se actualizan los genes del individuo
-            for (int i = 0; i < n; i++) {
-                intGenes.get(i).set(0, finalPermutation.get(i));
-            }
+
+        // Obtenemos los valores de las habitaciones en las posiciones seleccionadas
+        int intVal1 = aspiradora.getIntGenes().get(randomValue1).getFenotipo();
+        int intVal2 = aspiradora.getIntGenes().get(randomValue2).getFenotipo();
+
+        // Intercambiamos los valores
+        aspiradora.getIntGenes().get(randomValue1).set(0, intVal2);
+        aspiradora.getIntGenes().get(randomValue2).set(0, intVal1);
+
+        // Calculamos el nuevo fitness después del intercambio
+        double newFitness = aspiradora.getFitness();
+
+        // Si el nuevo fitness es peor, revertimos el intercambio
+        if (newFitness > aspiradora.getFitness()) {
+            aspiradora.getIntGenes().get(randomValue1).set(0, intVal1);
+            aspiradora.getIntGenes().get(randomValue2).set(0, intVal2);
         }
     }
 }
