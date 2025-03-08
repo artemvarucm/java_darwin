@@ -8,11 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.Objects.isNull;
+
 /**
  * Problema de la aspiradora
  */
 public class IndividuoAspiradora extends Individuo {
     protected AbstractMansionMap map;
+    protected Double fitnessCache; // fitness cacheado (para no volver a calcularlo)
+    protected String genotipoStrCache; // por si cambia el genotipo, para recalcular el fitness (nunca pasa realmente)
     public IndividuoAspiradora(AbstractMansionMap map) {
         super(null, false);
         this.map = map;
@@ -49,8 +53,15 @@ public class IndividuoAspiradora extends Individuo {
     }
 
     public double getFitness() {
+        if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
+            return this.fitnessCache;
+        }
+
         List<Number> roomOrder = this.getFenotipos();
-        return map.calculateFitness(roomOrder);
+        this.fitnessCache = map.calculateFitness(roomOrder);
+        this.genotipoStrCache = this.genotipoToString();
+
+        return this.fitnessCache;
     }
 
     @Override

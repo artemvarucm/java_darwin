@@ -28,12 +28,9 @@ public class IntegerGen extends Gen<Integer> {
         return genotipo;
     }
 
-    public void printGenotipo() {
-        System.out.print(genotipo);
+    public String toString() {
+        return genotipo.toString();
     }
-
-    @Override
-    public void mutate(int index) {}
 
     public void set(int index, Integer value) {
         this.genotipo = value;

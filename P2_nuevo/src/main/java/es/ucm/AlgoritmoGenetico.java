@@ -133,6 +133,9 @@ public class AlgoritmoGenetico {
     }
 
     private void saveElite() {
+        if (tamElite == 0)
+            return;
+
         // para no reordenar la poblacion, guardamos una lista ordenada aparte
         List<Individuo> sortedList;
         boolean maximizar = poblacion.get(0).getMaximizar();
@@ -149,6 +152,9 @@ public class AlgoritmoGenetico {
     }
 
     private void replaceWorstWithElite() {
+        if (tamElite == 0)
+            return;
+
         // para no reordenar la poblacion, guardamos una lista ordenada aparte
         boolean maximizar = poblacion.get(0).getMaximizar();
         if (maximizar) { // if inverso al de saveElite
