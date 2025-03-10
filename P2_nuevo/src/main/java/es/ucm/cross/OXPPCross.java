@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static es.ucm.utils.RandomUtil.getNDifferentRandInt;
 
@@ -49,7 +50,13 @@ public class OXPPCross extends AbstractCross {
     }
 
     private void fillRemaining(Individuo parent, Individuo child, int nIntGenes, Set<Integer> childSet, List<Integer> randomFilled) {
-        int parentPointer = 0;
+        // escogemos una posición vacía de forma aleatoria
+        Integer randomEmpty = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        while (randomFilled.contains(randomEmpty)) {
+            randomEmpty = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        }
+
+        int parentPointer = randomEmpty;
         int childPointer = parentPointer;
         while (childSet.size() < nIntGenes) {
             if (randomFilled.contains(childPointer)) {
