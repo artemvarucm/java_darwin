@@ -9,14 +9,16 @@ import java.util.concurrent.ThreadLocalRandom;
  * Mutación heurística que intenta mejorar el fitness del individuo
  */
 public class HeuristicMutate extends AbstractMutate {
+    public HeuristicMutate(double mutateProbability) {
+        super(mutateProbability);
+    }
 
     @Override
-    public void mutate(Individuo ind) {
+    public Individuo mutate(Individuo ind) {
         if (!(ind instanceof IndividuoAspiradora)) {
             throw new IllegalArgumentException("HeuristicMutate solo funciona con IndividuoAspiradora");
         }
-
-        IndividuoAspiradora aspiradora = (IndividuoAspiradora) ind;
+        IndividuoAspiradora aspiradora = (IndividuoAspiradora) ind.copy();
         int nIntGenes = aspiradora.getIntGenes().size();
 
         // Seleccionamos dos posiciones aleatorias para intercambiar
@@ -42,5 +44,7 @@ public class HeuristicMutate extends AbstractMutate {
             aspiradora.getIntGenes().get(randomValue1).set(0, intVal1);
             aspiradora.getIntGenes().get(randomValue2).set(0, intVal2);
         }
+
+        return aspiradora;
     }
 }

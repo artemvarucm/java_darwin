@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class InversionMutateTest extends AbstractMutateTest{
     @Test
     public void mutate() {
-        AbstractMutate mutator = new InversionMutate();
+        AbstractMutate mutator = new InversionMutate(0.05);
         this.mutateTest(mutator);
     }
 }

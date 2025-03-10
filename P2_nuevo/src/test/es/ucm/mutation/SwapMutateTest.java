@@ -9,7 +9,7 @@ public class SwapMutateTest extends AbstractMutateTest{
 
     @Test
     public void mutate() {
-        AbstractMutate mutator = new SwapMutate();
+        AbstractMutate mutator = new SwapMutate(0.05);
         this.mutateTest(mutator);
     }
 }

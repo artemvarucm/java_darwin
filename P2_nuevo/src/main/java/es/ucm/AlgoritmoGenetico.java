@@ -117,8 +117,9 @@ public class AlgoritmoGenetico {
             this.poblacion = descendientes;
 
             // Mutación
-            for (Individuo individuo : poblacion) {
-                mutationMethod.mutate(individuo);
+            for (int i = 0; i < poblacion.size(); i++) {
+                Individuo individuo = poblacion.get(i);
+                poblacion.set(i, mutationMethod.mutate(individuo));
             }
 
             // Reemplazamos los peores con la elite

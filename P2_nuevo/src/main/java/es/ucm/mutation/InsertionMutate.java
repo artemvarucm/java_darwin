@@ -8,32 +8,40 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class InsertionMutate extends AbstractMutate {
+    public InsertionMutate(double mutateProbability) {
+        super(mutateProbability);
+    }
+
     @Override
-    public void mutate(Individuo ind) {
-        List<IntegerGen> intGenes = ind.getIntGenes();
+    public Individuo mutate(Individuo ind) {
+        Individuo indMutado = ind.copy();
+        List<IntegerGen> intGenes = indMutado.getIntGenes();
         int n = intGenes.size();
-        if (n < 2)
-            return;
-            
-        int removeIndex = ThreadLocalRandom.current().nextInt(0, n);
-        int insertIndex = ThreadLocalRandom.current().nextInt(0, n);
-        while (insertIndex == removeIndex) {
-            insertIndex = ThreadLocalRandom.current().nextInt(0, n);
+        double p = ThreadLocalRandom.current().nextDouble();
+        if (p < mutateProbability && n > 1) {
+
+            int removeIndex = ThreadLocalRandom.current().nextInt(0, n);
+            int insertIndex = ThreadLocalRandom.current().nextInt(0, n);
+            while (insertIndex == removeIndex) {
+                insertIndex = ThreadLocalRandom.current().nextInt(0, n);
+            }
+
+            // Obtiene la permutación actual
+            List<Integer> permutation = new ArrayList<>();
+            for (IntegerGen g : intGenes) {
+                permutation.add(g.getFenotipo());
+            }
+
+            // Extrae el elemento y lo reubica
+            Integer elem = permutation.remove(removeIndex);
+            permutation.add(insertIndex, elem);
+
+            // Actualiza los genes con la nueva permutación
+            for (int i = 0; i < n; i++) {
+                intGenes.get(i).set(0, permutation.get(i));
+            }
         }
-        
-        // Obtiene la permutación actual
-        List<Integer> permutation = new ArrayList<>();
-        for (IntegerGen g : intGenes) {
-            permutation.add(g.getFenotipo());
-        }
-        
-        // Extrae el elemento y lo reubica
-        Integer elem = permutation.remove(removeIndex);
-        permutation.add(insertIndex, elem);
-        
-        // Actualiza los genes con la nueva permutación
-        for (int i = 0; i < n; i++) {
-            intGenes.get(i).set(0, permutation.get(i));
-        }
+
+        return indMutado;
     }
 }

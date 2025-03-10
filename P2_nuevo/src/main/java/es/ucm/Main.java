@@ -320,15 +320,15 @@ public class Main extends JFrame {
         int mutationType = mutationMethodComboBox.getSelectedIndex();
         switch (mutationType) {
             case 0:
-                return new SwapMutate();
+                return new SwapMutate(mutationRate);
             case 1:
-                return new InsertionMutate();
+                return new InsertionMutate(mutationRate);
             case 2:
-                return new InversionMutate();
+                return new InversionMutate(mutationRate);
             case 3:
-                return new HeuristicMutate();
+                return new HeuristicMutate(mutationRate);
             case 4:
-                return new ScrambleMutate();
+                return new ScrambleMutate(mutationRate);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
