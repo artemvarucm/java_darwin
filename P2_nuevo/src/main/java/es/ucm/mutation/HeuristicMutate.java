@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static es.ucm.utils.RandomUtil.getNDifferentRandInt;
+
 
 /**
  * Mutación heurística que intenta mejorar el fitness del individuo

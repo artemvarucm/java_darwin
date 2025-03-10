@@ -16,21 +16,4 @@ public abstract class AbstractMutate {
      * Muta el individuo pasado como parámetro
      */
     public abstract Individuo mutate(Individuo ind);
-
-    /**
-     * Devuelve una lista de enteros aleatorios en el rango seleccionado.
-     * !Todos los numeros son diferentes!
-     */
-    protected List<Integer> getNDifferentRandInt(int origin, int bound, int size) {
-        List<Integer> result = new ArrayList<>();
-
-        while (result.size() < size) {
-            int randomValue = ThreadLocalRandom.current().nextInt(origin, bound);
-            if (!result.contains(randomValue)) {
-                result.add(randomValue);
-            }
-        }
-
-        return result;
-    }
 }

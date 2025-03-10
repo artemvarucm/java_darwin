@@ -21,8 +21,12 @@ public class PMXCross extends AbstractCross {
         Individuo child2 = this.factory.createOne();
 
         int nIntGenes = parent1.getIntGenes().size();
-        int randomValue1 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
-        int randomValue2 = ThreadLocalRandom.current().nextInt(0, nIntGenes);
+        int nPossibleCuts = nIntGenes - 1;
+        Integer randomValue1 = ThreadLocalRandom.current().nextInt(0, nPossibleCuts);
+        Integer randomValue2 = ThreadLocalRandom.current().nextInt(0, nPossibleCuts);
+        while (randomValue1.equals(randomValue2)) {
+            randomValue2 = ThreadLocalRandom.current().nextInt(0, nPossibleCuts);
+        }
 
         if (randomValue1 > randomValue2) {
             int temp = randomValue1;
@@ -33,8 +37,7 @@ public class PMXCross extends AbstractCross {
         // Mapeo de los segmentos cruzados
         Map<Integer, Integer> mapping1 = new HashMap<>();
         Map<Integer, Integer> mapping2 = new HashMap<>();
-
-        for (int i = randomValue1; i <= randomValue2; i++) {
+        for (int i = randomValue1 + 1; i <= randomValue2; i++) {
             int gene1 = parent1.getIntGenes().get(i).getFenotipo();
             int gene2 = parent2.getIntGenes().get(i).getFenotipo();
 
@@ -47,7 +50,8 @@ public class PMXCross extends AbstractCross {
 
         // Completar el resto de los genes
         for (int i = 0; i < nIntGenes; i++) {
-            if (i < randomValue1 || i > randomValue2) {
+            if (i <= randomValue1 || i > randomValue2) {
+                // posición que falta por rellenar
                 int gene1 = parent1.getIntGenes().get(i).getFenotipo();
                 int gene2 = parent2.getIntGenes().get(i).getFenotipo();
 

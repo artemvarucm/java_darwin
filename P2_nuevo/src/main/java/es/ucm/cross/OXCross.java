@@ -30,6 +30,12 @@ public class OXCross extends AbstractCross {
             randomValue2 = ThreadLocalRandom.current().nextInt(0, nPossibleCuts);
         }
 
+        if (randomValue1 > randomValue2) {
+            int temp = randomValue1;
+            randomValue1 = randomValue2;
+            randomValue2 = temp;
+        }
+
         // Conjuntos para ver que numeros ya estan o faltan
         Set<Integer> child1Set = new HashSet<>();
         Set<Integer> child2Set = new HashSet<>();
@@ -45,35 +51,28 @@ public class OXCross extends AbstractCross {
         }
 
         int parent1Pointer = randomValue2 + 1;
-        int i = parent1Pointer;
-        while (child1Set.size() < nIntGenes) {
-            int parent1Int = parent1.getIntGenes().get(parent1Pointer).getFenotipo();
-            if (child1Set.contains(parent1Int)) {
-                // movemos el puntero, el numero ya no interesa
-                parent1Pointer = (parent1Pointer + 1) % nIntGenes;
-            } else {
-                child1.getIntGenes().get(i).set(0, parent1Int);
-                child1Set.add(parent1Int);
-                i = (i + 1) % nIntGenes;
-            }
-        }
+        fillRemaining(parent1, child1, nIntGenes, child1Set, parent1Pointer);
 
         int parent2Pointer = randomValue2 + 1;
-        i = parent2Pointer;
-        while (child2Set.size() < nIntGenes) {
-            int parent2Int = parent2.getIntGenes().get(parent2Pointer).getFenotipo();
-            if (child2Set.contains(parent2Int)) {
-                // movemos el puntero, el numero ya no interesa
-                parent2Pointer = (parent2Pointer + 1) % nIntGenes;
-            } else {
-                child2.getIntGenes().get(i).set(0, parent2Int);
-                child2Set.add(parent2Int);
-                i = (i + 1) % nIntGenes;
-            }
-        }
+        fillRemaining(parent2, child2, nIntGenes, child2Set, parent2Pointer);
 
         result.add(child1);
         result.add(child2);
         return result;
+    }
+
+    private void fillRemaining(Individuo parent, Individuo child, int nIntGenes, Set<Integer> childSet, int parentPointer) {
+        int childPointer = parentPointer;
+        while (childSet.size() < nIntGenes) {
+            int parentInt = parent.getIntGenes().get(parentPointer).getFenotipo();
+            if (childSet.contains(parentInt)) {
+                // movemos el puntero, el numero ya no interesa
+                parentPointer = (parentPointer + 1) % nIntGenes;
+            } else {
+                child.getIntGenes().get(childPointer).set(0, parentInt);
+                childSet.add(parentInt);
+                childPointer = (childPointer + 1) % nIntGenes;
+            }
+        }
     }
 }

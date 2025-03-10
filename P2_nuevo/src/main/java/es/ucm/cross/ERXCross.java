@@ -1,6 +1,7 @@
 package es.ucm.cross;
 
 import es.ucm.factories.IndividuoFactory;
+import es.ucm.genes.IntegerGen;
 import es.ucm.individuos.Individuo;
 
 import java.util.ArrayList;
@@ -25,8 +26,7 @@ public class ERXCross extends AbstractCross {
         
         // Genera dos hijos aplicando el algoritmo de ERX
         List<Integer> child1Perm = generateChild(p1, p2);
-        List<Integer> child2Perm = generateChild(p1, p2);
-        
+        List<Integer> child2Perm = generateChild(p2, p1);
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
         for (int i = 0; i < n; i++) {
@@ -43,7 +43,7 @@ public class ERXCross extends AbstractCross {
     // Extrae la permutación del individuo
     private List<Integer> getPermutation(Individuo ind) {
         List<Integer> perm = new ArrayList<>();
-        for (var gene : ind.getIntGenes()) {
+        for (IntegerGen gene : ind.getIntGenes()) {
             perm.add(gene.getFenotipo());
         }
         return perm;
@@ -80,48 +80,46 @@ public class ERXCross extends AbstractCross {
         int n = p1.size();
         Map<Integer, Set<Integer>> edgeMap = buildEdgeMap(p1, p2);
         List<Integer> child = new ArrayList<>();
-        Set<Integer> visited = new HashSet<>();
-        // Comienza con un gen aleatorio
-        int current = p1.get(ThreadLocalRandom.current().nextInt(0, n));
-        child.add(current);
-        visited.add(current);
-        
-        while (child.size() < n) {
-            // Remueve el gen actual de las listas de vecinos
-            for (Set<Integer> neighbors : edgeMap.values()) {
-                neighbors.remove(current);
-            }
-            Set<Integer> neighbors = edgeMap.get(current);
-            int next;
-            if (!neighbors.isEmpty()) {
-                // Escoge el vecino con lista de adyacencia mínima (en caso de empate, aleatorio)
-                int min = Integer.MAX_VALUE;
-                List<Integer> candidateList = new ArrayList<>();
-                for (int gene : neighbors) {
-                    int size = edgeMap.get(gene).size();
-                    if (size < min) {
-                        candidateList.clear();
-                        candidateList.add(gene);
-                        min = size;
-                    } else if (size == min) {
-                        candidateList.add(gene);
-                    }
-                }
-                next = candidateList.get(ThreadLocalRandom.current().nextInt(0, candidateList.size()));
-            } else {
-                // Si no hay vecinos, se escoge aleatoriamente de los no visitados
-                List<Integer> remaining = new ArrayList<>();
-                for (Integer gene : p1) {
-                    if (!visited.contains(gene)) {
-                        remaining.add(gene);
-                    }
-                }
-                next = remaining.get(ThreadLocalRandom.current().nextInt(0, remaining.size()));
-            }
-            child.add(next);
-            visited.add(next);
-            current = next;
-        }
+        // la ruta empieza en el primer nodo del padre p1
+        child.add(p1.get(0));
+        recursive(child, edgeMap, n);
         return child;
+    }
+
+    private void recursive(List<Integer> child, Map<Integer, Set<Integer>> edgeMap, int parentSize) {
+        int current = child.get(child.size() - 1);
+        Set<Integer> neighbors = edgeMap.get(current);
+        if (!neighbors.isEmpty()) {
+            // Escoge el vecino con lista de adyacencia mínima (en caso de empate, aleatorio)
+            int min = Integer.MAX_VALUE;
+            List<Integer> candidateList = new ArrayList<>();
+            for (int gene : neighbors) {
+                int size = edgeMap.get(gene).size();
+                if (size < min) {
+                    candidateList.clear();
+                    candidateList.add(gene);
+                    min = size;
+                } else if (size == min) {
+                    candidateList.add(gene);
+                }
+            }
+
+            while (!candidateList.isEmpty()) {
+                int random = ThreadLocalRandom.current().nextInt(0, candidateList.size());
+                Integer next = candidateList.get(random);
+                candidateList.remove(random);
+                child.add(next);
+                if (child.size() == parentSize) {
+                    break;
+                } else {
+                    recursive(child, edgeMap, parentSize);
+                    if (child.size() == parentSize) {
+                        break;
+                    } else {
+                        child.remove(next);
+                    }
+                }
+            }
+        }
     }
 }

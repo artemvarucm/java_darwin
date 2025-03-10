@@ -1,6 +1,7 @@
 package es.ucm.cross;
 
 import es.ucm.factories.IndividuoFactory;
+import es.ucm.genes.IntegerGen;
 import es.ucm.individuos.Individuo;
 
 import java.util.ArrayList;
@@ -25,15 +26,15 @@ public class COCross extends AbstractCross {
         Collections.sort(sortedSet);
         
         // Convierte cada permutación en su codificación ordinal
-        List<Integer> ordinal1 = toOrdinal(p1);
-        List<Integer> ordinal2 = toOrdinal(p2);
+        List<Integer> ordinal1 = toOrdinal(p1, sortedSet);
+        List<Integer> ordinal2 = toOrdinal(p2, sortedSet);
         
         // Cruce de un punto (se elige punto de crossover aleatorio)
-        int crossoverPoint = ThreadLocalRandom.current().nextInt(0, n);
+        int crossoverPoint = ThreadLocalRandom.current().nextInt(0, n - 1);
         List<Integer> child1Ordinal = new ArrayList<>();
         List<Integer> child2Ordinal = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            if (i < crossoverPoint) {
+            if (i <= crossoverPoint) {
                 child1Ordinal.add(ordinal1.get(i));
                 child2Ordinal.add(ordinal2.get(i));
             } else {
@@ -63,7 +64,7 @@ public class COCross extends AbstractCross {
     // Extrae la permutación a partir de los genes
     private List<Integer> getPermutation(Individuo ind) {
         List<Integer> perm = new ArrayList<>();
-        for (var gene : ind.getIntGenes()) {
+        for (IntegerGen gene : ind.getIntGenes()) {
             perm.add(gene.getFenotipo());
         }
         return perm;
@@ -71,15 +72,13 @@ public class COCross extends AbstractCross {
     
     // Convierte una permutación en su codificación ordinal.
     // Se parte de una lista copia de la permutación y para cada elemento se busca el índice en la lista
-    private List<Integer> toOrdinal(List<Integer> perm) {
-        List<Integer> available = new ArrayList<>(perm);
-        Collections.sort(available);
+    private List<Integer> toOrdinal(List<Integer> perm, List<Integer> sortedSet) {
+        List<Integer> available = new ArrayList<>(sortedSet);
         List<Integer> ordinal = new ArrayList<>();
-        List<Integer> availableCopy = new ArrayList<>(available);
         for (int gene : perm) {
-            int index = availableCopy.indexOf(gene);
+            int index = available.indexOf(gene);
             ordinal.add(index);
-            availableCopy.remove(index);
+            available.remove(index);
         }
         return ordinal;
     }

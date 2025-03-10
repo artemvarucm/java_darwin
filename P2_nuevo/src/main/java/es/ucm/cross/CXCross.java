@@ -3,8 +3,7 @@ package es.ucm.cross;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CXCross extends AbstractCross {
 
@@ -14,83 +13,48 @@ public class CXCross extends AbstractCross {
 
     @Override
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        int n = parent1.getIntGenes().size();
-        int[] child1Arr = new int[n];
-        int[] child2Arr = new int[n];
-        // Marcas para saber qué posiciones ya se asignaron
-        boolean[] assigned = new boolean[n];
-        // Inicializa con un valor inválido (por ejemplo, -1)
-        for (int i = 0; i < n; i++) {
-            child1Arr[i] = -1;
-            child2Arr[i] = -1;
-        }
-        int cycle = 1;
-        while (!allAssigned(assigned)) {
-            // Encuentra la primera posición sin asignar
-            int index = 0;
-            while (index < n && assigned[index]) {
-                index++;
-            }
-            if (index >= n) break;
-            // Realiza el ciclo
-            int start = index;
-            do {
-                // Si es ciclo impar, se copia normal; si es par, se intercambian
-                if (cycle % 2 != 0) {
-                    child1Arr[index] = parent1.getIntGenes().get(index).getFenotipo();
-                    child2Arr[index] = parent2.getIntGenes().get(index).getFenotipo();
-                } else {
-                    child1Arr[index] = parent2.getIntGenes().get(index).getFenotipo();
-                    child2Arr[index] = parent1.getIntGenes().get(index).getFenotipo();
-                }
-                assigned[index] = true;
-                // Encuentra el índice en parent1 cuyo elemento coincide con el de parent2 en la posición actual
-                int gene = parent2.getIntGenes().get(index).getFenotipo();
-                index = findIndex(parent1, gene);
-            } while (index != start);
-            cycle++;
-        }
-        
-        // Para cualquier posición que no se haya asignado (por seguridad), se asigna de forma directa
-        for (int i = 0; i < n; i++) {
-            if (child1Arr[i] == -1) {
-                child1Arr[i] = parent1.getIntGenes().get(i).getFenotipo();
-            }
-            if (child2Arr[i] == -1) {
-                child2Arr[i] = parent2.getIntGenes().get(i).getFenotipo();
-            }
-        }
-        
-        // Crea los hijos y actualiza sus genes
-        Individuo child1 = factory.createOne();
-        Individuo child2 = factory.createOne();
-        for (int i = 0; i < n; i++) {
-            child1.getIntGenes().get(i).set(0, child1Arr[i]);
-            child2.getIntGenes().get(i).set(0, child2Arr[i]);
-        }
-        
         List<Individuo> result = new ArrayList<>(2);
+        // empiezan igual que los padres (solo tenemos que aplicar el ciclo)
+        Individuo child1 = parent2.copy();
+        Individuo child2 = parent1.copy();
+
+        // rellenamos los hijos
+        fillCycle(parent2, parent1, child1);
+        fillCycle(parent1, parent2, child2);
+
         result.add(child1);
         result.add(child2);
         return result;
     }
-    
-    // Retorna true si todas las posiciones han sido asignadas
-    private boolean allAssigned(boolean[] assigned) {
-        for (boolean a : assigned) {
-            if (!a) return false;
+
+    /**
+     *
+     * @param parentMap - el padre que se usa para el mapping
+     * @param parentFrom - el padre del cual se cogen los valores
+     * @param child - el hijo que se actualiza
+     */
+    private void fillCycle(Individuo parentMap, Individuo parentFrom, Individuo child) {
+        // diccionario inverso dado el valor devuelve la posicion en la que está (hecho para parentFrom)
+        Map<Integer, Integer> inversePar = new HashMap<>();
+        int nIntGenes = parentFrom.getIntGenes().size();
+        for (int i = 0; i < nIntGenes; i++) {
+            int gen = parentFrom.getIntGenes().get(i).getFenotipo();
+            inversePar.put(gen, i);
         }
-        return true;
-    }
-    
-    // Encuentra el índice en parent cuyo gen es igual a target
-    private int findIndex(Individuo parent, int target) {
-        int n = parent.getIntGenes().size();
-        for (int i = 0; i < n; i++) {
-            if (parent.getIntGenes().get(i).getFenotipo() == target) {
-                return i;
-            }
+
+        int cycleInd = 0;
+        Set<Integer> childSet = new HashSet<>();
+        while (!childSet.contains(cycleInd)) {
+            // el gen del valor que vamos a guardar
+            int geneValue = parentFrom.getIntGenes().get(cycleInd).getFenotipo();
+            child.getIntGenes().get(cycleInd).set(0, geneValue);
+
+            // el gen mapeado del otro padre
+            int geneMap = parentMap.getIntGenes().get(cycleInd).getFenotipo();
+            childSet.add(cycleInd);
+
+
+            cycleInd = inversePar.get(geneMap);
         }
-        return -1;
     }
 }

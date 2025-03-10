@@ -17,9 +17,11 @@ public abstract class AbstractCrossTest {
     private void oneCross(AbstractCross crosser) {
         Individuo par1 = new IndividuoAspiradora(new MansionMap());
         Individuo par2 = new IndividuoAspiradora(new MansionMap());
+        System.out.println("PADRES");
         par1.printGenotipo();
         par2.printGenotipo();
         List<Individuo> hijos = crosser.cross(par1, par2);
+        System.out.println("HIJOS");
         hijos.get(0).printGenotipo();
         hijos.get(1).printGenotipo();
     }
