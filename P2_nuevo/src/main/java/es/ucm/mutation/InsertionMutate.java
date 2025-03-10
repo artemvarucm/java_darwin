@@ -19,7 +19,8 @@ public class InsertionMutate extends AbstractMutate {
         int n = intGenes.size();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability && n > 1) {
-
+            // removeIndex -> la posicion del número que sacamos
+            // insertIndex -> la posicion en la que lo metemos
             int removeIndex = ThreadLocalRandom.current().nextInt(0, n);
             int insertIndex = ThreadLocalRandom.current().nextInt(0, n);
             while (insertIndex == removeIndex) {

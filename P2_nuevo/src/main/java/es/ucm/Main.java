@@ -108,7 +108,7 @@ public class Main extends JFrame {
             "Swap", 
             "Insertion", 
             "Inversion", 
-            "Heuristic", 
+            "Heuristic (n = 3)",
             "Custom Mutation"
         });
         individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1"});
