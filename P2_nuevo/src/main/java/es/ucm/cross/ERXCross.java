@@ -94,13 +94,15 @@ public class ERXCross extends AbstractCross {
             int min = Integer.MAX_VALUE;
             List<Integer> candidateList = new ArrayList<>();
             for (int gene : neighbors) {
-                int size = edgeMap.get(gene).size();
-                if (size < min) {
-                    candidateList.clear();
-                    candidateList.add(gene);
-                    min = size;
-                } else if (size == min) {
-                    candidateList.add(gene);
+                if (!child.contains(gene)) {
+                    int size = edgeMap.get(gene).size();
+                    if (size < min) {
+                        candidateList.clear();
+                        candidateList.add(gene);
+                        min = size;
+                    } else if (size == min) {
+                        candidateList.add(gene);
+                    }
                 }
             }
 
