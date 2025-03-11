@@ -23,7 +23,7 @@ public class AEstrellaBusquedaCamino {
         }
 
         // el ultimo nodo tiene el coste completo
-        return nodos.get(nodos.size() - 1).getRealCostFromStart();
+        return nodos.get(nodos.size() - 1).getAcumulatedCostFromStart();
     }
 
     /**
@@ -47,8 +47,8 @@ public class AEstrellaBusquedaCamino {
             nodosCerrados.add(current);
             // 4 movimientos posibles (left, right, up, down)
             for (MovementEnum move: MovementEnum.values()) {
-                int row = current.getCurrentRow() + move.rowDelta;
-                int col = current.getCurrentCol() + move.colDelta;
+                int row = current.getRow() + move.rowDelta;
+                int col = current.getCol() + move.colDelta;
                 if (
                     (col >= mapa.getNCols() || col < 0)
                         ||

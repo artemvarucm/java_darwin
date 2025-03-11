@@ -11,7 +11,11 @@ import es.ucm.mansion.MansionMap;
  * Se usa en el opeardor cruce y al crear la población inicial
  */
 public class IndividuoAspiradoraFactory extends IndividuoFactory {
+    public IndividuoAspiradoraFactory(MansionMap map) {
+        super(map);
+    }
+
     public Individuo createOne() {
-        return new IndividuoAspiradora(new MansionMap());
+        return new IndividuoAspiradora(this.map);
     }
 }

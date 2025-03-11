@@ -4,22 +4,16 @@ import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
 import es.ucm.mansion.MansionMap;
 import es.ucm.mansion.objects.Room;
-import es.ucm.mansion.busqueda.AEstrellaBusquedaCamino;
-import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mutation.*;
 import es.ucm.selection.*;
 import es.ucm.cross.*;
-import es.ucm.MansionMapPanel;
 import org.math.plot.Plot2DPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
 
 /**
@@ -33,15 +27,14 @@ public class Main extends JFrame {
     private JTextField mutationRateField;
     private JTextField crossoverRateField;
     private JTextField elitismRateField;
-    private JTextField precisionField;
-    private JTextField dimensionsField;
+    private JTextField turnPenaltyField;
+    private JTextField obstaclePenaltyField;
 
     // ComboBox para seleccionar métodos de selección, cruce, mutación y tipo de individuo
     private JComboBox<String> selectionMethodComboBox;
     private JComboBox<String> crossoverMethodComboBox;
     private JComboBox<String> mutationMethodComboBox;
     private JComboBox<String> individualTypeComboBox;
-    private JComboBox<String> fitnessFunctionComboBox; // Nuevo ComboBox para seleccionar la función de fitness
 
     // Área de texto para mostrar resultados
     private JTextArea resultsArea;
@@ -83,8 +76,8 @@ public class Main extends JFrame {
         mutationRateField = new JTextField("0.05");
         crossoverRateField = new JTextField("0.6");
         elitismRateField = new JTextField("0.1");
-        precisionField = new JTextField("0.001");
-        dimensionsField = new JTextField("2");
+        turnPenaltyField = new JTextField("0");
+        obstaclePenaltyField = new JTextField("0");
 
         selectionMethodComboBox = new JComboBox<>(new String[]{
             "Roulette", 
@@ -113,14 +106,6 @@ public class Main extends JFrame {
         });
         individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1"});
 
-        // Nuevo ComboBox para seleccionar la función de fitness
-        fitnessFunctionComboBox = new JComboBox<>(new String[]{
-            "Fitness Original", 
-            "Fitness con Penalización por Obstáculos", 
-            "Fitness con Penalización por Giros",
-            "Fitness Multicriterio"
-        });
-
         controlPanel.add(new JLabel("Population Size:"));
         controlPanel.add(populationSizeField);
         controlPanel.add(new JLabel("Number of Generations:"));
@@ -139,9 +124,12 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
-        controlPanel.add(new JLabel("Función de Fitness:"));
-        controlPanel.add(fitnessFunctionComboBox);
-
+        controlPanel.add(new JLabel("FITNESS ADJUSTMENT"));
+        controlPanel.add(new JLabel(""));
+        controlPanel.add(new JLabel("Turn penalty:"));
+        controlPanel.add(turnPenaltyField);
+        controlPanel.add(new JLabel("Obstacle penalty:"));
+        controlPanel.add(obstaclePenaltyField);
         // Botones de control
         JButton startButton = new JButton("Start");
         startButton.addActionListener(e -> startAlgorithm());
@@ -202,8 +190,11 @@ public class Main extends JFrame {
             double mutationRate = Double.parseDouble(mutationRateField.getText());
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
+            double turnPenalty = Double.parseDouble(turnPenaltyField.getText());
+            double obstaclePenalty = Double.parseDouble(obstaclePenaltyField.getText());
+            this.mansion.setTurnPenalty(turnPenalty);
+            this.mansion.setObstaclePenalty(obstaclePenalty);
             int individualType = individualTypeComboBox.getSelectedIndex();
-            int fitnessFunction = fitnessFunctionComboBox.getSelectedIndex() + 1; // Obtener la función de fitness seleccionada
 
             IndividuoFactory factory = getIndividuoFactory(individualType);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
@@ -224,7 +215,7 @@ public class Main extends JFrame {
             sb.append("Mejor ruta encontrada:\n");
             sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
             sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
-            sb.append("------------------------------------------------------------------\n");
+            //sb.append("------------------------------------------------------------------\n");
             resultsArea.setText(sb.toString());
 
             // Actualizamos el mapa gráfico con la ruta calculada
@@ -257,7 +248,7 @@ public class Main extends JFrame {
     private IndividuoFactory getIndividuoFactory(int individualType) {
         switch (individualType) {
             case 0:
-                return new IndividuoAspiradoraFactory();
+                return new IndividuoAspiradoraFactory(this.mansion);
             default:
                 throw new IllegalArgumentException("Tipo de individuo no válido");
         }
@@ -362,13 +353,12 @@ public class Main extends JFrame {
         mutationRateField.setText("0.05");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
-        precisionField.setText("0.001");
-        dimensionsField.setText("2");
+        turnPenaltyField.setText("0");
+        obstaclePenaltyField.setText("0");
         selectionMethodComboBox.setSelectedIndex(0);
         crossoverMethodComboBox.setSelectedIndex(0);
         mutationMethodComboBox.setSelectedIndex(0);
         individualTypeComboBox.setSelectedIndex(0);
-        fitnessFunctionComboBox.setSelectedIndex(0); // Resetear la función de fitness
         resultsArea.setText("");
         mapPanelGraphics.setRouteCells(null);
         plotPanel.removeAllPlots();

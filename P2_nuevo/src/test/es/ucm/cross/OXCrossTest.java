@@ -13,7 +13,7 @@ import java.util.List;
 public class OXCrossTest extends AbstractCrossTest {
     @Test
     public void crossTest1() {
-        IndividuoFactory factory = new IndividuoAspiradoraFactory();
+        IndividuoFactory factory = new IndividuoAspiradoraFactory(new MansionMap());
         AbstractCross crosser = new OXCross(factory);
         this.crossTest(crosser);
     }

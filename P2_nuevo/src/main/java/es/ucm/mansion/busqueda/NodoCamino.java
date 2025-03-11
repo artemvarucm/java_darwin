@@ -1,6 +1,5 @@
 package es.ucm.mansion.busqueda;
 
-import es.ucm.mansion.AbstractMansionMap;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,38 +10,42 @@ import static java.util.Objects.isNull;
  * Representa un nodo del camino para que se puedan reanudar
  */
 public class NodoCamino {
-    private int currentRow, currentCol;
+    private int row, col;
     private int objectiveRow, objectiveCol;
     private double realCostFromStart;
     private NodoCamino prevNode;
 
-    public NodoCamino(int currentRow, int currentCol, int objectiveRow, int objectiveCol, NodoCamino prevNode) {
-        this.currentRow = currentRow;
-        this.currentCol = currentCol;
+    public NodoCamino(int row, int col, int objectiveRow, int objectiveCol, NodoCamino prevNode) {
+        this.row = row;
+        this.col = col;
         this.objectiveRow = objectiveRow;
         this.objectiveCol = objectiveCol;
         this.prevNode = prevNode;
-        this.realCostFromStart = isNull(prevNode) ? 0 : prevNode.realCostFromStart + 1;
+        this.realCostFromStart = isNull(prevNode) ? 0 : prevNode.realCostFromStart + manhattanDist(row, col, prevNode.row, prevNode.col);
     }
 
     public Boolean checkGoal() {
-        return currentRow == objectiveRow && currentCol == objectiveCol;
+        return row == objectiveRow && col == objectiveCol;
     }
 
     public Double getTotalEstimatedCost() {
-        // suma el coste real de ir del comienzo al nodo actual y la heuristica para ir al objetivo
-        return this.getHeuristica() + this.getRealCostFromStart();
+        // suma el coste acumulado de ir del comienzo al nodo actual y la heuristica para ir al objetivo
+        return this.getHeuristica() + this.getAcumulatedCostFromStart();
     }
 
 
-    public double getRealCostFromStart() {
+    public double getAcumulatedCostFromStart() {
         return this.realCostFromStart;
     }
 
     public double getHeuristica() {
-        return Math.abs(objectiveRow - currentRow) + Math.abs(objectiveCol - currentCol);
+        return manhattanDist(objectiveRow, objectiveCol, row, col);
     }
-    
+
+    private double manhattanDist(int row1, int col1, int row2, int col2) {
+        return Math.abs(row1 - row2) + Math.abs(col1 - col2);
+    }
+
     /*
      * public double getHeuristica() {
         // Distancia Manhattan tradicional
@@ -80,7 +83,7 @@ public class NodoCamino {
 
         return penalty;
     }
-     * 
+     *
      * */
 
     public List<NodoCamino> reconstructPath() {
@@ -100,12 +103,12 @@ public class NodoCamino {
         result.add(this);
     }
 
-    public int getCurrentRow() {
-        return currentRow;
+    public int getRow() {
+        return row;
     }
 
-    public int getCurrentCol() {
-        return currentCol;
+    public int getCol() {
+        return col;
     }
 
     @Override
@@ -115,6 +118,6 @@ public class NodoCamino {
         }
 
         NodoCamino nodo = (NodoCamino) obj;
-        return nodo.currentRow == this.currentRow && nodo.currentCol == this.currentCol;
+        return nodo.row == this.row && nodo.col == this.col;
     }
 }

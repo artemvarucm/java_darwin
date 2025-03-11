@@ -24,7 +24,11 @@ public class MansionMapPanel extends JPanel {
         this.routeCells = routeCells;
         repaint();
     }
-    
+
+    public void setMansion(MansionMap mansion) {
+        this.mansion = mansion;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -47,7 +51,7 @@ public class MansionMapPanel extends JPanel {
             g2d.setColor(Color.YELLOW);
             for (NodoCamino nodo: routeCells) {
                 // X son las columnas, Y son las filas
-                g2d.fillRect(nodo.getCurrentCol() * cellWidth, nodo.getCurrentRow() * cellHeight, cellWidth, cellHeight);
+                g2d.fillRect(nodo.getCol() * cellWidth, nodo.getRow() * cellHeight, cellWidth, cellHeight);
             }
         }
 

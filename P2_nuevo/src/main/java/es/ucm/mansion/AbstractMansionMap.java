@@ -21,6 +21,9 @@ public abstract class AbstractMansionMap {
     private AbstractMansionObject[][] grid; // toma 3 valores: null(vacio), room, obstacle
 
     private AEstrellaBusquedaCamino buscadorCamino; // para calcular el fitness
+    private double turnPenalty = 0; // penalización por giro
+    private double obstaclePenalty = 0; // penalización por obstáculo
+
     public AbstractMansionMap(int nRows, int nCols, int baseRow, int baseCol) {
         this.nRows = nRows;
         this.nCols = nCols;
@@ -29,6 +32,14 @@ public abstract class AbstractMansionMap {
         this.rooms = new HashMap<>();
         this.grid = new AbstractMansionObject[nRows][nCols];
         this.buscadorCamino = new AEstrellaBusquedaCamino(this);
+    }
+
+    public void setTurnPenalty(double turnPenalty) {
+        this.turnPenalty = turnPenalty;
+    }
+
+    public void setObstaclePenalty(double obstaclePenalty) {
+        this.obstaclePenalty = obstaclePenalty;
     }
 
     public void addRoom(Room room) {
@@ -145,5 +156,70 @@ public abstract class AbstractMansionMap {
         totalCost += this.buscadorCamino.calculateCostAtoB(rowA, colA, rowB, colB);
 
         return totalCost;
+    }
+
+    private double calculateFitnessWithObstaclePenalty(List<Number> roomOrder) {
+        double fitness = this.calculateFitness(roomOrder);
+        AEstrellaBusquedaCamino aStar = new AEstrellaBusquedaCamino(this);
+        double penalty = 0.0;
+
+        for (int i = 0; i < roomOrder.size() - 1; i++) {
+            final int index = i; // Copia final de i para usar en la expresión lambda
+            Room room1 = this.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+            Room room2 = this.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index + 1).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+
+            double distance = aStar.calculateCostAtoB(room1.getRow(), room1.getCol(), room2.getRow(), room2.getCol());
+
+            // Penalización si el camino pasa cerca de un obstáculo
+            if (distance > 1.0) {
+                penalty += distance * 0.1; // Ajusta el factor de penalización según sea necesario
+            }
+        }
+
+        return fitness + penalty;
+    }
+
+    private double calculateFitnessWithTurnPenalty(List<Number> roomOrder) {
+        double fitness = this.calculateFitness(roomOrder);
+        double penalty = 0.0;
+
+        for (int i = 1; i < roomOrder.size() - 1; i++) {
+            final int index = i;
+            Room prevRoom = this.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index - 1).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+            Room currRoom = this.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+            Room nextRoom = this.getRooms().stream()
+                    .filter(r -> r.getId() == roomOrder.get(index + 1).intValue())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
+
+            int prevDirection = getDirection(prevRoom, currRoom);
+            int nextDirection = getDirection(currRoom, nextRoom);
+
+            if (prevDirection != nextDirection) {
+                penalty += 1.0; // Penalización por cambio de dirección
+            }
+        }
+
+        return fitness + penalty;
+    }
+
+    private int getDirection(Room from, Room to) {
+        if (from.getRow() == to.getRow()) {
+            return (from.getCol() < to.getCol()) ? 1 : 3; // Derecha (1) o Izquierda (3)
+        } else {
+            return (from.getRow() < to.getRow()) ? 2 : 4; // Abajo (2) o Arriba (4)
+        }
     }
 }
