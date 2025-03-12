@@ -169,7 +169,7 @@ public abstract class AbstractMansionMap {
         List<NodoCamino> ruta = calculatePath(roomOrder);
         MovementEnum direccionAnterior = null;
         for (NodoCamino nodo: ruta) {
-            if (!isNull(nodo.getPrevNode())) {
+            if (turnPenalty != 0 && !isNull(nodo.getPrevNode())) {
                 // penalización por giros
                 int row1 = nodo.getPrevNode().getRow();
                 int col1 = nodo.getPrevNode().getCol();
