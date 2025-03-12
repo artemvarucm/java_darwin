@@ -27,6 +27,11 @@ public class ERXCross extends AbstractCross {
         // Genera dos hijos aplicando el algoritmo de ERX
         List<Integer> child1Perm = generateChild(p1, p2);
         List<Integer> child2Perm = generateChild(p2, p1);
+        if (child1Perm.size() < n || child2Perm.size() < n) {
+            // bloqueo total, no se produce cruce (identicos a los padres)
+            child1Perm = p1;
+            child2Perm = p2;
+        }
         Individuo child1 = factory.createOne();
         Individuo child2 = factory.createOne();
         for (int i = 0; i < n; i++) {
@@ -90,7 +95,7 @@ public class ERXCross extends AbstractCross {
         int current = child.get(child.size() - 1);
         Set<Integer> neighbors = edgeMap.get(current);
         if (!neighbors.isEmpty()) {
-            // Escoge el vecino con lista de adyacencia mínima (en caso de empate, aleatorio)
+            // Escoge LOS VECINOS con lista de adyacencia mínima
             int min = Integer.MAX_VALUE;
             List<Integer> candidateList = new ArrayList<>();
             for (int gene : neighbors) {
@@ -107,17 +112,21 @@ public class ERXCross extends AbstractCross {
             }
 
             while (!candidateList.isEmpty()) {
+                // vuelta atrás para todos los vecinos (por si se bloquea)
                 int random = ThreadLocalRandom.current().nextInt(0, candidateList.size());
                 Integer next = candidateList.get(random);
                 candidateList.remove(random);
                 child.add(next);
                 if (child.size() == parentSize) {
+                    // solución encontrada
                     break;
                 } else {
                     recursive(child, edgeMap, parentSize);
                     if (child.size() == parentSize) {
+                        // solución encontrada durante la recursión
                         break;
                     } else {
+                        // pasamos a otro vecino con adyacencia mínima
                         child.remove(next);
                     }
                 }
