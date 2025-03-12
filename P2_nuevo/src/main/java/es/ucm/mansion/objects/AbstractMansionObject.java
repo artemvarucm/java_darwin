@@ -16,4 +16,6 @@ public abstract class AbstractMansionObject {
     public int getCol() {
         return col;
     }
+
+    public abstract boolean isObstacle();
 }

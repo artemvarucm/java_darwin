@@ -33,7 +33,7 @@ public class AEstrellaBusquedaCamino {
         List<NodoCamino> nodosAbiertos = new ArrayList<>();
         List<NodoCamino> nodosCerrados = new ArrayList<>();
         // Nodo inicial
-        nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB, null));
+        nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB));
 
         // System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
         while (!nodosAbiertos.isEmpty()) {
@@ -54,7 +54,7 @@ public class AEstrellaBusquedaCamino {
                         ||
                     (row >= mapa.getNRows() || row < 0)
                         ||
-                    (!isNull(mapa.getGrid()[row][col]) && mapa.getGrid()[row][col] instanceof Obstacle)
+                    (!isNull(mapa.getGrid()[row][col]) && mapa.getGrid()[row][col].isObstacle())
                 ) {
                     // movimiento inválido, saltar
                     continue;

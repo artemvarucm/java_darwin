@@ -14,6 +14,9 @@ public class NodoCamino {
     private int objectiveRow, objectiveCol;
     private double realCostFromStart;
     private NodoCamino prevNode;
+    public NodoCamino(int row, int col, int objectiveRow, int objectiveCol) {
+        this(row, col, objectiveRow, objectiveCol, null);
+    }
 
     public NodoCamino(int row, int col, int objectiveRow, int objectiveCol, NodoCamino prevNode) {
         this.row = row;
@@ -109,6 +112,10 @@ public class NodoCamino {
 
     public int getCol() {
         return col;
+    }
+
+    public NodoCamino getPrevNode() {
+        return prevNode;
     }
 
     @Override

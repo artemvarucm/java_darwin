@@ -6,6 +6,11 @@ public class Obstacle extends AbstractMansionObject {
     }
 
     @Override
+    public boolean isObstacle() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "■";
     }

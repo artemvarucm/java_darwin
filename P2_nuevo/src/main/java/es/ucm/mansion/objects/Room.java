@@ -22,4 +22,8 @@ public class Room extends AbstractMansionObject{
     public String toString() {
         return String.valueOf(id);
     }
+    @Override
+    public boolean isObstacle() {
+        return false;
+    }
 }

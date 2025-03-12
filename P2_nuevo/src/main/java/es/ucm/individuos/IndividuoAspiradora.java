@@ -41,7 +41,7 @@ public class IndividuoAspiradora extends Individuo {
         }
 
         List<Number> roomOrder = this.getFenotipos();
-        this.fitnessCache = map.calculateFitness(roomOrder);
+        this.fitnessCache = map.calculateFitnessWithPenalties(roomOrder);
         this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;

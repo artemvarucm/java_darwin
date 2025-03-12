@@ -1,6 +1,7 @@
 package es.ucm.mansion;
 
 import es.ucm.mansion.busqueda.AEstrellaBusquedaCamino;
+import es.ucm.mansion.busqueda.MovementEnum;
 import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
 import es.ucm.mansion.objects.Obstacle;
@@ -120,7 +121,11 @@ public abstract class AbstractMansionMap {
         for (Number id: roomOrder) {
             rowB = rooms.get(id).getRow();
             colB = rooms.get(id).getCol();
-            result.addAll(this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB));
+            List<NodoCamino> ruta = this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB);
+            if (isNull(ruta)) {
+                throw new RuntimeException("RUTA NO ENCONTRADA");
+            }
+            result.addAll(ruta);
             // eliminamos el nodo final
             // porque lo meteremos como primero en la siguiente iteración
             result.remove(result.size() - 1);
@@ -158,68 +163,62 @@ public abstract class AbstractMansionMap {
         return totalCost;
     }
 
-    private double calculateFitnessWithObstaclePenalty(List<Number> roomOrder) {
-        double fitness = this.calculateFitness(roomOrder);
-        AEstrellaBusquedaCamino aStar = new AEstrellaBusquedaCamino(this);
-        double penalty = 0.0;
-
-        for (int i = 0; i < roomOrder.size() - 1; i++) {
-            final int index = i; // Copia final de i para usar en la expresión lambda
-            Room room1 = this.getRooms().stream()
-                    .filter(r -> r.getId() == roomOrder.get(index).intValue())
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-            Room room2 = this.getRooms().stream()
-                    .filter(r -> r.getId() == roomOrder.get(index + 1).intValue())
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-
-            double distance = aStar.calculateCostAtoB(room1.getRow(), room1.getCol(), room2.getRow(), room2.getCol());
-
-            // Penalización si el camino pasa cerca de un obstáculo
-            if (distance > 1.0) {
-                penalty += distance * 0.1; // Ajusta el factor de penalización según sea necesario
+    public double calculateFitnessWithPenalties(List<Number> roomOrder) {
+        double rawFitness = calculateFitness(roomOrder);
+        double penalizacion = 0;
+        List<NodoCamino> ruta = calculatePath(roomOrder);
+        MovementEnum direccionAnterior = null;
+        for (NodoCamino nodo: ruta) {
+            if (!isNull(nodo.getPrevNode())) {
+                // penalización por giros
+                int row1 = nodo.getPrevNode().getRow();
+                int col1 = nodo.getPrevNode().getCol();
+                int row2 = nodo.getRow();
+                int col2 = nodo.getCol();
+                MovementEnum direccionActual = getDireccion(row1, col1, row2, col2);
+                if (!isNull(direccionAnterior) && !direccionActual.equals(direccionAnterior)) {
+                    penalizacion += turnPenalty;
+                }
+                direccionAnterior = direccionActual;
             }
+
+            // penalización por obstáculos cerca del camino
+            penalizacion += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
         }
 
-        return fitness + penalty;
+        return penalizacion + rawFitness;
     }
 
-    private double calculateFitnessWithTurnPenalty(List<Number> roomOrder) {
-        double fitness = this.calculateFitness(roomOrder);
-        double penalty = 0.0;
-
-        for (int i = 1; i < roomOrder.size() - 1; i++) {
-            final int index = i;
-            Room prevRoom = this.getRooms().stream()
-                    .filter(r -> r.getId() == roomOrder.get(index - 1).intValue())
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-            Room currRoom = this.getRooms().stream()
-                    .filter(r -> r.getId() == roomOrder.get(index).intValue())
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-            Room nextRoom = this.getRooms().stream()
-                    .filter(r -> r.getId() == roomOrder.get(index + 1).intValue())
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Habitación no encontrada"));
-
-            int prevDirection = getDirection(prevRoom, currRoom);
-            int nextDirection = getDirection(currRoom, nextRoom);
-
-            if (prevDirection != nextDirection) {
-                penalty += 1.0; // Penalización por cambio de dirección
-            }
-        }
-
-        return fitness + penalty;
-    }
-
-    private int getDirection(Room from, Room to) {
-        if (from.getRow() == to.getRow()) {
-            return (from.getCol() < to.getCol()) ? 1 : 3; // Derecha (1) o Izquierda (3)
+    private MovementEnum getDireccion(int row1, int col1, int row2, int col2) {
+        if (row1 - row2 == 0) {
+            return col1 < col2 ? MovementEnum.RIGHT : MovementEnum.LEFT;
         } else {
-            return (from.getRow() < to.getRow()) ? 2 : 4; // Abajo (2) o Arriba (4)
+            return row1 < row2 ? MovementEnum.DOWN : MovementEnum.UP;
         }
+    }
+
+    /**
+     * Cuenta los obstáculos que hay en las celdas contiguas a la pasada por parametro
+     */
+    private int countObstaclesAroundPoint(int row, int col) {
+        int count = 0;
+        for (int i = row - 1; i <= row + 1; i++) {
+            for (int j = col - 1; j <= col + 1; j++) {
+                if (
+                        (i == row && j == col)
+                        || i < 0 || i >= nRows
+                        || j < 0 || j >= nCols
+                ) {
+                    // posicion invalida (no se puede acceder)
+                    continue;
+                }
+
+                if (!isNull(grid[i][j]) && grid[i][j].isObstacle()) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 }

@@ -3,12 +3,13 @@ package es.ucm;
 import es.ucm.mansion.MansionMap;
 import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
-import es.ucm.mansion.objects.Obstacle;
 import es.ucm.mansion.objects.Room;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 public class MansionMapPanel extends JPanel {
     private MansionMap mansion;
@@ -47,7 +48,7 @@ public class MansionMapPanel extends JPanel {
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
         // pintamos la ruta
-        if (routeCells != null) {
+        if (!isNull(routeCells)) {
             g2d.setColor(Color.YELLOW);
             for (NodoCamino nodo: routeCells) {
                 // X son las columnas, Y son las filas
@@ -69,16 +70,16 @@ public class MansionMapPanel extends JPanel {
                     g2d.drawString("B", x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
                 }
                 // Si hay un objeto, diferenciamos habitación y obstáculo
-                else if (obj != null) {
-                    if (obj instanceof Room) {
+                else if (!isNull(obj)) {
+                    if (obj.isObstacle()) {
+                        g2d.setColor(Color.DARK_GRAY);
+                        g2d.fillRect(x, y, cellWidth, cellHeight);
+                    } else {
                         g2d.setColor(new Color(173, 216, 230)); // Azul claro para habitaciones
                         g2d.fillRect(x, y, cellWidth, cellHeight);
                         g2d.setColor(Color.BLACK);
                         Room room = (Room) obj;
                         g2d.drawString(String.valueOf(room.getId()), x + cellWidth / 2 - 4, y + cellHeight / 2 + 4);
-                    } else if (obj instanceof Obstacle) {
-                        g2d.setColor(Color.DARK_GRAY);
-                        g2d.fillRect(x, y, cellWidth, cellHeight);
                     }
                 }
                 
