@@ -214,6 +214,7 @@ public class Main extends JFrame {
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
             sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
+            sb.append("Fitness (sin penalizaciones) = ").append(mansion.calculateFitness(bestIndividual.getFenotipos())).append("\n");
             sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
             //sb.append("------------------------------------------------------------------\n");
             resultsArea.setText(sb.toString());

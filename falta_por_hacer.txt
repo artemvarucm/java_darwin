@@ -1,0 +1,10 @@
+Todos
+- Optimizar para rapidez (sin afectar funcionamiento!)
+- Ver si en la gráfica pintar el fitness sin penalizar o con penalización
+Artem
+- Revisar CustomCross
+Mario
+- Versión animada de la ruta ->
+    preguntar al profe si se refiere a animar la ruta final
+    o a ir pintando la ruta optima en cada caso
+- Penalizar por ruta duplicada desde interfaz también (o alguna otra penalización de la lista que ha puesto)
