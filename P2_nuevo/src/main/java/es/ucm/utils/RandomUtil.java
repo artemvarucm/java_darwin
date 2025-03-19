@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomUtil {
     /**
-     * Devuelve una lista de enteros aleatorios en el rango seleccionado.
+     * Devuelve una lista ORDENADA de enteros aleatorios en el rango seleccionado.
      * !Todos los numeros son diferentes!
      */
     public static List<Integer> getNDifferentRandInt(int origin, int bound, int size) {
@@ -19,6 +19,6 @@ public class RandomUtil {
             }
         }
 
-        return result;
+        return result.stream().sorted().toList();
     }
 }
