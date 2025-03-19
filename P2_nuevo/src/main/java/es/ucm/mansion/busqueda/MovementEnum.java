@@ -4,10 +4,10 @@ package es.ucm.mansion.busqueda;
  * Representa los movimientos posibles del robot
  */
 public enum MovementEnum {
+    DOWN(1, 0),
     LEFT(0, -1),
     RIGHT(0, 1),
-    UP(-1, 0), // CUIDADO! para ir arriba es restando
-    DOWN(1, 0);
+    UP(-1, 0); // CUIDADO! para ir arriba es restando
 
     public final int rowDelta;
     public final int colDelta;

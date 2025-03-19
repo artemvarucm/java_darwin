@@ -84,10 +84,13 @@ public class AEstrellaBusquedaCamino {
         return null; // no hay ningún camino
     }
 
+    /**
+     * Devuelve el nodo del minimo coste de la lista (en caso de empate, se coge el posterior)
+      */
     private NodoCamino getNodeWithMinCost(List<NodoCamino> nodos) {
         NodoCamino minimo = nodos.get(0);
         for (NodoCamino n: nodos) {
-            if (minimo.getTotalEstimatedCost() > n.getTotalEstimatedCost()) {
+            if (minimo.getTotalEstimatedCost() >= n.getTotalEstimatedCost()) {
                 minimo = n;
             }
         }
