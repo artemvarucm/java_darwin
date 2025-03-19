@@ -12,64 +12,85 @@ import java.util.concurrent.ThreadLocalRandom;
 import static es.ucm.utils.RandomUtil.getNDifferentRandInt;
 
 public class OXPPCross extends AbstractCross {
-    int N_RANDOMS = 3; // el número de posiciones aleatorias seleccionadas
+    int N_RANDOMS = 3; // Número de posiciones aleatorias seleccionadas para el cruce
 
+    // Constructor que recibe una fábrica de individuos
     public OXPPCross(IndividuoFactory factory) {
-        super(factory);
+        super(factory); // Llama al constructor de la clase padre (AbstractCross)
     }
 
+    // Método para realizar el cruce entre dos padres
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
+        // Lista para almacenar los dos hijos resultantes del cruce
         List<Individuo> result = new ArrayList<>(2);
+
+        // Crear dos nuevos individuos (hijos) utilizando la fábrica
         Individuo child1 = this.factory.createOne();
         Individuo child2 = this.factory.createOne();
 
+        // Obtener el número de genes enteros de los padres
         int nIntGenes = parent1.getIntGenes().size();
         int nPossibleCuts = nIntGenes - 1;
+
+        // Generar N_RANDOMS posiciones aleatorias diferentes para el cruce
         List<Integer> randomValues = getNDifferentRandInt(0, nPossibleCuts, N_RANDOMS);
 
-        // Conjuntos para ver que numeros ya estan o faltan
+        // Conjuntos para verificar qué números ya están asignados en los hijos
         Set<Integer> child1Set = new HashSet<>();
         Set<Integer> child2Set = new HashSet<>();
-        for (Integer i: randomValues) {
+
+        // Asignar los genes de las posiciones aleatorias seleccionadas
+        for (Integer i : randomValues) {
             int parent1Int = parent1.getIntGenes().get(i).getFenotipo();
             int parent2Int = parent2.getIntGenes().get(i).getFenotipo();
 
+            // Asignar los genes de parent2 a child1 y viceversa
             child1.getIntGenes().get(i).set(0, parent2Int);
-            child1Set.add(parent2Int);
+            child1Set.add(parent2Int); // Registrar el número asignado en child1
 
             child2.getIntGenes().get(i).set(0, parent1Int);
-            child2Set.add(parent1Int);
+            child2Set.add(parent1Int); // Registrar el número asignado en child2
         }
 
+        // Completar los genes restantes en los hijos
         fillRemaining(parent1, child1, nIntGenes, child1Set, randomValues);
         fillRemaining(parent2, child2, nIntGenes, child2Set, randomValues);
 
+        // Agregar los hijos a la lista de resultados
         result.add(child1);
         result.add(child2);
+
+        // Devolver la lista de hijos
         return result;
     }
 
+    // Método para completar los genes restantes en los hijos
     private void fillRemaining(Individuo parent, Individuo child, int nIntGenes, Set<Integer> childSet, List<Integer> randomFilled) {
-        // escogemos una posición vacía de forma aleatoria
+        // Seleccionar una posición vacía de forma aleatoria
         Integer randomEmpty = ThreadLocalRandom.current().nextInt(0, nIntGenes);
         while (randomFilled.contains(randomEmpty)) {
             randomEmpty = ThreadLocalRandom.current().nextInt(0, nIntGenes);
         }
 
+        // Punteros para recorrer los genes de los padres y los hijos
         int parentPointer = randomEmpty;
         int childPointer = parentPointer;
+
+        // Completar los genes restantes hasta que todos los genes estén asignados
         while (childSet.size() < nIntGenes) {
             if (randomFilled.contains(childPointer)) {
+                // Si la posición ya está asignada, avanzar al siguiente gen
                 childPointer = (childPointer + 1) % nIntGenes;
             } else {
-                int parent1Int = parent.getIntGenes().get(parentPointer).getFenotipo();
-                if (childSet.contains(parent1Int)) {
-                    // movemos el puntero, el numero ya no interesa
+                int parentInt = parent.getIntGenes().get(parentPointer).getFenotipo();
+                if (childSet.contains(parentInt)) {
+                    // Si el número ya está en el hijo, avanzar al siguiente gen del padre
                     parentPointer = (parentPointer + 1) % nIntGenes;
                 } else {
-                    child.getIntGenes().get(childPointer).set(0, parent1Int);
-                    childSet.add(parent1Int);
-                    childPointer = (childPointer + 1) % nIntGenes;
+                    // Asignar el gen del padre al hijo
+                    child.getIntGenes().get(childPointer).set(0, parentInt);
+                    childSet.add(parentInt); // Registrar el número asignado
+                    childPointer = (childPointer + 1) % nIntGenes; // Avanzar al siguiente gen del hijo
                 }
             }
         }
