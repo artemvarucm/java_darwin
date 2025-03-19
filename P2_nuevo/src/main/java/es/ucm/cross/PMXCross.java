@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PMXCross extends AbstractCross {
     // Constructor que recibe una fábrica de individuos
     public PMXCross(IndividuoFactory factory) {
-        super(factory); // Llama al constructor de la clase padre (AbstractCross)
+        super(factory);
     }
 
     @Override
@@ -85,11 +85,9 @@ public class PMXCross extends AbstractCross {
             }
         }
 
-        // Agregar los hijos a la lista de resultados
         result.add(child1);
         result.add(child2);
 
-        // Devolver la lista de hijos
         return result;
     }
 }

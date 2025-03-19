@@ -15,12 +15,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OXCross extends AbstractCross {
     // Constructor que recibe una fábrica de individuos
     public OXCross(IndividuoFactory factory) {
-        super(factory); // Llama al constructor de la clase padre (AbstractCross)
+        super(factory);
     }
 
     // Método para realizar el cruce entre dos padres
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        // Lista para almacenar los dos hijos resultantes del cruce
         List<Individuo> result = new ArrayList<>(2);
 
         // Crear dos nuevos individuos (hijos) utilizando la fábrica
@@ -58,24 +57,22 @@ public class OXCross extends AbstractCross {
 
             // Asignar los genes de parent2 a child1 y viceversa
             child1.getIntGenes().get(i).set(0, parent2Int);
-            child1Set.add(parent2Int); // Registrar el número asignado en child1
+            child1Set.add(parent2Int);
 
             child2.getIntGenes().get(i).set(0, parent1Int);
-            child2Set.add(parent1Int); // Registrar el número asignado en child2
+            child2Set.add(parent1Int);
         }
 
         // Completar los genes restantes en los hijos
-        int parent1Pointer = randomValue2 + 1; // Puntero para recorrer los genes de parent1
+        int parent1Pointer = randomValue2 + 1;
         fillRemaining(parent1, child1, nIntGenes, child1Set, parent1Pointer);
 
-        int parent2Pointer = randomValue2 + 1; // Puntero para recorrer los genes de parent2
+        int parent2Pointer = randomValue2 + 1;
         fillRemaining(parent2, child2, nIntGenes, child2Set, parent2Pointer);
 
-        // Agregar los hijos a la lista de resultados
         result.add(child1);
         result.add(child2);
 
-        // Devolver la lista de hijos
         return result;
     }
 
@@ -90,7 +87,7 @@ public class OXCross extends AbstractCross {
             } else {
                 // Asignar el gen del padre al hijo
                 child.getIntGenes().get(childPointer).set(0, parentInt);
-                childSet.add(parentInt); // Registrar el número asignado
+                childSet.add(parentInt);
                 childPointer = (childPointer + 1) % nIntGenes; // Avanzar al siguiente gen del hijo
             }
         }
