@@ -1,5 +1,8 @@
 package es.ucm.mansion.objects;
 
+/**
+ * Clase abstracta para representa el objeto en un lugar de la mansión (obstaculo o habitacion)
+ */
 public abstract class AbstractMansionObject {
     protected final int row;
     protected final int col;

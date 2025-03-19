@@ -2,6 +2,9 @@ package es.ucm.mansion;
 
 import es.ucm.mansion.objects.Room;
 
+/**
+ * El mapa definido segun el problema planteado.
+ */
 public class MansionMap extends AbstractMansionMap {
     private static int N_ROWS = 15;
     private static int N_COLS = 15;

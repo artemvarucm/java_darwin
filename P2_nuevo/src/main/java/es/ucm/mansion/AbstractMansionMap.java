@@ -15,6 +15,10 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Clase abstract que se utiliza para representar una mansión, con comandos utiles como calcular el fitness.
+ * A partir de ella se pueden crear mapas con diferente distribución de habitaciones y obstáculos
+ */
 public abstract class AbstractMansionMap {
     Map<Number, Room> rooms;// para saber donde está el room del id determinado
     private int nRows, nCols; // shape del mapa
@@ -80,29 +84,6 @@ public abstract class AbstractMansionMap {
         return grid;
     }
 
-    public String getStringRepresentation() {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < nRows; i++) {
-            for (int j = 0; j < nCols; j++) {
-                String str = "   ";
-
-                if (!isNull(grid[i][j]))
-                    str = grid[i][j].toString();
-
-                result.append(String.format("|%1$2s", str));
-            }
-            result.append("|\n");
-            for (int j = 0; j < nCols; j++) {
-                result.append("--");
-            }
-            result.append("\n");
-        }
-
-        return result.toString();
-    }
-    public void printMap() {
-        System.out.println(getStringRepresentation());
-    }
 
     public List<Room> getRooms() {
         List<Room> result = new ArrayList<>();
@@ -220,5 +201,36 @@ public abstract class AbstractMansionMap {
         }
 
         return count;
+    }
+
+    /**
+     * deprecated: para dibujar en consola el mapa
+     */
+    public String getStringRepresentation() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < nRows; i++) {
+            for (int j = 0; j < nCols; j++) {
+                String str = "   ";
+
+                if (!isNull(grid[i][j]))
+                    str = grid[i][j].toString();
+
+                result.append(String.format("|%1$2s", str));
+            }
+            result.append("|\n");
+            for (int j = 0; j < nCols; j++) {
+                result.append("--");
+            }
+            result.append("\n");
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * deprecated: para dibujar en consola el mapa
+     */
+    public void printMap() {
+        System.out.println(getStringRepresentation());
     }
 }

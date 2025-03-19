@@ -8,6 +8,9 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Algoritmo A*
+ */
 public class AEstrellaBusquedaCamino {
     AbstractMansionMap mapa;
     public AEstrellaBusquedaCamino(AbstractMansionMap mapa) {

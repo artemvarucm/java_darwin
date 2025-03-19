@@ -1,5 +1,8 @@
 package es.ucm.mansion.busqueda;
 
+/**
+ * Representa los movimientos posibles del robot
+ */
 public enum MovementEnum {
     LEFT(0, -1),
     RIGHT(0, 1),

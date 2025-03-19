@@ -1,5 +1,8 @@
 package es.ucm.mansion.objects;
 
+/**
+ * Clase que representa una habitación de la mansión
+ */
 public class Room extends AbstractMansionObject{
     private final int id;
     private final String name;
@@ -20,6 +23,7 @@ public class Room extends AbstractMansionObject{
 
     @Override
     public String toString() {
+        // deprecated: usado cuando se mostraba por consola
         return String.valueOf(id);
     }
     @Override

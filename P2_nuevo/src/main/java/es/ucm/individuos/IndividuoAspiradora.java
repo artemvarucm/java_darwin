@@ -19,7 +19,10 @@ public class IndividuoAspiradora extends Individuo {
         this.map = map;
         this.fillRandomPermutation();
     }
-    
+
+    /**
+     * Inicializa con una permutación aleatoria el individuo
+     */
     public void fillRandomPermutation() {
         List<Integer> source = new ArrayList<>();
         List<Room> rooms = map.getRooms();

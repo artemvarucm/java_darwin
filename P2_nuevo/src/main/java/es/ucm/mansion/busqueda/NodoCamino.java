@@ -7,12 +7,12 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 /**
- * Representa un nodo del camino para que se puedan reanudar
+ * Representa un nodo del camino para que se puedan reanudar (usado en A*)
  */
 public class NodoCamino {
     private int row, col;
     private int objectiveRow, objectiveCol;
-    private double realCostFromStart;
+    private double realCostFromStart; // coste acumulado (suma de costes hasta llegar al nodo)
     private NodoCamino prevNode;
     public NodoCamino(int row, int col, int objectiveRow, int objectiveCol) {
         this(row, col, objectiveRow, objectiveCol, null);
@@ -49,46 +49,6 @@ public class NodoCamino {
         return Math.abs(row1 - row2) + Math.abs(col1 - col2);
     }
 
-    /*
-     * public double getHeuristica() {
-        // Distancia Manhattan tradicional
-        double manhattanDistance = Math.abs(objectiveRow - currentRow) + Math.abs(objectiveCol - currentCol);
-
-        // Penalización por densidad de obstáculos
-        double obstaclePenalty = calculateObstacleDensityPenalty();
-
-        // Distancia euclidiana
-        double euclideanDistance = Math.sqrt(Math.pow(objectiveRow - currentRow, 2) + Math.pow(objectiveCol - currentCol, 2));
-
-        // Penalización si la distancia Manhattan es mayor que la euclidiana
-        double deviationPenalty = Math.max(0, manhattanDistance - euclideanDistance) * 0.2;
-
-        return manhattanDistance + obstaclePenalty + deviationPenalty;
-    }
-
-    private double calculateObstacleDensityPenalty() {
-        double penalty = 0.0;
-        int deltaRow = Integer.signum(objectiveRow - currentRow);
-        int deltaCol = Integer.signum(objectiveCol - currentCol);
-
-        // Verificar celdas en la dirección del objetivo
-        int row = currentRow + deltaRow;
-        int col = currentCol + deltaCol;
-        while (row != objectiveRow || col != objectiveCol) {
-            if (row >= 0 && row < mansionMap.getNRows() && col >= 0 && col < mansionMap.getNCols()) {
-                if (mansionMap.getGrid()[row][col] instanceof Obstacle) {
-                    penalty += 0.5; // Penalización por cada obstáculo en la dirección
-                }
-            }
-            row += deltaRow;
-            col += deltaCol;
-        }
-
-        return penalty;
-    }
-     *
-     * */
-
     public List<NodoCamino> reconstructPath() {
         List<NodoCamino> result= new LinkedList<>(); // tiene que ser vacía
         recursiveReconstructPath(result);
@@ -120,6 +80,7 @@ public class NodoCamino {
 
     @Override
     public boolean equals(Object obj) {
+        // para ver si el nodo en la lista de cerrados o abiertos
         if (!(obj instanceof NodoCamino)) {
             return false;
         }
