@@ -38,14 +38,14 @@ public class AEstrellaBusquedaCamino {
         // Nodo inicial
         nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB));
 
-        // System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
+        //System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
         while (!nodosAbiertos.isEmpty()) {
             NodoCamino current = getNodeWithMinCost(nodosAbiertos);
             if (current.checkGoal()) {
                 // devolver la solución
                 return current.reconstructPath();
             }
-            // System.out.println("Expandiendo: " + current.getCurrentRow() + ", " + current.getCurrentCol());
+            //System.out.println("Expandiendo: " + current.getRow() + ", " + current.getCol());
             nodosAbiertos.remove(current);
             nodosCerrados.add(current);
             // 4 movimientos posibles (left, right, up, down)
@@ -67,15 +67,16 @@ public class AEstrellaBusquedaCamino {
                 // si el nodo está cerrado, NO lo añadimos
                 if (!nodosCerrados.contains(nodo)) {
                     if (nodosAbiertos.contains(nodo)) {
+                        // si ya está abierto, vemos si el coste es menor
                         NodoCamino existente = nodosAbiertos.get(nodosAbiertos.indexOf(nodo));
-                        if (existente.getTotalEstimatedCost() < existente.getTotalEstimatedCost()) {
+                        if (nodo.getTotalEstimatedCost() < existente.getTotalEstimatedCost()) {
                             nodosAbiertos.remove(existente);
                             nodosAbiertos.add(nodo);
-                            //System.out.println("Añadido: " + nodo.getCurrentRow() + ", " + nodo.getCurrentCol());
+                            //System.out.println("Añadido: " + nodo.getRow() + ", " + nodo.getCol());
                         }
                     } else {
                         nodosAbiertos.add(nodo);
-                        //System.out.println("Añadido: " + nodo.getCurrentRow() + ", " + nodo.getCurrentCol());
+                        //System.out.println("Añadido: " + nodo.getRow() + ", " + nodo.getCol());
                     }
                 }
             }

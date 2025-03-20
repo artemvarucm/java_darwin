@@ -3,6 +3,7 @@ package es.ucm.mansion.busqueda;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
@@ -87,5 +88,10 @@ public class NodoCamino {
 
         NodoCamino nodo = (NodoCamino) obj;
         return nodo.row == this.row && nodo.col == this.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, col);
     }
 }
