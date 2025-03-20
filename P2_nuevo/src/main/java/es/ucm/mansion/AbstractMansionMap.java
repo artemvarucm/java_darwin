@@ -29,6 +29,8 @@ public abstract class AbstractMansionMap {
     private double turnPenalty = 0; // penalización por giro
     private double obstaclePenalty = 0; // penalización por obstáculo
 
+    private Integer[][] obstaclesCount; // recuento de obstaculos para cada celda (se usa por motivos de rendimiento)
+
     public AbstractMansionMap(int nRows, int nCols, int baseRow, int baseCol) {
         this.nRows = nRows;
         this.nCols = nCols;
@@ -36,6 +38,7 @@ public abstract class AbstractMansionMap {
         this.baseCol = baseCol;
         this.rooms = new HashMap<>();
         this.grid = new AbstractMansionObject[nRows][nCols];
+        this.obstaclesCount = new Integer[nRows][nCols];
         this.buscadorCamino = new AEstrellaBusquedaCamino(this);
     }
 
@@ -102,7 +105,8 @@ public abstract class AbstractMansionMap {
         for (Number id: roomOrder) {
             rowB = rooms.get(id).getRow();
             colB = rooms.get(id).getCol();
-            List<NodoCamino> ruta = this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB);
+            NodoCamino lastNode = result.isEmpty() ? null : result.get(result.size() - 1);
+            List<NodoCamino> ruta = this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB, lastNode);
             if (isNull(ruta)) {
                 throw new RuntimeException("RUTA NO ENCONTRADA");
             }
@@ -110,7 +114,6 @@ public abstract class AbstractMansionMap {
             // eliminamos el nodo final
             // porque lo meteremos como primero en la siguiente iteración
             result.remove(result.size() - 1);
-
             rowA = rowB;
             colA = colB;
         }
@@ -118,43 +121,28 @@ public abstract class AbstractMansionMap {
         // además tiene que volver a la base también
         rowB = baseRow;
         colB = baseCol;
-        result.addAll(this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB));
+        NodoCamino lastNode = result.get(result.size() - 1);
+        result.addAll(this.buscadorCamino.calculatePathFromAtoB(rowA, colA, rowB, colB, lastNode));
 
         return result;
     }
 
     public double calculateFitness(List<Number> roomOrder) {
-        double totalCost = 0;
-        int rowA = baseRow;
-        int colA = baseCol;
-        int rowB, colB;
-        for (Number id: roomOrder) {
-            rowB = rooms.get(id).getRow();
-            colB = rooms.get(id).getCol();
-            totalCost += this.buscadorCamino.calculateCostAtoB(rowA, colA, rowB, colB);
-            rowA = rowB;
-            colA = colB;
-        }
+        List<NodoCamino> ruta = calculatePath(roomOrder);
 
-        // además tiene que volver a la base también
-        rowB = baseRow;
-        colB = baseCol;
-        totalCost += this.buscadorCamino.calculateCostAtoB(rowA, colA, rowB, colB);
-
-        return totalCost;
+        return ruta.get(ruta.size() - 1).getRealCostFromStart();
     }
 
     public double calculateFitnessWithPenalties(List<Number> roomOrder) {
-        double rawFitness = calculateFitness(roomOrder);
-        double penalizacion = 0;
         List<NodoCamino> ruta = calculatePath(roomOrder);
-        for (NodoCamino nodo: ruta) {
-            penalizacion += getPenalty(nodo);
-        }
 
-        return penalizacion + rawFitness;
+        return ruta.get(ruta.size() - 1).getPenalizedCostFromStart();
     }
 
+
+    /**
+     * Calcula la penalización para el nodo (teniendo en cuenta el nodo anterior (nodo.prevNode))
+     */
     public double getPenalty(NodoCamino nodo) {
         double penalty = 0;
         MovementEnum direccionAnterior = null;
@@ -178,7 +166,8 @@ public abstract class AbstractMansionMap {
         }
 
         // penalización por obstáculos cerca del camino
-        penalty += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
+        if (obstaclePenalty > 0)
+            penalty += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
 
         return penalty;
     }
@@ -195,6 +184,9 @@ public abstract class AbstractMansionMap {
      * Cuenta los obstáculos que hay en las celdas contiguas a la pasada por parametro
      */
     private int countObstaclesAroundPoint(int row, int col) {
+        if (!isNull(obstaclesCount[row][col])) {
+            return obstaclesCount[row][col];
+        }
         int count = 0;
         for (int i = row - 1; i <= row + 1; i++) {
             for (int j = col - 1; j <= col + 1; j++) {
@@ -212,6 +204,8 @@ public abstract class AbstractMansionMap {
                 }
             }
         }
+
+        obstaclesCount[row][col] = count;
 
         return count;
     }

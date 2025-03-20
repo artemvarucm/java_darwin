@@ -17,33 +17,30 @@ public class AEstrellaBusquedaCamino {
         this.mapa = mapa;
     }
 
-
-    public Double calculateCostAtoB(int rowA, int colA, int rowB, int colB) {
-        List<NodoCamino> nodos = calculatePathFromAtoB(rowA, colA, rowB, colB);
-        if (isNull(nodos)) {
-            // no existe camino entre los dos puntos
-            return Double.POSITIVE_INFINITY;
-        }
-
-        // el ultimo nodo tiene el coste completo
-        return nodos.get(nodos.size() - 1).getRealCostFromStart();
-    }
-
     /**
      * Calcula el de !MINIMO! coste camino del punto A al punto B
+     * prevNode -> nodo anterior al punto A
      */
-    public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB) {
+    public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB, NodoCamino prevNode) {
         List<NodoCamino> nodosAbiertos = new ArrayList<>();
         List<NodoCamino> nodosCerrados = new ArrayList<>();
         // Nodo inicial
-        nodosAbiertos.add(new NodoCamino(rowA, colA, rowB, colB));
+        NodoCamino init = new NodoCamino(rowA, colA, rowB, colB, prevNode);
+        init.addPenalty(mapa.getPenalty(init));
+        nodosAbiertos.add(init);
 
         //System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
         while (!nodosAbiertos.isEmpty()) {
             NodoCamino current = getNodeWithMinCost(nodosAbiertos);
             if (current.checkGoal()) {
-                // devolver la solución
-                return current.reconstructPath();
+                // Devolvemos la solución
+
+                List<NodoCamino> camino = current.reconstructPath();
+                if (!isNull(prevNode))
+                    // el primer elemento sobra (es el nodo anterior al punto A)
+                    camino.remove(0);
+
+                return camino;
             }
             //System.out.println("Expandiendo: " + current.getRow() + ", " + current.getCol());
             nodosAbiertos.remove(current);
@@ -65,7 +62,7 @@ public class AEstrellaBusquedaCamino {
 
                 NodoCamino nodo = new NodoCamino(row, col, rowB, colB, current);
                 // penalizacion del nodo
-                nodo.setPenalty(mapa.getPenalty(nodo));
+                nodo.addPenalty(mapa.getPenalty(nodo));
 
                 // si el nodo está cerrado, NO lo añadimos
                 if (!nodosCerrados.contains(nodo)) {
