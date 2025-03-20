@@ -148,26 +148,39 @@ public abstract class AbstractMansionMap {
         double rawFitness = calculateFitness(roomOrder);
         double penalizacion = 0;
         List<NodoCamino> ruta = calculatePath(roomOrder);
-        MovementEnum direccionAnterior = null;
         for (NodoCamino nodo: ruta) {
-            if (turnPenalty != 0 && !isNull(nodo.getPrevNode())) {
-                // penalización por giros
-                int row1 = nodo.getPrevNode().getRow();
-                int col1 = nodo.getPrevNode().getCol();
-                int row2 = nodo.getRow();
-                int col2 = nodo.getCol();
-                MovementEnum direccionActual = getDireccion(row1, col1, row2, col2);
-                if (!isNull(direccionAnterior) && !direccionActual.equals(direccionAnterior)) {
-                    penalizacion += turnPenalty;
-                }
-                direccionAnterior = direccionActual;
-            }
-
-            // penalización por obstáculos cerca del camino
-            penalizacion += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
+            penalizacion += getPenalty(nodo);
         }
 
         return penalizacion + rawFitness;
+    }
+
+    public double getPenalty(NodoCamino nodo) {
+        double penalty = 0;
+        MovementEnum direccionAnterior = null;
+        if (turnPenalty != 0 && !isNull(nodo.getPrevNode())) {
+            // penalización por giros
+            int row1 = nodo.getPrevNode().getRow();
+            int col1 = nodo.getPrevNode().getCol();
+            int row2 = nodo.getRow();
+            int col2 = nodo.getCol();
+
+            if (!isNull(nodo.getPrevNode().getPrevNode())) {
+                int row0 = nodo.getPrevNode().getPrevNode().getRow();
+                int col0 = nodo.getPrevNode().getPrevNode().getCol();
+                direccionAnterior = getDireccion(row0, col0, row1, col1);
+            }
+
+            MovementEnum direccionActual = getDireccion(row1, col1, row2, col2);
+            if (!isNull(direccionAnterior) && !direccionActual.equals(direccionAnterior)) {
+                penalty += turnPenalty;
+            }
+        }
+
+        // penalización por obstáculos cerca del camino
+        penalty += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
+
+        return penalty;
     }
 
     private MovementEnum getDireccion(int row1, int col1, int row2, int col2) {

@@ -26,7 +26,7 @@ public class AEstrellaBusquedaCamino {
         }
 
         // el ultimo nodo tiene el coste completo
-        return nodos.get(nodos.size() - 1).getAcumulatedCostFromStart();
+        return nodos.get(nodos.size() - 1).getRealCostFromStart();
     }
 
     /**
@@ -64,6 +64,9 @@ public class AEstrellaBusquedaCamino {
                 }
 
                 NodoCamino nodo = new NodoCamino(row, col, rowB, colB, current);
+                // penalizacion del nodo
+                nodo.setPenalty(mapa.getPenalty(nodo));
+
                 // si el nodo está cerrado, NO lo añadimos
                 if (!nodosCerrados.contains(nodo)) {
                     if (nodosAbiertos.contains(nodo)) {

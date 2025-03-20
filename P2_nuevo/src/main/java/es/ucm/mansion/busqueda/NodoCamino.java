@@ -14,6 +14,7 @@ public class NodoCamino {
     private int row, col;
     private int objectiveRow, objectiveCol;
     private double realCostFromStart; // coste acumulado (suma de costes hasta llegar al nodo)
+    private double penalty; // penalizacion
     private NodoCamino prevNode;
     public NodoCamino(int row, int col, int objectiveRow, int objectiveCol) {
         this(row, col, objectiveRow, objectiveCol, null);
@@ -28,17 +29,21 @@ public class NodoCamino {
         this.realCostFromStart = isNull(prevNode) ? 0 : prevNode.realCostFromStart + manhattanDist(row, col, prevNode.row, prevNode.col);
     }
 
+    public void setPenalty(double penalty) {
+        this.penalty = checkGoal() ? 0 : penalty;
+    }
+
     public Boolean checkGoal() {
         return row == objectiveRow && col == objectiveCol;
     }
 
     public Double getTotalEstimatedCost() {
-        // suma el coste acumulado de ir del comienzo al nodo actual y la heuristica para ir al objetivo
-        return this.getHeuristica() + this.getAcumulatedCostFromStart();
+        // suma el coste acumulado de ir del comienzo al nodo actual, la penalizacion y la heuristica para ir al objetivo
+        return this.getHeuristica() + this.getRealCostFromStart() + this.penalty;
     }
 
 
-    public double getAcumulatedCostFromStart() {
+    public double getRealCostFromStart() {
         return this.realCostFromStart;
     }
 
