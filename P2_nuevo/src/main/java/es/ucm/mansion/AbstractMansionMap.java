@@ -166,7 +166,7 @@ public abstract class AbstractMansionMap {
         }
 
         // penalización por obstáculos cerca del camino
-        if (obstaclePenalty > 0)
+        if (obstaclePenalty != 0)
             penalty += obstaclePenalty * countObstaclesAroundPoint(nodo.getRow(), nodo.getCol());
 
         return penalty;

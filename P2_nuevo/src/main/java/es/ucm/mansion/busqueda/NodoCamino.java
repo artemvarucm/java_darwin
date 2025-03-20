@@ -68,7 +68,7 @@ public class NodoCamino {
     }
 
     private void recursiveReconstructPath(List<NodoCamino> result) {
-        if (!isNull(prevNode)) {
+        if (!isNull(prevNode) && prevNode.objectiveCol == objectiveCol && prevNode.objectiveRow == objectiveRow) {
             // si hay un nodo anterior, lo añadimos a la lista ejecutando recursión sobre él
             prevNode.recursiveReconstructPath(result);
         }
@@ -102,6 +102,6 @@ public class NodoCamino {
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, col);
+        return row * 100 + col;
     }
 }

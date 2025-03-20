@@ -13,7 +13,8 @@ public class AEstrellaBusquedaCaminoTest {
     @Test
     public void calculateCostAtoB() {
         AEstrellaBusquedaCamino busqueda = new AEstrellaBusquedaCamino(new MansionMap());
-        assertEquals(7.0, busqueda.calculateCostAtoB(7, 7, 7, 0), 0.00000000001);
+        List<NodoCamino> camino = busqueda.calculatePathFromAtoB(7, 7, 7, 0, null);
+        assertEquals(7.0, camino.get(camino.size() - 1).getRealCostFromStart(), 0.00000000001);
     }
 
     @Test

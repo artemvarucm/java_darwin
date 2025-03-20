@@ -1,10 +1,8 @@
 package es.ucm.mansion.busqueda;
 
 import es.ucm.mansion.AbstractMansionMap;
-import es.ucm.mansion.objects.Obstacle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -22,8 +20,8 @@ public class AEstrellaBusquedaCamino {
      * prevNode -> nodo anterior al punto A
      */
     public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB, NodoCamino prevNode) {
-        List<NodoCamino> nodosAbiertos = new ArrayList<>();
-        List<NodoCamino> nodosCerrados = new ArrayList<>();
+        List<NodoCamino> nodosAbiertos = new LinkedList<>();
+        Set<NodoCamino> nodosCerrados = new HashSet<>();
         // Nodo inicial
         NodoCamino init = new NodoCamino(rowA, colA, rowB, colB, prevNode);
         init.addPenalty(mapa.getPenalty(init));
@@ -33,13 +31,9 @@ public class AEstrellaBusquedaCamino {
         while (!nodosAbiertos.isEmpty()) {
             NodoCamino current = getNodeWithMinCost(nodosAbiertos);
             if (current.checkGoal()) {
-                // Devolvemos la solución
+                // Devolvemos la solución (solo el tramo de A a B)
 
                 List<NodoCamino> camino = current.reconstructPath();
-                if (!isNull(prevNode))
-                    // el primer elemento sobra (es el nodo anterior al punto A)
-                    camino.remove(0);
-
                 return camino;
             }
             //System.out.println("Expandiendo: " + current.getRow() + ", " + current.getCol());
@@ -91,7 +85,7 @@ public class AEstrellaBusquedaCamino {
     private NodoCamino getNodeWithMinCost(List<NodoCamino> nodos) {
         NodoCamino minimo = nodos.get(0);
         for (NodoCamino n: nodos) {
-            if (minimo.getTotalEstimatedCost() >= n.getTotalEstimatedCost()) {
+            if (minimo.getTotalEstimatedCost() > n.getTotalEstimatedCost()) {
                 minimo = n;
             }
         }
