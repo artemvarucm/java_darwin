@@ -17,7 +17,7 @@ public class AEstrellaBusquedaCamino {
 
     /**
      * Calcula el de !MINIMO! coste camino del punto A al punto B
-     * prevNode -> nodo anterior al punto A
+     * prevNode -> nodo anterior al punto A (para que el último nodo tenga el coste desde el origen, no desde A)
      */
     public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB, NodoCamino prevNode) {
         PriorityQueue<NodoCamino> nodosAbiertos = new PriorityQueue<>(Comparator.comparingDouble(NodoCamino::getTotalEstimatedCost));

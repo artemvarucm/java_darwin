@@ -8,10 +8,7 @@ import es.ucm.mansion.objects.Obstacle;
 import es.ucm.mansion.objects.Room;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -29,16 +26,18 @@ public abstract class AbstractMansionMap {
     private double turnPenalty = 0; // penalización por giro
     private double obstaclePenalty = 0; // penalización por obstáculo
 
-    private Integer[][] obstaclesCount; // recuento de obstaculos para cada celda (se usa por motivos de rendimiento)
+    private Integer[][] obstaclesCountCache; // recuento de obstaculos para cada celda (se usa por motivos de rendimiento)
 
+    private final Map<List<Number>, Double> penalizedFitnessCache; // cache para el fitness penalizado
     public AbstractMansionMap(int nRows, int nCols, int baseRow, int baseCol) {
         this.nRows = nRows;
         this.nCols = nCols;
         this.baseRow = baseRow;
         this.baseCol = baseCol;
         this.rooms = new HashMap<>();
+        this.penalizedFitnessCache = new HashMap<>();
         this.grid = new AbstractMansionObject[nRows][nCols];
-        this.obstaclesCount = new Integer[nRows][nCols];
+        this.obstaclesCountCache = new Integer[nRows][nCols];
         this.buscadorCamino = new AEstrellaBusquedaCamino(this);
     }
 
@@ -134,9 +133,15 @@ public abstract class AbstractMansionMap {
     }
 
     public double calculateFitnessWithPenalties(List<Number> roomOrder) {
+        if (penalizedFitnessCache.containsKey(roomOrder)) {
+            return penalizedFitnessCache.get(roomOrder);
+        }
+
         List<NodoCamino> ruta = calculatePath(roomOrder);
 
-        return ruta.get(ruta.size() - 1).getPenalizedCostFromStart();
+        Double fitness =  ruta.get(ruta.size() - 1).getPenalizedCostFromStart();
+        penalizedFitnessCache.put(roomOrder, fitness);
+        return fitness;
     }
 
 
@@ -184,8 +189,8 @@ public abstract class AbstractMansionMap {
      * Cuenta los obstáculos que hay en las celdas contiguas a la pasada por parametro
      */
     private int countObstaclesAroundPoint(int row, int col) {
-        if (!isNull(obstaclesCount[row][col])) {
-            return obstaclesCount[row][col];
+        if (!isNull(obstaclesCountCache[row][col])) {
+            return obstaclesCountCache[row][col];
         }
         int count = 0;
         for (int i = row - 1; i <= row + 1; i++) {
@@ -205,7 +210,7 @@ public abstract class AbstractMansionMap {
             }
         }
 
-        obstaclesCount[row][col] = count;
+        obstaclesCountCache[row][col] = count;
 
         return count;
     }
