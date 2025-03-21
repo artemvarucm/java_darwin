@@ -1,6 +1,6 @@
 package es.ucm;
 
-import es.ucm.mansion.MansionMap;
+import es.ucm.mansion.AbstractMansionMap;
 import es.ucm.mansion.busqueda.NodoCamino;
 import es.ucm.mansion.objects.AbstractMansionObject;
 import es.ucm.mansion.objects.Room;
@@ -12,10 +12,10 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 public class MansionMapPanel extends JPanel {
-    private MansionMap mansion;
+    private AbstractMansionMap mansion;
     private List<NodoCamino> routeCells;
 
-    public MansionMapPanel(MansionMap mansion, List<NodoCamino> routeCells) {
+    public MansionMapPanel(AbstractMansionMap mansion, List<NodoCamino> routeCells) {
         this.mansion = mansion;
         this.routeCells = routeCells;
     }
@@ -26,7 +26,7 @@ public class MansionMapPanel extends JPanel {
         repaint();
     }
 
-    public void setMansion(MansionMap mansion) {
+    public void setMansion(AbstractMansionMap mansion) {
         this.mansion = mansion;
     }
 

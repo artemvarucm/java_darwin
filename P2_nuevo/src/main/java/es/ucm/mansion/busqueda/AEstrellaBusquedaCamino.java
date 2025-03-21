@@ -20,21 +20,24 @@ public class AEstrellaBusquedaCamino {
      * prevNode -> nodo anterior al punto A
      */
     public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB, NodoCamino prevNode) {
-        List<NodoCamino> nodosAbiertos = new LinkedList<>();
+        PriorityQueue<NodoCamino> nodosAbiertos = new PriorityQueue<>(Comparator.comparingDouble(NodoCamino::getTotalEstimatedCost));
+        Map<NodoCamino, NodoCamino> nodoMap = new HashMap<>(); // Stores the best known path for each node
         Set<NodoCamino> nodosCerrados = new HashSet<>();
-        // Nodo inicial
+
+        // Create the initial node
         NodoCamino init = new NodoCamino(rowA, colA, rowB, colB, prevNode);
         init.addPenalty(mapa.getPenalty(init));
         nodosAbiertos.add(init);
+        nodoMap.put(init, init); // Store by unique key
 
-        //System.out.println("Objetivo: " + rowA + ", " + colA + " -> " + rowB + ", " + colB);
         while (!nodosAbiertos.isEmpty()) {
-            NodoCamino current = getNodeWithMinCost(nodosAbiertos);
+            // Devuelve el nodo del minimo coste de la lista
+            NodoCamino current = nodosAbiertos.poll();
+
             if (current.checkGoal()) {
                 // Devolvemos la solución (solo el tramo de A a B)
 
-                List<NodoCamino> camino = current.reconstructPath();
-                return camino;
+                return current.reconstructPath();
             }
             //System.out.println("Expandiendo: " + current.getRow() + ", " + current.getCol());
             nodosAbiertos.remove(current);
@@ -43,16 +46,9 @@ public class AEstrellaBusquedaCamino {
             for (MovementEnum move: MovementEnum.values()) {
                 int row = current.getRow() + move.rowDelta;
                 int col = current.getCol() + move.colDelta;
-                if (
-                    (col >= mapa.getNCols() || col < 0)
-                        ||
-                    (row >= mapa.getNRows() || row < 0)
-                        ||
-                    (!isNull(mapa.getGrid()[row][col]) && mapa.getGrid()[row][col].isObstacle())
-                ) {
-                    // movimiento inválido, saltar
+
+                if (isInvalidMove(row, col))
                     continue;
-                }
 
                 NodoCamino nodo = new NodoCamino(row, col, rowB, colB, current);
                 // penalizacion del nodo
@@ -60,17 +56,17 @@ public class AEstrellaBusquedaCamino {
 
                 // si el nodo está cerrado, NO lo añadimos
                 if (!nodosCerrados.contains(nodo)) {
-                    if (nodosAbiertos.contains(nodo)) {
-                        // si ya está abierto, vemos si el coste es menor
-                        NodoCamino existente = nodosAbiertos.get(nodosAbiertos.indexOf(nodo));
+                    // If the node is in the open list and has a higher cost, update it
+                    if (nodoMap.containsKey(nodo)) {
+                        NodoCamino existente = nodoMap.get(nodo);
                         if (nodo.getTotalEstimatedCost() < existente.getTotalEstimatedCost()) {
                             nodosAbiertos.remove(existente);
                             nodosAbiertos.add(nodo);
-                            //System.out.println("Añadido: " + nodo.getRow() + ", " + nodo.getCol());
+                            nodoMap.put(nodo, nodo);
                         }
                     } else {
                         nodosAbiertos.add(nodo);
-                        //System.out.println("Añadido: " + nodo.getRow() + ", " + nodo.getCol());
+                        nodoMap.put(nodo, nodo);
                     }
                 }
             }
@@ -79,17 +75,9 @@ public class AEstrellaBusquedaCamino {
         return null; // no hay ningún camino
     }
 
-    /**
-     * Devuelve el nodo del minimo coste de la lista (en caso de empate, se coge el posterior)
-      */
-    private NodoCamino getNodeWithMinCost(List<NodoCamino> nodos) {
-        NodoCamino minimo = nodos.get(0);
-        for (NodoCamino n: nodos) {
-            if (minimo.getTotalEstimatedCost() > n.getTotalEstimatedCost()) {
-                minimo = n;
-            }
-        }
-
-        return minimo;
+    private boolean isInvalidMove(int row, int col) {
+        return row < 0 || row >= mapa.getNRows() ||
+                col < 0 || col >= mapa.getNCols() ||
+                (mapa.getGrid()[row][col] != null && mapa.getGrid()[row][col].isObstacle());
     }
 }

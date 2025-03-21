@@ -2,8 +2,9 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
+import es.ucm.mansion.AbstractMansionMap;
 import es.ucm.mansion.MansionMap;
-import es.ucm.mansion.objects.Room;
+import es.ucm.mansion.MiniMansionMap;
 import es.ucm.mutation.*;
 import es.ucm.selection.*;
 import es.ucm.cross.*;
@@ -14,6 +15,8 @@ import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -46,7 +49,7 @@ public class Main extends JFrame {
     private MansionMapPanel mapPanelGraphics;
 
     // Referencia al objeto MansionMap (para poder actualizar el panel cada vez que se calcule la ruta)
-    private MansionMap mansion;
+    private AbstractMansionMap mansion;
 
     /**
      * Constructor de la interfaz gráfica.
@@ -104,7 +107,7 @@ public class Main extends JFrame {
             "Heuristic (n = 3)",
             "Custom Mutation"
         });
-        individualTypeComboBox = new JComboBox<>(new String[]{"Problema 1"});
+        individualTypeComboBox = new JComboBox<>(new String[]{"Mansion", "Mini Mansion"});
 
         controlPanel.add(new JLabel("Population Size:"));
         controlPanel.add(populationSizeField);
@@ -192,11 +195,12 @@ public class Main extends JFrame {
             double elitismRate = Double.parseDouble(elitismRateField.getText());
             double turnPenalty = Double.parseDouble(turnPenaltyField.getText());
             double obstaclePenalty = Double.parseDouble(obstaclePenaltyField.getText());
+
+            this.mansion = getSelectedMansion();
             this.mansion.setTurnPenalty(turnPenalty);
             this.mansion.setObstaclePenalty(obstaclePenalty);
-            int individualType = individualTypeComboBox.getSelectedIndex();
-
-            IndividuoFactory factory = getIndividuoFactory(individualType);
+            IndividuoFactory factory = new IndividuoAspiradoraFactory(mansion);
+            mapPanelGraphics.setMansion(mansion);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -208,7 +212,10 @@ public class Main extends JFrame {
             algorithm.setSelectionMethod(selectionMethod);
             algorithm.setCrossoverMethod(crossoverMethod);
             algorithm.setMutationMethod(mutationMethod);
+            Instant start = Instant.now();
             algorithm.optimize();
+            Instant end = Instant.now();
+            Duration timeElapsed = Duration.between(start, end);
 
             Individuo bestIndividual = algorithm.getMejor();
             StringBuilder sb = new StringBuilder();
@@ -216,6 +223,7 @@ public class Main extends JFrame {
             sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
             sb.append("Fitness (sin penalizaciones) = ").append(mansion.calculateFitness(bestIndividual.getFenotipos())).append("\n");
             sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
+            sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000. + " segundos").append("\n");
             //sb.append("------------------------------------------------------------------\n");
             resultsArea.setText(sb.toString());
 
@@ -233,25 +241,17 @@ public class Main extends JFrame {
     }
 
     /**
-     * Busca una habitación en el mapa según su id.
+     * Obtiene el mapa seleccionado
      */
-    private Room findRoomById(MansionMap mansion, int roomId) {
-        for (Room r : mansion.getRooms()) {
-            if (r.getId() == roomId)
-                return r;
-        }
-        return null;
-    }
-
-    /**
-     * Obtiene la fábrica de individuos según el tipo seleccionado.
-     */
-    private IndividuoFactory getIndividuoFactory(int individualType) {
+    private AbstractMansionMap getSelectedMansion() {
+        int individualType = individualTypeComboBox.getSelectedIndex();
         switch (individualType) {
             case 0:
-                return new IndividuoAspiradoraFactory(this.mansion);
+                return new MansionMap();
+            case 1:
+                return new MiniMansionMap();
             default:
-                throw new IllegalArgumentException("Tipo de individuo no válido");
+                throw new IllegalArgumentException("Mapa no válido");
         }
     }
 

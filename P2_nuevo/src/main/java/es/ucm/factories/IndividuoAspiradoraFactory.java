@@ -2,6 +2,7 @@ package es.ucm.factories;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoAspiradora;
+import es.ucm.mansion.AbstractMansionMap;
 import es.ucm.mansion.MansionMap;
 
 
@@ -11,7 +12,7 @@ import es.ucm.mansion.MansionMap;
  * Se usa en el opeardor cruce y al crear la población inicial
  */
 public class IndividuoAspiradoraFactory extends IndividuoFactory {
-    public IndividuoAspiradoraFactory(MansionMap map) {
+    public IndividuoAspiradoraFactory(AbstractMansionMap map) {
         super(map);
     }
 
