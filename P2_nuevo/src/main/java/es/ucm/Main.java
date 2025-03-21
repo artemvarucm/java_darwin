@@ -75,8 +75,8 @@ public class Main extends JFrame {
         controlPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 
         populationSizeField = new JTextField("100");
-        generationsField = new JTextField("100");
-        mutationRateField = new JTextField("0.05");
+        generationsField = new JTextField("300");
+        mutationRateField = new JTextField("0.2");
         crossoverRateField = new JTextField("0.6");
         elitismRateField = new JTextField("0.1");
         turnPenaltyField = new JTextField("0");
@@ -350,8 +350,8 @@ public class Main extends JFrame {
      */
     private void resetFields() {
         populationSizeField.setText("100");
-        generationsField.setText("100");
-        mutationRateField.setText("0.05");
+        generationsField.setText("300");
+        mutationRateField.setText("0.2");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
         turnPenaltyField.setText("0");

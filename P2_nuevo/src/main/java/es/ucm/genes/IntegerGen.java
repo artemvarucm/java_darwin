@@ -1,11 +1,10 @@
 package es.ucm.genes;
 
 
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * El gen que representa una variable de tipo float
- * GENOTIPO: Double
+ * El gen que representa una variable de tipo int
+ * GENOTIPO: Int
  */
 public class IntegerGen extends Gen<Integer> {
     private Integer genotipo;
