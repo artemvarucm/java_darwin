@@ -21,14 +21,14 @@ public class AEstrellaBusquedaCamino {
      */
     public List<NodoCamino> calculatePathFromAtoB(int rowA, int colA, int rowB, int colB, NodoCamino prevNode) {
         PriorityQueue<NodoCamino> nodosAbiertos = new PriorityQueue<>(Comparator.comparingDouble(NodoCamino::getTotalEstimatedCost));
-        Map<NodoCamino, NodoCamino> nodoMap = new HashMap<>(); // Stores the best known path for each node
+        // guarda el nodo con el mejor coste (porque pueden haber nodos con mismas coordenadas, pero diferente coste)
+        Map<Integer, NodoCamino> nodoMap = new HashMap<>();
         Set<NodoCamino> nodosCerrados = new HashSet<>();
 
-        // Create the initial node
         NodoCamino init = new NodoCamino(rowA, colA, rowB, colB, prevNode);
         init.addPenalty(mapa.getPenalty(init));
         nodosAbiertos.add(init);
-        nodoMap.put(init, init); // Store by unique key
+        nodoMap.put(init.hashCode(), init);
 
         while (!nodosAbiertos.isEmpty()) {
             // Devuelve el nodo del minimo coste de la lista
@@ -36,10 +36,8 @@ public class AEstrellaBusquedaCamino {
 
             if (current.checkGoal()) {
                 // Devolvemos la solución (solo el tramo de A a B)
-
                 return current.reconstructPath();
             }
-            //System.out.println("Expandiendo: " + current.getRow() + ", " + current.getCol());
             nodosAbiertos.remove(current);
             nodosCerrados.add(current);
             // 4 movimientos posibles (left, right, up, down)
@@ -54,19 +52,21 @@ public class AEstrellaBusquedaCamino {
                 // penalizacion del nodo
                 nodo.addPenalty(mapa.getPenalty(nodo));
 
-                // si el nodo está cerrado, NO lo añadimos
+                // Si el nodo está cerrado, NO lo añadimos
                 if (!nodosCerrados.contains(nodo)) {
-                    // If the node is in the open list and has a higher cost, update it
-                    if (nodoMap.containsKey(nodo)) {
-                        NodoCamino existente = nodoMap.get(nodo);
+                    // Si el nodo está en nodoMap y no está en cerrados -> está abierto
+                    if (nodoMap.containsKey(nodo.hashCode())) {
+                        // Si está abierto, y es mejor que el existente, se reemplaza
+                        NodoCamino existente = nodoMap.get(nodo.hashCode());
                         if (nodo.getTotalEstimatedCost() < existente.getTotalEstimatedCost()) {
                             nodosAbiertos.remove(existente);
                             nodosAbiertos.add(nodo);
-                            nodoMap.put(nodo, nodo);
+                            nodoMap.put(nodo.hashCode(), nodo);
                         }
                     } else {
+                        // si no está abierto, se añade
                         nodosAbiertos.add(nodo);
-                        nodoMap.put(nodo, nodo);
+                        nodoMap.put(nodo.hashCode(), nodo);
                     }
                 }
             }
