@@ -13,12 +13,19 @@ public abstract class AbstractNode {
         return childNodes.isEmpty();
     }
 
+    public Integer getChildrenSize() {
+        return this.childNodes.size();
+    }
+
+    public void setChildNode(int i, AbstractNode node) {
+        this.childNodes.set(i, node);
+    }
+
     /**
-     * Calcula el camino teniendo en cuenta que
-     * la hormiga está en la posición y con la dirección especificada
-     * @return
+     * Mueve la hormiga (incluyendo cambios de direccion)
+     * y devuelve la ruta como coordenadas (no incluye posición incial)
      */
-    public List<Coord> getActionList(Hormiga hormiga) {
+    public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
         return null;
     }
 }

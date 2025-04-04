@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ForwardNode extends AbstractNode {
     @Override
-    public List<Coord> getActionList(Hormiga hormiga) {
+    public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
         Coord coordCurrent = hormiga.getCoord();
         int col = coordCurrent.getCol();
         int row = coordCurrent.getRow();
