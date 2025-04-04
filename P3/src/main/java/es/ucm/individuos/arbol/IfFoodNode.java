@@ -9,6 +9,9 @@ import java.util.List;
  * en caso constrario - el segundo
  */
 public class IfFoodNode extends AbstractNode {
+    public IfFoodNode() {
+        this(null, null);
+    }
     public IfFoodNode(AbstractNode node1, AbstractNode node2) {
         this.childNodes.add(node1);
         this.childNodes.add(node2);
@@ -27,7 +30,7 @@ public class IfFoodNode extends AbstractNode {
     }
 
     public AbstractNode clone() {
-        AbstractNode clon = new IfFoodNode(null, null);
+        AbstractNode clon = new IfFoodNode();
         this.copyToClone(clon);
         return clon;
     }

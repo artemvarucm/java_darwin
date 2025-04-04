@@ -8,6 +8,9 @@ import java.util.List;
  * expandiendo primero uno (en profundidad), luego otro
  */
 public class Prog2Node extends AbstractNode {
+    public Prog2Node() {
+        this(null, null);
+    }
     public Prog2Node(AbstractNode node1, AbstractNode node2) {
         this.childNodes.add(node1);
         this.childNodes.add(node2);
@@ -24,7 +27,7 @@ public class Prog2Node extends AbstractNode {
     }
 
     public AbstractNode clone() {
-        AbstractNode clon = new Prog2Node(null, null);
+        AbstractNode clon = new Prog2Node();
         this.copyToClone(clon);
         return clon;
     }

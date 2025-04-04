@@ -3,6 +3,8 @@ package es.ucm.individuos.arbol;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 public abstract class AbstractNode {
     protected List<AbstractNode> childNodes;
     public AbstractNode() {
@@ -40,24 +42,24 @@ public abstract class AbstractNode {
     public void copyToClone(AbstractNode clone) {
         clone.childNodes.clear();
         for (AbstractNode child: childNodes)
-            clone.childNodes.add(child.clone());
+            clone.childNodes.add(
+                    isNull(child) ? null : child.clone()
+            );
     }
 
     public abstract String getNodeName();
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getNodeName());
-        stringBuilder.append("(");
-        boolean first = true;
-        for (AbstractNode child: childNodes) {
-            if (!first)
-                stringBuilder.append(", ");
-            else
-                first = false;
+        return toStringStartWith("");
+    }
 
-            stringBuilder.append(child.toString());
+    private String toStringStartWith(String start) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(start);
+        stringBuilder.append(getNodeName());
+        for (AbstractNode child: childNodes) {
+            stringBuilder.append("\n");
+            stringBuilder.append(child.toStringStartWith(start + "\t"));
         }
-        stringBuilder.append(")");
 
         return stringBuilder.toString();
     }

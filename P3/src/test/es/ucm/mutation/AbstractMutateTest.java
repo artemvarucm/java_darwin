@@ -2,6 +2,7 @@ package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.initializer.FULLInitializer;
 import es.ucm.mapa.SantaFeMap;
 
 public abstract class AbstractMutateTest {
@@ -13,7 +14,7 @@ public abstract class AbstractMutateTest {
     }
 
     private void oneMutate(AbstractMutate mutator) {
-        Individuo ind1 = new IndividuoHormiga(new SantaFeMap());
+        Individuo ind1 = new IndividuoHormiga(new SantaFeMap(), new FULLInitializer(4));
         System.out.println("GENOTIPO INICIAL");
         ind1.printGenotipo();
         Individuo indMutado = mutator.mutate(ind1);

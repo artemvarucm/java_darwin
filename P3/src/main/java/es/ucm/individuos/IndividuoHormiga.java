@@ -5,6 +5,7 @@ import es.ucm.individuos.arbol.AbstractNode;
 import es.ucm.individuos.arbol.ForwardNode;
 import es.ucm.individuos.arbol.LeftNode;
 import es.ucm.individuos.arbol.Prog2Node;
+import es.ucm.initializer.AbstractInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 
 
@@ -15,17 +16,14 @@ public class IndividuoHormiga extends Individuo {
     protected Double fitnessCache;
     protected String genotipoStrCache;
 
+    public IndividuoHormiga(AbstractFoodMap map, AbstractInitializer initializer) {
+        this(map);
+        this.addTreeGen(initializer.initialize());
+    }
+
     public IndividuoHormiga(AbstractFoodMap map) {
         super(null, false);
         this.map = map;
-        this.fillRandomPermutation();
-    }
-
-    /**
-     * Inicializa con una permutación aleatoria el individuo
-     */
-    public void fillRandomPermutation() {
-        this.addTreeGen(new Prog2Node(new LeftNode(), new ForwardNode()));
     }
 
     @Override

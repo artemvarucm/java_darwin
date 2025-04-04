@@ -7,6 +7,9 @@ import java.util.List;
  * Parecido a {@link Prog2Node}, pero con 3 nodos
  */
 public class Prog3Node extends AbstractNode {
+    public Prog3Node() {
+        this(null, null, null);
+    }
     public Prog3Node(AbstractNode node1, AbstractNode node2, AbstractNode node3) {
         this.childNodes.add(node1);
         this.childNodes.add(node2);
@@ -26,7 +29,7 @@ public class Prog3Node extends AbstractNode {
     }
 
     public AbstractNode clone() {
-        AbstractNode clon = new Prog3Node(null, null, null);
+        AbstractNode clon = new Prog3Node();
         this.copyToClone(clon);
         return clon;
     }

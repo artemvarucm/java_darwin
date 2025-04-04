@@ -2,6 +2,8 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
+import es.ucm.initializer.AbstractInitializer;
+import es.ucm.initializer.FULLInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.mapa.SantaFeMap;
 import es.ucm.mutation.*;
@@ -227,10 +229,12 @@ public class Main extends JFrame {
             double mutationRate = Double.parseDouble(mutationRateField.getText());
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
+            int maxDepth = Integer.parseInt(maxTreeDepthField.getText());
 
             this.mapa = getSelectedMapa();
-            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa);
             mapPanelGraphics.setMansion(mapa);
+            AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
+            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, initializationMethod);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -279,6 +283,19 @@ public class Main extends JFrame {
                 return new SantaFeMap();
             default:
                 throw new IllegalArgumentException("Mapa no válido");
+        }
+    }
+
+    /**
+     * Obtiene el método de inicializacion según la opción elegida.
+     */
+    private AbstractInitializer getInitializationMethod(int maxDepth) {
+        int initType = initMethodComboBox.getSelectedIndex();
+        switch (initType) {
+            case 0:
+                return new FULLInitializer(maxDepth);
+            default:
+                throw new IllegalArgumentException("Método de mutación no válido");
         }
     }
 
