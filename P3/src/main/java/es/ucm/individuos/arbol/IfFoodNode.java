@@ -25,4 +25,15 @@ public class IfFoodNode extends AbstractNode {
 
         return path;
     }
+
+    public AbstractNode clone() {
+        AbstractNode clon = new IfFoodNode(null, null);
+        this.copyToClone(clon);
+        return clon;
+    }
+
+    @Override
+    public String getNodeName() {
+        return "IF_FOOD";
+    }
 }

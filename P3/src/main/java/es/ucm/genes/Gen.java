@@ -1,9 +1,9 @@
 package es.ucm.genes;
 
 
-public abstract class Gen<GT> {
-    // La T representa el tipo de elemento en el GENOTIPO del gen
-    // La U representa el tipo de elemento en el FENOTIPO del gen
+public abstract class Gen<GT, FT> {
+    // La GT representa el tipo de elemento en el GENOTIPO del gen
+    // La FT representa el tipo de elemento en el FENOTIPO del gen
 
     protected Integer tamGen;
     public Gen() {
@@ -14,7 +14,7 @@ public abstract class Gen<GT> {
     /**
      * Devuelve el fenotipo del gen, ejemplo si es 11, devuelve 3
      */
-    public abstract Number getFenotipo();
+    public abstract FT getFenotipo();
 
     public int getTamGen() {
         return this.tamGen;

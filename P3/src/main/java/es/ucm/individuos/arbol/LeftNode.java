@@ -1,5 +1,7 @@
 package es.ucm.individuos.arbol;
 
+import org.w3c.dom.Node;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,5 +23,16 @@ public class LeftNode extends AbstractNode {
         }
 
         return new LinkedList<>(); // no se ha movido
+    }
+
+    public AbstractNode clone() {
+        AbstractNode clon = new LeftNode();
+        this.copyToClone(clon);
+        return clon;
+    }
+
+    @Override
+    public String getNodeName() {
+        return "LEFT";
     }
 }

@@ -17,7 +17,7 @@ public abstract class AbstractCrossTest {
     }
 
     private void oneCross(AbstractCross crosser) {
-        Individuo par1 = new IndividuoHormiga(new SantaFeMap());
+        /*Individuo par1 = new IndividuoHormiga(new SantaFeMap());
         Individuo par2 = new IndividuoHormiga(new SantaFeMap());
         System.out.println("PADRES");
         par1.printGenotipo();
@@ -44,6 +44,6 @@ public abstract class AbstractCrossTest {
             } else {
                 child2.add(gen2);
             }
-        }
+        }*/
     }
 }

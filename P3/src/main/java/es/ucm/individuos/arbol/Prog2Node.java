@@ -22,4 +22,15 @@ public class Prog2Node extends AbstractNode {
 
         return path;
     }
+
+    public AbstractNode clone() {
+        AbstractNode clon = new Prog2Node(null, null);
+        this.copyToClone(clon);
+        return clon;
+    }
+
+    @Override
+    public String getNodeName() {
+        return "PROG_2";
+    }
 }

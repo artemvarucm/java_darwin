@@ -6,7 +6,7 @@ package es.ucm.genes;
  * El gen que representa una variable de tipo int
  * GENOTIPO: Int
  */
-public class IntegerGen extends Gen<Integer> {
+public class IntegerGen extends Gen<Integer, Integer> {
     private Integer genotipo;
 
     public IntegerGen(Integer initValue) {

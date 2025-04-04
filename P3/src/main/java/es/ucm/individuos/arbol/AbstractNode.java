@@ -21,11 +21,44 @@ public abstract class AbstractNode {
         this.childNodes.set(i, node);
     }
 
+    public AbstractNode getChildNode(int i) {
+        return this.childNodes.get(i);
+    }
+
     /**
      * Mueve la hormiga (incluyendo cambios de direccion)
      * y devuelve la ruta como coordenadas (no incluye posición incial)
      */
-    public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
-        return null;
+    public abstract List<Coord> walkAndReturnCoords(Hormiga hormiga);
+
+
+    public abstract AbstractNode clone();
+
+    /**
+     * Copia recursiva de los hijos al clon del parametro
+     */
+    public void copyToClone(AbstractNode clone) {
+        clone.childNodes.clear();
+        for (AbstractNode child: childNodes)
+            clone.childNodes.add(child.clone());
+    }
+
+    public abstract String getNodeName();
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getNodeName());
+        stringBuilder.append("(");
+        boolean first = true;
+        for (AbstractNode child: childNodes) {
+            if (!first)
+                stringBuilder.append(", ");
+            else
+                first = false;
+
+            stringBuilder.append(child.toString());
+        }
+        stringBuilder.append(")");
+
+        return stringBuilder.toString();
     }
 }

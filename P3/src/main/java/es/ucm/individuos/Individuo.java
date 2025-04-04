@@ -3,6 +3,8 @@ package es.ucm.individuos;
 
 import es.ucm.genes.Gen;
 import es.ucm.genes.IntegerGen;
+import es.ucm.genes.TreeGen;
+import es.ucm.individuos.arbol.AbstractNode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -50,16 +52,16 @@ public abstract class Individuo {
         ind.genes = copiaGenes;
     }
 
-    public void addIntegerGen(Integer initValue) {
-        this.genes.add(new IntegerGen(initValue));
+    public void addTreeGen(AbstractNode node) {
+        this.genes.add(new TreeGen(node));
     }
 
     /**
      * Devuelve una lista con el fenotipo de cada gen (lista de valores de las variables)
      */
-    public List<Number> getFenotipos() {
+    /*public List<Number> getFenotipos() {
         return this.genes.stream().map(Gen::getFenotipo).toList();
-    }
+    }*/
 
     public void printGenotipo() {
         System.out.println(this.genotipoToString());
@@ -77,17 +79,7 @@ public abstract class Individuo {
         return result.toString();
     }
 
-
-    public int getGenotipoLength() {
-        int total = 0;
-        for (Gen gen: this.genes) {
-            total += gen.getTamGen();
-        }
-
-        return total;
-    }
-
-    public String getSolutionString() {
+    /*public String getSolutionString() {
         int i = 1;
         StringBuilder result = new StringBuilder();
         for (Number var: this.getFenotipos()) {
@@ -99,19 +91,5 @@ public abstract class Individuo {
         }
 
         return result.toString();
-    }
-
-    /**
-     * Devuelve todos los genes de tipo IntegerGen del individuo
-     */
-    public List<IntegerGen> getIntGenes() {
-        List<IntegerGen> genesEnteros = new ArrayList<>();
-        for (Gen gen: this.genes) {
-            if (gen instanceof IntegerGen) {
-                genesEnteros.add((IntegerGen) gen);
-            }
-        }
-
-        return genesEnteros;
-    }
+    }*/
 }

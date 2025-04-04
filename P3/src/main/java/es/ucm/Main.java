@@ -10,6 +10,8 @@ import es.ucm.cross.*;
 import org.math.plot.Plot2DPanel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -29,7 +31,7 @@ public class Main extends JFrame {
     private JTextField mutationRateField;
     private JTextField crossoverRateField;
     private JTextField elitismRateField;
-    private JTextField minTreeDepthField;
+    private JTextField maxTreeDepthField;
     private JTextField stepsLimitField;
     private JTextField bloatingField;
 
@@ -80,9 +82,34 @@ public class Main extends JFrame {
         mutationRateField = new JTextField("0.2");
         crossoverRateField = new JTextField("0.6");
         elitismRateField = new JTextField("0.1");
-        minTreeDepthField = new JTextField("2");
+        maxTreeDepthField = new JTextField("2");
         stepsLimitField = new JTextField("400");
         bloatingField = new JTextField("0");
+
+        maxTreeDepthField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void warn() {
+                if (!maxTreeDepthField.getText().isEmpty() &&
+                        Integer.parseInt(maxTreeDepthField.getText()) < 2){
+                    Runnable setDefault = new Runnable() {
+                        @Override
+                        public void run() {
+                            maxTreeDepthField.setText("2");
+                        }
+                    };
+                    SwingUtilities.invokeLater(setDefault);
+                }
+            }
+        });
 
         initMethodComboBox = new JComboBox<>(new String[]{
                 "Full",
@@ -133,8 +160,8 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
-        controlPanel.add(new JLabel("Min tree depth:"));
-        controlPanel.add(minTreeDepthField);
+        controlPanel.add(new JLabel("Max tree depth:"));
+        controlPanel.add(maxTreeDepthField);
         controlPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
         controlPanel.add(stepsLimitField);
         controlPanel.add(new JLabel("Bloating:"));
@@ -224,13 +251,13 @@ public class Main extends JFrame {
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
             sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
-            sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
+            //sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
             sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000. + " segundos").append("\n");
             //sb.append("------------------------------------------------------------------\n");
             resultsArea.setText(sb.toString());
 
             // Actualizamos el mapa gráfico con la ruta calculada
-            List<Number> roomOrder = bestIndividual.getFenotipos();
+            //List<Number> roomOrder = bestIndividual.getFenotipos();
             //mapPanelGraphics.setRouteCells(mapa.calculatePath(roomOrder));
 
             // Graficar evolución del algoritmo
@@ -297,6 +324,8 @@ public class Main extends JFrame {
     private AbstractMutate getMutationMethod(double mutationRate) {
         int mutationType = mutationMethodComboBox.getSelectedIndex();
         switch (mutationType) {
+            case 0:
+                return new TerminalMutate(mutationRate);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
@@ -330,7 +359,7 @@ public class Main extends JFrame {
         mutationRateField.setText("0.2");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
-        minTreeDepthField.setText("2");
+        maxTreeDepthField.setText("2");
         stepsLimitField.setText("400");
         bloatingField.setText("0");
         initMethodComboBox.setSelectedIndex(0);
