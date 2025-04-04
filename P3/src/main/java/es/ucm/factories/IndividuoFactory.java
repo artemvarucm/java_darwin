@@ -1,7 +1,7 @@
 package es.ucm.factories;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.mansion.AbstractMansionMap;
+import es.ucm.mapa.AbstractFoodMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
  * Se usa en el opeardor cruce y al crear la población inicial
  */
 public abstract class IndividuoFactory {
-    protected AbstractMansionMap map;
-    public IndividuoFactory(AbstractMansionMap map) {
+    protected AbstractFoodMap map;
+    public IndividuoFactory(AbstractFoodMap map) {
         this.map = map;
     }
 

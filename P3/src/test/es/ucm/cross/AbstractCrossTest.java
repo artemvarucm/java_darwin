@@ -1,8 +1,8 @@
 package es.ucm.cross;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoAspiradora;
-import es.ucm.mansion.MansionMap;
+import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.mapa.SantaFeMap;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +17,8 @@ public abstract class AbstractCrossTest {
     }
 
     private void oneCross(AbstractCross crosser) {
-        Individuo par1 = new IndividuoAspiradora(new MansionMap());
-        Individuo par2 = new IndividuoAspiradora(new MansionMap());
+        Individuo par1 = new IndividuoHormiga(new SantaFeMap());
+        Individuo par2 = new IndividuoHormiga(new SantaFeMap());
         System.out.println("PADRES");
         par1.printGenotipo();
         par2.printGenotipo();

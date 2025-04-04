@@ -2,9 +2,8 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
-import es.ucm.mansion.AbstractMansionMap;
-import es.ucm.mansion.MansionMap;
-import es.ucm.mansion.MiniMansionMap;
+import es.ucm.mapa.AbstractFoodMap;
+import es.ucm.mapa.SantaFeMap;
 import es.ucm.mutation.*;
 import es.ucm.selection.*;
 import es.ucm.cross.*;
@@ -30,10 +29,12 @@ public class Main extends JFrame {
     private JTextField mutationRateField;
     private JTextField crossoverRateField;
     private JTextField elitismRateField;
-    private JTextField turnPenaltyField;
-    private JTextField obstaclePenaltyField;
+    private JTextField minTreeDepthField;
+    private JTextField stepsLimitField;
+    private JTextField bloatingField;
 
-    // ComboBox para seleccionar métodos de selección, cruce, mutación y tipo de individuo
+    // ComboBox para seleccionar métodos de inicializacion, selección, cruce, mutación y tipo de individuo
+    private JComboBox<String> initMethodComboBox;
     private JComboBox<String> selectionMethodComboBox;
     private JComboBox<String> crossoverMethodComboBox;
     private JComboBox<String> mutationMethodComboBox;
@@ -46,10 +47,10 @@ public class Main extends JFrame {
     private Plot2DPanel plotPanel;
 
     // Panel para representar el mapa con gráficos
-    private MansionMapPanel mapPanelGraphics;
+    private FoodMapPanel mapPanelGraphics;
 
-    // Referencia al objeto MansionMap (para poder actualizar el panel cada vez que se calcule la ruta)
-    private AbstractMansionMap mansion;
+    // Referencia al objeto FoodMap (para poder actualizar el panel cada vez que se calcule la ruta)
+    private AbstractFoodMap mapa;
 
     /**
      * Constructor de la interfaz gráfica.
@@ -79,8 +80,15 @@ public class Main extends JFrame {
         mutationRateField = new JTextField("0.2");
         crossoverRateField = new JTextField("0.6");
         elitismRateField = new JTextField("0.1");
-        turnPenaltyField = new JTextField("0");
-        obstaclePenaltyField = new JTextField("0");
+        minTreeDepthField = new JTextField("2");
+        stepsLimitField = new JTextField("400");
+        bloatingField = new JTextField("0");
+
+        initMethodComboBox = new JComboBox<>(new String[]{
+                "Full",
+                "Grow",
+                "Ramped & Half",
+        });
 
         selectionMethodComboBox = new JComboBox<>(new String[]{
             "Roulette", 
@@ -92,22 +100,18 @@ public class Main extends JFrame {
             "Ranking"
         });
         crossoverMethodComboBox = new JComboBox<>(new String[]{
-            "OX (Orden)", 
-            "PMX (Emparejamiento parcial)", 
-            "OXPP (Orden pos. prioritario)", 
-            "CX (Ciclos)", 
-            "CO (Cod. ordinal)", 
-            "ERX (Recomb. ruletas)", 
-            "Custom Cross"
+            "Subtrees swap"
         });
         mutationMethodComboBox = new JComboBox<>(new String[]{
-            "Swap", 
-            "Insertion", 
-            "Inversion", 
-            "Heuristic (n = 3)",
-            "Custom Mutation"
+            "Terminal",
+            "Functional",
+            "Tree",
+            "Permutation",
+            "Hoist",
+            "Expansion",
+            "Contraction"
         });
-        individualTypeComboBox = new JComboBox<>(new String[]{"Mansion", "Mini Mansion"});
+        individualTypeComboBox = new JComboBox<>(new String[]{"Santa Fe"});
 
         controlPanel.add(new JLabel("Population Size:"));
         controlPanel.add(populationSizeField);
@@ -119,6 +123,8 @@ public class Main extends JFrame {
         controlPanel.add(crossoverRateField);
         controlPanel.add(new JLabel("Elitism Rate:"));
         controlPanel.add(elitismRateField);
+        controlPanel.add(new JLabel("Initialization Method:"));
+        controlPanel.add(initMethodComboBox);
         controlPanel.add(new JLabel("Selection Method:"));
         controlPanel.add(selectionMethodComboBox);
         controlPanel.add(new JLabel("Crossover Method:"));
@@ -127,12 +133,13 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
-        controlPanel.add(new JLabel("FITNESS ADJUSTMENT"));
-        controlPanel.add(new JLabel(""));
-        controlPanel.add(new JLabel("Turn penalty:"));
-        controlPanel.add(turnPenaltyField);
-        controlPanel.add(new JLabel("Obstacle penalty:"));
-        controlPanel.add(obstaclePenaltyField);
+        controlPanel.add(new JLabel("Min tree depth:"));
+        controlPanel.add(minTreeDepthField);
+        controlPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
+        controlPanel.add(stepsLimitField);
+        controlPanel.add(new JLabel("Bloating:"));
+        controlPanel.add(bloatingField);
+
         // Botones de control
         JButton startButton = new JButton("Start");
         startButton.addActionListener(e -> startAlgorithm());
@@ -168,10 +175,10 @@ public class Main extends JFrame {
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.addTab("GRAFICO", plotPanel);
 
-        // Creamos la mansión y el MapPanel para visualizarla.
-        mansion = new MansionMap();
+        // Creamos el mapa y el MapPanel para visualizarla.
+        mapa = new SantaFeMap();
         // Inicialmente sin ruta, se actualizará al finalizar la ejecución.
-        mapPanelGraphics = new MansionMapPanel(mansion, null);
+        mapPanelGraphics = new FoodMapPanel(mapa);
         mapPanelGraphics.setPreferredSize(new Dimension(500, 500));
 
         JPanel mapaPanel = new JPanel(new BorderLayout());
@@ -193,14 +200,10 @@ public class Main extends JFrame {
             double mutationRate = Double.parseDouble(mutationRateField.getText());
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
-            double turnPenalty = Double.parseDouble(turnPenaltyField.getText());
-            double obstaclePenalty = Double.parseDouble(obstaclePenaltyField.getText());
 
-            this.mansion = getSelectedMansion();
-            this.mansion.setTurnPenalty(turnPenalty);
-            this.mansion.setObstaclePenalty(obstaclePenalty);
-            IndividuoFactory factory = new IndividuoAspiradoraFactory(mansion);
-            mapPanelGraphics.setMansion(mansion);
+            this.mapa = getSelectedMapa();
+            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa);
+            mapPanelGraphics.setMansion(mapa);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -221,7 +224,6 @@ public class Main extends JFrame {
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
             sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
-            sb.append("Fitness (sin penalizaciones) = ").append(mansion.calculateFitness(bestIndividual.getFenotipos())).append("\n");
             sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
             sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000. + " segundos").append("\n");
             //sb.append("------------------------------------------------------------------\n");
@@ -229,7 +231,7 @@ public class Main extends JFrame {
 
             // Actualizamos el mapa gráfico con la ruta calculada
             List<Number> roomOrder = bestIndividual.getFenotipos();
-            mapPanelGraphics.setRouteCells(mansion.calculatePath(roomOrder));
+            //mapPanelGraphics.setRouteCells(mapa.calculatePath(roomOrder));
 
             // Graficar evolución del algoritmo
             plotAlgorithmResults(algorithm, generations);
@@ -243,13 +245,11 @@ public class Main extends JFrame {
     /**
      * Obtiene el mapa seleccionado
      */
-    private AbstractMansionMap getSelectedMansion() {
+    private AbstractFoodMap getSelectedMapa() {
         int individualType = individualTypeComboBox.getSelectedIndex();
         switch (individualType) {
             case 0:
-                return new MansionMap();
-            case 1:
-                return new MiniMansionMap();
+                return new SantaFeMap();
             default:
                 throw new IllegalArgumentException("Mapa no válido");
         }
@@ -286,20 +286,6 @@ public class Main extends JFrame {
     private AbstractCross getCrossoverMethod(IndividuoFactory factory) {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
         switch (crossoverType) {
-            case 0:
-                return new OXCross(factory);
-            case 1:
-                return new PMXCross(factory);
-            case 2:
-                return new OXPPCross(factory);
-            case 3:
-                return new CXCross(factory);
-            case 4:
-                return new COCross(factory);
-            case 5:
-                return new ERXCross(factory);
-            case 6:
-                return new CustomCross(factory);
             default:
                 throw new IllegalArgumentException("Método de cruce no válido");
         }
@@ -311,16 +297,6 @@ public class Main extends JFrame {
     private AbstractMutate getMutationMethod(double mutationRate) {
         int mutationType = mutationMethodComboBox.getSelectedIndex();
         switch (mutationType) {
-            case 0:
-                return new SwapMutate(mutationRate);
-            case 1:
-                return new InsertionMutate(mutationRate);
-            case 2:
-                return new InversionMutate(mutationRate);
-            case 3:
-                return new HeuristicMutate(mutationRate);
-            case 4:
-                return new ScrambleMutate(mutationRate);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
@@ -354,8 +330,10 @@ public class Main extends JFrame {
         mutationRateField.setText("0.2");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
-        turnPenaltyField.setText("0");
-        obstaclePenaltyField.setText("0");
+        minTreeDepthField.setText("2");
+        stepsLimitField.setText("400");
+        bloatingField.setText("0");
+        initMethodComboBox.setSelectedIndex(0);
         selectionMethodComboBox.setSelectedIndex(0);
         crossoverMethodComboBox.setSelectedIndex(0);
         mutationMethodComboBox.setSelectedIndex(0);
