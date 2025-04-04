@@ -330,6 +330,8 @@ public class Main extends JFrame {
     private AbstractCross getCrossoverMethod(IndividuoFactory factory) {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
         switch (crossoverType) {
+            case 0:
+                return new SubtreeSwapCross(factory);
             default:
                 throw new IllegalArgumentException("Método de cruce no válido");
         }

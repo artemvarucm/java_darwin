@@ -2,9 +2,6 @@ package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractMutate {
     protected double mutateProbability;

@@ -69,12 +69,10 @@ public abstract class Individuo {
 
     protected String genotipoToString() {
         StringBuilder result = new StringBuilder();
-        result.append("[ ");
         for (Gen gen: this.genes) {
             result.append(gen.toString());
             result.append(" ");
         }
-        result.append("]");
 
         return result.toString();
     }

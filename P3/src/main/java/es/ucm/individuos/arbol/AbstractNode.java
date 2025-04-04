@@ -47,6 +47,22 @@ public abstract class AbstractNode {
             );
     }
 
+    /**
+     * Devuelve la lista con todos los nodos que son funciones del conjunto
+     * que engloba tanto al nodo mismo y a todos sus descendientes
+     */
+    public List<AbstractNode> getAllFunctionalNodes() {
+        List<AbstractNode> funcNodes = new ArrayList<>();
+        if (!isTerminal()) {
+            funcNodes.add(this);
+            for (AbstractNode child : childNodes) {
+                funcNodes.addAll(child.getAllFunctionalNodes());
+            }
+        }
+
+        return funcNodes;
+    }
+
     public abstract String getNodeName();
     public String toString() {
         return toStringStartWith("");
