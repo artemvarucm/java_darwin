@@ -118,7 +118,7 @@ public class IndividuoHormiga extends Individuo {
     }
     
     public int getNodeCount() {
-        return getRootNode().getNodeCount();
+        return getRootNode().getTreeSize();
     }
     
     public String getExpressionString() {
