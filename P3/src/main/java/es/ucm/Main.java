@@ -2,11 +2,9 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.Coord;
-import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
+import es.ucm.initializer.GrowInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.mapa.SantaFeMap;
 import es.ucm.mutation.*;
@@ -23,7 +21,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Interfaz gráfica para el simulador de algoritmos genéticos.
@@ -309,6 +306,8 @@ public class Main extends JFrame {
         switch (initType) {
             case 0:
                 return new FULLInitializer(maxDepth);
+            case 1:
+                return new GrowInitializer(maxDepth);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
