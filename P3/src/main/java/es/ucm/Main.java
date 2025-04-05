@@ -167,7 +167,7 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
-        controlPanel.add(new JLabel("Max tree depth:"));
+        controlPanel.add(new JLabel("Max tree depth (on initialization):"));
         controlPanel.add(maxTreeDepthField);
         controlPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
         controlPanel.add(stepsLimitField);

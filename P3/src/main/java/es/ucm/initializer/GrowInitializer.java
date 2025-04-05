@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import es.ucm.individuos.arbol.AbstractNode;
 
 public class GrowInitializer extends AbstractInitializer {
+    private static double MIN_DEPTH = 2; // profundidad minima
     public GrowInitializer(int maxDepth) {
         super(maxDepth);
     }
@@ -14,7 +15,10 @@ public class GrowInitializer extends AbstractInitializer {
     }
     
     private AbstractNode initializeRecursive(int depth) {
-        if (depth >= maxDepth || ThreadLocalRandom.current().nextBoolean()) {
+        if (
+                depth > (MIN_DEPTH - 1) && // el nodo raiz no puede ser terminal
+                (depth >= maxDepth || ThreadLocalRandom.current().nextBoolean())
+        ) {
             return selectRandomTerminal();
         } else {
             AbstractNode func = selectRandomFunction();
