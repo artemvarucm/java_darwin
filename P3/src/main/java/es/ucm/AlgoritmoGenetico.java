@@ -72,6 +72,16 @@ public class AlgoritmoGenetico {
     public void setMutationMethod(AbstractMutate mutationMethod) {
         this.mutationMethod = mutationMethod;
     }
+    
+    public interface ProgressListener {
+        void onProgress(int generation, Individuo bestIndividual);
+    }
+    
+    private ProgressListener progressListener;
+    
+    public void setProgressListener(ProgressListener listener) {
+        this.progressListener = listener;
+    }
 
     public void optimize() {
         // Inicializar la población
@@ -136,6 +146,10 @@ public class AlgoritmoGenetico {
 
             // Registrar datos históricos
             registrarHistorial(generacion);
+            
+            if (progressListener != null) {
+                progressListener.onProgress(generacion, getMejor());
+            }
         }
     }
 

@@ -27,6 +27,24 @@ public abstract class AbstractNode {
         return this.childNodes.get(i);
     }
     
+    public int getDepth() {
+        if (isTerminal()) return 1;
+        int maxChildDepth = 0;
+        for (AbstractNode child : childNodes) {
+            maxChildDepth = Math.max(maxChildDepth, child.getDepth());
+        }
+        return 1 + maxChildDepth;
+    }
+
+    public int getNodeCount() {
+        if (isTerminal()) return 1;
+        int count = 1;
+        for (AbstractNode child : childNodes) {
+            count += child.getNodeCount();
+        }
+        return count;
+    }
+    
     /**
      * Devuelve el tamaño total del árbol (número de nodos)
      */

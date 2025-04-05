@@ -26,6 +26,16 @@ public abstract class AbstractFoodMap {
     public void addFood(Coord coord) {
         foodCoords.add(coord);
     }
+    
+    public int getCurrentFoodCount() {
+        int count = 0;
+        for (Coord coord : foodCoords) {
+            if (foodGrid[coord.getRow()][coord.getCol()]) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     public void fillFoodGrid() {
         // crea el tablero con 0's

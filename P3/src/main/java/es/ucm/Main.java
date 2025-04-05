@@ -2,6 +2,9 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
+import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.arbol.Coord;
+import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.initializer.GrowInitializer;
@@ -21,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Interfaz gráfica para el simulador de algoritmos genéticos.
@@ -46,6 +50,7 @@ public class Main extends JFrame {
 
     // Área de texto para mostrar resultados
     private JTextArea resultsArea;
+    private JTextArea treeExpressionArea;
 
     // Panel para graficar la evolución del algoritmo
     private Plot2DPanel plotPanel;
@@ -214,6 +219,17 @@ public class Main extends JFrame {
         mapaPanel.add(mapPanelGraphics, BorderLayout.CENTER);
         tabPane.addTab("MAPA", mapaPanel);
 
+        // Panel para mostrar la expresión del árbol
+        treeExpressionArea = new JTextArea();
+        treeExpressionArea.setEditable(false);
+        treeExpressionArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane treeScrollPane = new JScrollPane(treeExpressionArea);
+        treeScrollPane.setBorder(BorderFactory.createTitledBorder("Solution Tree Expression"));
+
+        JPanel treePanel = new JPanel(new BorderLayout());
+        treePanel.add(treeScrollPane, BorderLayout.CENTER);
+        tabPane.addTab("ÁRBOL", treePanel);
+
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, tabPane);
         splitPane.setResizeWeight(0.5);
         add(splitPane);
@@ -247,36 +263,55 @@ public class Main extends JFrame {
             algorithm.setSelectionMethod(selectionMethod);
             algorithm.setCrossoverMethod(crossoverMethod);
             algorithm.setMutationMethod(mutationMethod);
+            
+            algorithm.setProgressListener((generation, bestIndividual) -> {
+                IndividuoHormiga bestAnt = (IndividuoHormiga) bestIndividual;
+                
+                SwingUtilities.invokeLater(() -> {
+                    // Actualizar panel con el mejor individuo de cada generación
+                    mapPanelGraphics.updateAntData(
+                        bestAnt.getCurrentPosition(),
+                        bestAnt.getCurrentDirection(),
+                        bestAnt.getFoodCollected(),
+                        bestAnt.getStepsTaken(),
+                        bestAnt.getPathHistory()
+                    );
+                    
+                    // Actualizar gráficas de progreso
+                    plotAlgorithmResults(algorithm, generation + 1);
+                });
+            });
             Instant start = Instant.now();
             algorithm.optimize();
             Instant end = Instant.now();
             Duration timeElapsed = Duration.between(start, end);
 
-            Individuo bestIndividual = algorithm.getMejor();
-         
-            // Actualizar visualización del mapa
-            //SantaFeMap santaFeMap = (SantaFeMap) this.mapa;
-            //santaFeMap.reset();
-            //mapPanelGraphics.setMansion(this.mapa);
+            IndividuoHormiga bestIndividual = (IndividuoHormiga) algorithm.getMejor();
             
-      
-            //Hormiga hormiga = new Hormiga(santaFeMap);
-            //List<Coord> path = ((IndividuoHormiga)bestIndividual).getRootNode()
-            //                   .walkAndReturnCoords(hormiga);
-            
-            // Limitar a 400 pasos y mostrar
-            //if(path.size() > 400) {
-            //    path = path.subList(0, 400);
-            //}
-            //mapPanelGraphics.setRouteCells(path);
-            
+            // Actualizar visualización con la mejor solución
+            mapPanelGraphics.updateAntData(
+                bestIndividual.getCurrentPosition(),
+                bestIndividual.getCurrentDirection(),
+                bestIndividual.getFoodCollected(),
+                bestIndividual.getStepsTaken(),
+                bestIndividual.getPathHistory()
+            );
+
+            // Mostrar resultados en el área de texto
             StringBuilder sb = new StringBuilder();
-            sb.append("Mejor ruta encontrada:\n");
-            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/" + mapa.getAllFoodCount() + "\n");
-            sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
+            sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
+            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
+            sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+            sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
+            sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
+            sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
+            
             resultsArea.setText(sb.toString());
 
-            // Graficar evolución del algoritmo
+            // Actualizar panel del árbol con la expresión
+            treeExpressionArea.setText(bestIndividual.getExpressionString());
+
+            // Graficar resultados finales
             plotAlgorithmResults(algorithm, generations);
 
         } catch (Exception ex) {
@@ -401,8 +436,11 @@ public class Main extends JFrame {
         mutationMethodComboBox.setSelectedIndex(0);
         individualTypeComboBox.setSelectedIndex(0);
         resultsArea.setText("");
-        mapPanelGraphics.setRouteCells(null);
+        treeExpressionArea.setText("");
         plotPanel.removeAllPlots();
+        mapa = new SantaFeMap();
+        mapPanelGraphics.setMansion(mapa);
+        mapPanelGraphics.updateAntData(null, null, 0, 0, null);
     }
 
     /**

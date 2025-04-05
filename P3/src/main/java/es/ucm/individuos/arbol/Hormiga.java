@@ -45,6 +45,10 @@ public class Hormiga {
 
         this.position = pos;
     }
+    
+    public Integer getSteps() {
+        return this.steps;
+    }
 
     public DirectionEnum getDir() { return direction; }
     public void setDir(DirectionEnum dir) { this.direction = dir; }

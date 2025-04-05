@@ -5,12 +5,11 @@ import es.ucm.individuos.arbol.AbstractNode;
 import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.individuos.arbol.ForwardNode;
 import es.ucm.individuos.arbol.LeftNode;
-import es.ucm.individuos.arbol.Prog2Node;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.mapa.SantaFeMap;
 import es.ucm.individuos.arbol.Coord;
-
+import es.ucm.individuos.arbol.DirectionEnum;
 
 import static java.util.Objects.isNull;
 
@@ -40,24 +39,62 @@ public class IndividuoHormiga extends Individuo {
         }
     }
 
+    private transient List<Coord> lastPath; // Para guardar el último camino simulado
+    private transient int lastSteps;
+    private transient Coord lastPosition;
+    private transient DirectionEnum lastDirection;
+
     @Override
     public double getFitness() {
         if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
             return this.fitnessCache;
         }
 
-        // Ejecutar el programa
+        
         Hormiga hormiga = new Hormiga(this.map, stepsLimit);
-        List<Coord> path = new LinkedList<>();
+        lastPath = new LinkedList<>();
+        lastPath.add(hormiga.getPosition()); // Posición inicial
+        
         while (!hormiga.shouldStop()) {
-            path.addAll(this.getRootNode().walkAndReturnCoords(hormiga));
+            List<Coord> newPositions = this.getRootNode().walkAndReturnCoords(hormiga);
+            lastPath.addAll(newPositions);
         }
 
-        this.fitnessCache = (double) (hormiga.getEatenFood());
-
+        // Guardar resultados de la simulación
+        this.lastSteps = hormiga.getSteps();
+        this.lastPosition = hormiga.getPosition();
+        this.lastDirection = hormiga.getDir();
+        
+        this.fitnessCache = (double) hormiga.getEatenFood();
         this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;
+    }
+
+    // Métodos para la visualización
+    public Coord getCurrentPosition() {
+        if (lastPath == null) getFitness(); // Fuerza simulación si es necesario
+        return lastPosition;
+    }
+
+    public DirectionEnum getCurrentDirection() {
+        if (lastPath == null) getFitness();
+        return lastDirection;
+    }
+
+    public List<Coord> getPathHistory() {
+        if (lastPath == null) getFitness();
+        return new LinkedList<>(lastPath);
+    }
+
+    public int getFoodCollected() {
+        if (lastPath == null) getFitness();
+        return (int) getFitness(); // Usamos el fitness que ya es la comida recolectada
+    }
+
+    public int getStepsTaken() {
+        if (lastPath == null) getFitness();
+        return lastSteps;
     }
 
     @Override
@@ -74,6 +111,18 @@ public class IndividuoHormiga extends Individuo {
         this.fitnessCache = fitness;
         // Invalida la caché del genotipo para forzar recálculo
         this.genotipoStrCache = null; 
+    }
+    
+    public int getTreeDepth() {
+        return getRootNode().getDepth();
+    }
+    
+    public int getNodeCount() {
+        return getRootNode().getNodeCount();
+    }
+    
+    public String getExpressionString() {
+        return getRootNode().toString();
     }
 
     public AbstractNode getRootNode() {
