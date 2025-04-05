@@ -2,6 +2,9 @@ package es.ucm;
 
 import es.ucm.factories.*;
 import es.ucm.individuos.Individuo;
+import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.arbol.Coord;
+import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.mapa.AbstractFoodMap;
@@ -234,7 +237,7 @@ public class Main extends JFrame {
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
             AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
-            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, initializationMethod);
+            IndividuoFactory factory = new IndividuoHormigaFactory((SantaFeMap) this.mapa, initializationMethod);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -252,12 +255,27 @@ public class Main extends JFrame {
             Duration timeElapsed = Duration.between(start, end);
 
             Individuo bestIndividual = algorithm.getMejor();
+         
+            // Actualizar visualización del mapa
+            SantaFeMap santaFeMap = (SantaFeMap) this.mapa;
+            santaFeMap.reset();
+            mapPanelGraphics.setMansion(santaFeMap);
+            
+      
+            Hormiga hormiga = new Hormiga(santaFeMap);
+            List<Coord> path = ((IndividuoHormiga)bestIndividual).getRootNode()
+                               .walkAndReturnCoords(hormiga);
+            
+            // Limitar a 400 pasos y mostrar
+            if(path.size() > 400) {
+                path = path.subList(0, 400);
+            }
+            mapPanelGraphics.setRouteCells(path);
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
-            sb.append("Fitness = ").append(bestIndividual.getFitness()).append("\n");
-            //sb.append("Ruta: ").append(bestIndividual.getSolutionString()).append("\n");
-            sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000. + " segundos").append("\n");
-            //sb.append("------------------------------------------------------------------\n");
+            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/89\n");
+            sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
             resultsArea.setText(sb.toString());
 
             // Actualizamos el mapa gráfico con la ruta calculada

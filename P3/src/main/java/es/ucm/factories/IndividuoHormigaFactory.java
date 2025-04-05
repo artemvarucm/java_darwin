@@ -3,7 +3,7 @@ package es.ucm.factories;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
 import es.ucm.initializer.AbstractInitializer;
-import es.ucm.mapa.AbstractFoodMap;
+import es.ucm.mapa.SantaFeMap;
 
 
 /**
@@ -13,12 +13,12 @@ import es.ucm.mapa.AbstractFoodMap;
  */
 public class IndividuoHormigaFactory extends IndividuoFactory {
     private AbstractInitializer initializer;
-    public IndividuoHormigaFactory(AbstractFoodMap map, AbstractInitializer initializer) {
+    public IndividuoHormigaFactory(SantaFeMap map, AbstractInitializer initializer) {
         super(map);
         this.initializer = initializer;
     }
 
     public Individuo createOne() {
-        return new IndividuoHormiga(this.map, initializer);
+        return new IndividuoHormiga((SantaFeMap) this.map, initializer);
     }
 }

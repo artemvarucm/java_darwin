@@ -31,6 +31,11 @@ public class Prog2Node extends AbstractNode {
         this.copyToClone(clon);
         return clon;
     }
+    
+    @Override
+    public int getTreeSize() {
+        return 1 + childNodes.get(0).getTreeSize() + childNodes.get(1).getTreeSize();
+    }
 
     @Override
     public String getNodeName() {

@@ -26,6 +26,19 @@ public abstract class AbstractNode {
     public AbstractNode getChildNode(int i) {
         return this.childNodes.get(i);
     }
+    
+    /**
+     * Devuelve el tamaño total del árbol (número de nodos)
+     */
+    public int getTreeSize() {
+        int size = 1; // contamos este nodo
+        for (AbstractNode child : childNodes) {
+            if (child != null) {
+                size += child.getTreeSize();
+            }
+        }
+        return size;
+    }
 
     /**
      * Mueve la hormiga (incluyendo cambios de direccion)

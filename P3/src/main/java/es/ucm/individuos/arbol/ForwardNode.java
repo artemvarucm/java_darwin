@@ -8,7 +8,7 @@ import java.util.List;
 public class ForwardNode extends AbstractNode {
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
-        Coord coordCurrent = hormiga.getCoord();
+        Coord coordCurrent = hormiga.getPosition();
         int col = coordCurrent.getCol();
         int row = coordCurrent.getRow();
 
@@ -22,8 +22,8 @@ public class ForwardNode extends AbstractNode {
             col = col - 1;
         }
 
-        hormiga.getCoord().setRow(row);
-        hormiga.getCoord().setCol(col);
+        hormiga.getPosition().setRow(row);
+        hormiga.getPosition().setCol(col);
         return List.of(new Coord(row, col));
     }
 
@@ -31,6 +31,11 @@ public class ForwardNode extends AbstractNode {
         AbstractNode clon = new ForwardNode();
         this.copyToClone(clon);
         return clon;
+    }
+    
+    @Override
+    public int getTreeSize() {
+        return 1; // Solo este nodo
     }
 
     @Override

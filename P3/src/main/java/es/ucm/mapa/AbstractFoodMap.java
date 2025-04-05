@@ -12,8 +12,9 @@ import static java.util.Objects.isNull;
  * A partir de ella se pueden crear mapas con diferente distribución de habitaciones y obstáculos
  */
 public abstract class AbstractFoodMap {
-    private int nRows, nCols; // shape del mapa
-    private boolean[][] foodGrid;
+    protected int nRows; // shape del mapa
+	protected int nCols;
+    protected boolean[][] foodGrid;
     public AbstractFoodMap(int nRows, int nCols) {
         this.nRows = nRows;
         this.nCols = nCols;

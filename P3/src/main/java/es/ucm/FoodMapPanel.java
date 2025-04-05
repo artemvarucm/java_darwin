@@ -2,66 +2,83 @@ package es.ucm;
 
 import es.ucm.individuos.arbol.Coord;
 import es.ucm.mapa.AbstractFoodMap;
+import es.ucm.mapa.SantaFeMap;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import static java.util.Objects.isNull;
-
 public class FoodMapPanel extends JPanel {
-    private AbstractFoodMap mapa;
+    private AbstractFoodMap map;
     private List<Coord> routeCells;
+    private List<Coord> foodCells;
 
-    public FoodMapPanel(AbstractFoodMap mapa) {
-        this.mapa = mapa;
+    public FoodMapPanel(AbstractFoodMap map) {
+        this.map = map;
+        updateFoodCells();
     }
-    
-    // Permite actualizar la ruta para redibujar el panel
+
+    public void setMansion(AbstractFoodMap map) {
+        this.map = map;
+        updateFoodCells();
+        repaint();
+    }
+
     public void setRouteCells(List<Coord> routeCells) {
         this.routeCells = routeCells;
         repaint();
     }
 
-    public void setMansion(AbstractFoodMap mapa) {
-        this.mapa = mapa;
+    private void updateFoodCells() {
+        if(map instanceof SantaFeMap) {
+            this.foodCells = ((SantaFeMap)map).getFoodCoords();
+        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Habilitar anti-aliasing para mejores gráficos
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                             RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int nRows = mapa.getNRows();
-        int nCols = mapa.getNCols();
-        int cellWidth = getWidth() / nCols;
-        int cellHeight = getHeight() / nRows;
+        int cellWidth = getWidth() / map.getNCols();
+        int cellHeight = getHeight() / map.getNRows();
 
-        // pintamos el fondo de blanco
+        // Dibujar fondo
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        // pintamos la ruta
-        if (!isNull(routeCells)) {
-            g2d.setColor(Color.YELLOW);
-            for (Coord coord: routeCells) {
-                // X son las columnas, Y son las filas
-                g2d.fillRect(coord.getCol() * cellWidth, coord.getRow() * cellHeight, cellWidth, cellHeight);
+        // Dibujar comida (verde)
+        if(foodCells != null) {
+            g2d.setColor(new Color(0, 180, 0));
+            for(Coord coord : foodCells) {
+                g2d.fillRect(coord.getCol() * cellWidth, coord.getRow() * cellHeight, 
+                             cellWidth, cellHeight);
             }
         }
 
-        for (int i = 0; i < nRows; i++) {
-            for (int j = 0; j < nCols; j++) {
-                int x = j * cellWidth; // X son las columnas, Y son las filas
-                int y = i * cellHeight;
-
-                // Dibujar el borde de la celda
-                g2d.setColor(Color.BLACK);
-                g2d.drawRect(x, y, cellWidth, cellHeight);
+        // Dibujar ruta (amarillo transparente)
+        if(routeCells != null && !routeCells.isEmpty()) {
+            g2d.setColor(new Color(255, 255, 0, 150));
+            for(Coord coord : routeCells) {
+                g2d.fillRect(coord.getCol() * cellWidth, coord.getRow() * cellHeight, 
+                             cellWidth, cellHeight);
             }
+
+            // Dibujar posición final (rojo)
+            Coord last = routeCells.get(routeCells.size()-1);
+            g2d.setColor(Color.RED);
+            g2d.fillRect(last.getCol() * cellWidth, last.getRow() * cellHeight, 
+                         cellWidth, cellHeight);
+        }
+
+        // Dibujar grid
+        g2d.setColor(Color.LIGHT_GRAY);
+        for(int i = 0; i <= map.getNRows(); i++) {
+            g2d.drawLine(0, i * cellHeight, getWidth(), i * cellHeight);
+        }
+        for(int j = 0; j <= map.getNCols(); j++) {
+            g2d.drawLine(j * cellWidth, 0, j * cellWidth, getHeight());
         }
     }
 }
