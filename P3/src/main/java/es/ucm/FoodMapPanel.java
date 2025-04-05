@@ -30,9 +30,7 @@ public class FoodMapPanel extends JPanel {
     }
 
     private void updateFoodCells() {
-        if(map instanceof SantaFeMap) {
-            this.foodCells = ((SantaFeMap)map).getFoodCoords();
-        }
+        this.foodCells = map.getFoodCoords();
     }
 
     @Override

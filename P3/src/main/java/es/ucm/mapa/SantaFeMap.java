@@ -7,12 +7,8 @@ import java.util.List;
 public class SantaFeMap extends AbstractFoodMap {
     private static final int N_ROWS = 32;
     private static final int N_COLS = 32;
-    private int initialFoodCount;
-    private List<Coord> foodCoords;  // Lista para mantener las coordenadas de comida
-    
     public SantaFeMap() {
         super(N_ROWS, N_COLS);
-        this.foodCoords = new ArrayList<>();
         initializeSantaFeTrail();
     }
     
@@ -27,48 +23,13 @@ public class SantaFeMap extends AbstractFoodMap {
             {26,16}, {25,16}, {24,16}, {21,16}, {19,16}, {18,16}, {17,16}, {16,17}, {15,20}, {14,20}, {11,20},
             {10,20}, {9,20}, {8,20}, {5,21}, {5,22}, {4,24}, {3,24}, {2,25}, {2,26}, {2,27}, {3,29}, {4,29},
             {6,29}, {9,29}, {12,29}, {14,28}, {14,27}, {14,26}, {15,23}, {18,24}, {19,27}, {22,26}, {23,23}
-            
+
         };
-        
+
         
         for(int[] coord : trailCoords) {
             Coord c = new Coord(coord[0], coord[1]);
             this.addFood(c);
-            this.foodCoords.add(c);  // Añadir a la lista de coordenadas
         }
-        this.initialFoodCount = trailCoords.length;
-    }
-    
-    // Método para obtener las coordenadas de la comida
-    public List<Coord> getFoodCoords() {
-        return new ArrayList<>(foodCoords);  // Devolver copia para evitar modificaciones externas
-    }
-    
-    public int getInitialFoodCount() { return initialFoodCount; }
-    
-    public int getCurrentFoodCount() { 
-        return foodCoords.size();  // Más eficiente que recorrer toda la matriz
-    }
-    
-    public void reset() {
-        this.foodGrid = new boolean[nRows][nCols];
-        this.foodCoords.clear();
-        initializeSantaFeTrail();
-    }
-    
-    public boolean hasFood(Coord coord) {
-        return foodGrid[coord.getRow()][coord.getCol()];
-    }
-    
-    public void removeFood(Coord coord) {
-        if(isValidPosition(coord) && foodGrid[coord.getRow()][coord.getCol()]) {
-            foodGrid[coord.getRow()][coord.getCol()] = false;
-            foodCoords.remove(coord);  // Eliminar de la lista de coordenadas
-        }
-    }
-    
-    public boolean isValidPosition(Coord coord) {
-        return coord.getRow() >= 0 && coord.getRow() < nRows &&
-               coord.getCol() >= 0 && coord.getCol() < nCols;
     }
 }

@@ -237,7 +237,7 @@ public class Main extends JFrame {
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
             AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
-            IndividuoFactory factory = new IndividuoHormigaFactory((SantaFeMap) this.mapa, initializationMethod);
+            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, initializationMethod);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -257,30 +257,26 @@ public class Main extends JFrame {
             Individuo bestIndividual = algorithm.getMejor();
          
             // Actualizar visualización del mapa
-            SantaFeMap santaFeMap = (SantaFeMap) this.mapa;
-            santaFeMap.reset();
-            mapPanelGraphics.setMansion(santaFeMap);
+            //SantaFeMap santaFeMap = (SantaFeMap) this.mapa;
+            //santaFeMap.reset();
+            //mapPanelGraphics.setMansion(this.mapa);
             
       
-            Hormiga hormiga = new Hormiga(santaFeMap);
-            List<Coord> path = ((IndividuoHormiga)bestIndividual).getRootNode()
-                               .walkAndReturnCoords(hormiga);
+            //Hormiga hormiga = new Hormiga(santaFeMap);
+            //List<Coord> path = ((IndividuoHormiga)bestIndividual).getRootNode()
+            //                   .walkAndReturnCoords(hormiga);
             
             // Limitar a 400 pasos y mostrar
-            if(path.size() > 400) {
-                path = path.subList(0, 400);
-            }
-            mapPanelGraphics.setRouteCells(path);
+            //if(path.size() > 400) {
+            //    path = path.subList(0, 400);
+            //}
+            //mapPanelGraphics.setRouteCells(path);
             
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
             sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/89\n");
             sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
             resultsArea.setText(sb.toString());
-
-            // Actualizamos el mapa gráfico con la ruta calculada
-            //List<Number> roomOrder = bestIndividual.getFenotipos();
-            //mapPanelGraphics.setRouteCells(mapa.calculatePath(roomOrder));
 
             // Graficar evolución del algoritmo
             plotAlgorithmResults(algorithm, generations);

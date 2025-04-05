@@ -26,7 +26,7 @@ public class Hormiga {
     
     public AbstractFoodMap getMap() { return map; }
     
-    public Coord getNextPosition() {
+    public void moveForward() {
         int row = position.getRow();
         int col = position.getCol();
         
@@ -37,6 +37,7 @@ public class Hormiga {
             case WEST: col = (col - 1 + map.getNCols()) % map.getNCols(); break;
         }
         
-        return new Coord(row, col);
+        position.setRow(row);
+        position.setCol(col);
     }
 }

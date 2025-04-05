@@ -36,11 +36,6 @@ public class IfFoodNode extends AbstractNode {
     }
     
     @Override
-    public int getTreeSize() {
-        return 1 + childNodes.get(0).getTreeSize() + childNodes.get(1).getTreeSize();
-    }
-
-    @Override
     public String getNodeName() {
         return "IF_FOOD";
     }
