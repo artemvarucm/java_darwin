@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Acepta 2 nodos (terminales o no)
- * Si hay comida en la posicion actual expande el primero,
+ * Si hay comida en la posicion de delante expande el primero,
  * en caso constrario - el segundo
  */
 public class IfFoodNode extends AbstractNode {
@@ -18,10 +18,12 @@ public class IfFoodNode extends AbstractNode {
     }
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
-        List<Coord> path = new LinkedList<>();
-        boolean food = true;
+        if (hormiga.shouldStop()) {
+            return new LinkedList<>();
+        }
 
-        if (food)
+        List<Coord> path = new LinkedList<>();
+        if (hormiga.hasFoodInFront())
             path.addAll(this.childNodes.get(0).walkAndReturnCoords(hormiga));
         else
             path.addAll(this.childNodes.get(1).walkAndReturnCoords(hormiga));

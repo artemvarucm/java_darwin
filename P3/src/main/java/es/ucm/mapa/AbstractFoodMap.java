@@ -24,15 +24,19 @@ public abstract class AbstractFoodMap {
     }
 
     public void addFood(Coord coord) {
-        if (!foodGrid[coord.getRow()][coord.getCol()]) {
-            foodGrid[coord.getRow()][coord.getCol()] = true;
-            foodCoords.add(coord);
-        } else {
-            throw new RuntimeException("YA EXISTE COMIDA EN ESA POSICIÓN (" + coord.getRow() + ", " + coord.getCol() + ")");
-        }
+        foodCoords.add(coord);
     }
 
-    public int getCurrentFoodCount() {
+    public void fillFoodGrid() {
+        // crea el tablero con 0's
+        this.foodGrid = new boolean[nRows][nCols];
+
+        // rellena casillas con comida
+        for (Coord food: foodCoords)
+            foodGrid[food.getRow()][food.getCol()] = true;
+    }
+
+    public int getAllFoodCount() {
         return foodCoords.size();
     }
 
@@ -42,6 +46,13 @@ public abstract class AbstractFoodMap {
 
     public boolean hasFood(Coord coord) {
         return foodGrid[coord.getRow()][coord.getCol()];
+    }
+
+    public void eatFood(Coord coord) {
+        if (hasFood(coord))
+            foodGrid[coord.getRow()][coord.getCol()] = false;
+        else
+            throw new RuntimeException("NO HAY COMIDA EN (" + coord.getRow() + ", " + coord.getCol() + ")");
     }
 
     public int getNRows() {

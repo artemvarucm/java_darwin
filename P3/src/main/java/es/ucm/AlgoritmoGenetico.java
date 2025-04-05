@@ -90,9 +90,8 @@ public class AlgoritmoGenetico {
         // Evolución del algoritmo
         for (int generacion = 0; generacion < maxGeneraciones; generacion++) {
             System.out.printf("GENERACION: %d%n", generacion);
-            
-            // Aplicar control de bloating
-            this.applyBloatingControl();
+            // Aplicar control de bloating fixme
+            //this.applyBloatingControl();
 
             // guardamos la élite
             this.saveElite();

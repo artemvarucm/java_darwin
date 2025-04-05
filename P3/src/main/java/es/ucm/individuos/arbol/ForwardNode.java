@@ -1,15 +1,22 @@
 package es.ucm.individuos.arbol;
 
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ForwardNode extends AbstractNode {
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
+        if (hormiga.shouldStop()) {
+            return new LinkedList<>();
+        }
+
         // Avanzamos (respetamos limites del mapa)
-        hormiga.moveForward();
+        Coord newCoord = hormiga.getFrontPosition();
+        hormiga.setPosition(newCoord);
+
         // Añadimos la nueva coordenada a la lista
-        Coord newCoord = hormiga.getPosition();
+        hormiga.step();
         return List.of(new Coord(newCoord.getRow(), newCoord.getCol()));
     }
 

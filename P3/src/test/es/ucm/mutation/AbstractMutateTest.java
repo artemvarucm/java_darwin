@@ -14,7 +14,7 @@ public abstract class AbstractMutateTest {
     }
 
     private void oneMutate(AbstractMutate mutator) {
-        Individuo ind1 = new IndividuoHormiga(new SantaFeMap(), new FULLInitializer(4));
+        Individuo ind1 = new IndividuoHormiga(new SantaFeMap(), 400, new FULLInitializer(4));
         System.out.println("GENOTIPO INICIAL");
         ind1.printGenotipo();
         Individuo indMutado = mutator.mutate(ind1);

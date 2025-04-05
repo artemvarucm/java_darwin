@@ -233,11 +233,12 @@ public class Main extends JFrame {
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
             int maxDepth = Integer.parseInt(maxTreeDepthField.getText());
+            int stepsLimit = Integer.parseInt(stepsLimitField.getText());
 
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
             AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
-            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, initializationMethod);
+            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, stepsLimit, initializationMethod);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -274,7 +275,7 @@ public class Main extends JFrame {
             
             StringBuilder sb = new StringBuilder();
             sb.append("Mejor ruta encontrada:\n");
-            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/89\n");
+            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/" + mapa.getAllFoodCount() + "\n");
             sb.append("Tiempo: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
             resultsArea.setText(sb.toString());
 

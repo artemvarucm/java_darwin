@@ -13,12 +13,14 @@ import es.ucm.mapa.AbstractFoodMap;
  */
 public class IndividuoHormigaFactory extends IndividuoFactory {
     private AbstractInitializer initializer;
-    public IndividuoHormigaFactory(AbstractFoodMap map, AbstractInitializer initializer) {
+    private Integer stepsLimit;
+    public IndividuoHormigaFactory(AbstractFoodMap map, Integer stepsLimit, AbstractInitializer initializer) {
         super(map);
         this.initializer = initializer;
+        this.stepsLimit = stepsLimit;
     }
 
     public Individuo createOne() {
-        return new IndividuoHormiga(this.map, initializer);
+        return new IndividuoHormiga(this.map, stepsLimit, initializer);
     }
 }

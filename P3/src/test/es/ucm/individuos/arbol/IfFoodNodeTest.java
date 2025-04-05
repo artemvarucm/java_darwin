@@ -9,6 +9,6 @@ public class IfFoodNodeTest extends AbstractNodeTest {
         AbstractNode node1 = new LeftNode();
         AbstractNode node2 = new ForwardNode();
 
-        this.checkCorrectPath(new IfFoodNode(node1, node2), new Coord(1, 1), DirectionEnum.EAST, new Coord(1, 1), DirectionEnum.NORTH);
+        this.checkCorrectPath(new IfFoodNode(node1, node2), new Coord(1, 1), DirectionEnum.EAST, new Coord(1, 2), DirectionEnum.EAST);
     }
 }

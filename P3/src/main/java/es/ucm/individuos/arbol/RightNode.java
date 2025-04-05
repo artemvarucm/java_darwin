@@ -11,6 +11,9 @@ import java.util.List;
 public class RightNode extends AbstractNode {
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
+        if (hormiga.shouldStop()) {
+            return new LinkedList<>();
+        }
 
         if (hormiga.getDir().equals(DirectionEnum.NORTH)) {
             hormiga.setDir(DirectionEnum.EAST);
@@ -22,6 +25,7 @@ public class RightNode extends AbstractNode {
             hormiga.setDir(DirectionEnum.NORTH);
         }
 
+        hormiga.step();
         return new LinkedList<>(); // no se ha movido
     }
 

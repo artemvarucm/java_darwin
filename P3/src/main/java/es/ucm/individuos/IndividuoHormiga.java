@@ -14,21 +14,30 @@ import es.ucm.individuos.arbol.Coord;
 
 import static java.util.Objects.isNull;
 
+import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Maximizamos el número de trozos comidos
+ */
 public class IndividuoHormiga extends Individuo {
     protected AbstractFoodMap map;
     protected Double fitnessCache;
+    protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
 
-    public IndividuoHormiga(AbstractFoodMap map, AbstractInitializer initializer) {
-        this(map);
-        this.addTreeGen(initializer.initialize());
+    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit) {
+        this(map, stepsLimit, null);
     }
 
-    public IndividuoHormiga(AbstractFoodMap map) {
-        super(null, false);
+    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, AbstractInitializer initializer) {
+        super(null, true);
         this.map = map;
+        this.stepsLimit = stepsLimit;
+
+        if (!isNull(initializer)) {
+            this.addTreeGen(initializer.initialize());
+        }
     }
 
     @Override
@@ -36,19 +45,16 @@ public class IndividuoHormiga extends Individuo {
         if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
             return this.fitnessCache;
         }
-        /*
-        // Resetear el mapa y crear nueva hormiga
-        this.map.reset();
-        Hormiga hormiga = new Hormiga(this.map);
-        
+
         // Ejecutar el programa
-        List<Coord> path = this.getRootNode().walkAndReturnCoords(hormiga);
-        
-        // Limitar a 400 pasos
-        int steps = Math.min(path.size(), 400);
-        this.fitnessCache = (double) (map.getInitialFoodCount() - map.getCurrentFoodCount());
-         */
-        this.fitnessCache = 0.;
+        Hormiga hormiga = new Hormiga(this.map, stepsLimit);
+        List<Coord> path = new LinkedList<>();
+        while (!hormiga.shouldStop()) {
+            path.addAll(this.getRootNode().walkAndReturnCoords(hormiga));
+        }
+
+        this.fitnessCache = (double) (hormiga.getEatenFood());
+
         this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;
@@ -56,7 +62,7 @@ public class IndividuoHormiga extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new IndividuoHormiga(this.map);
+        Individuo clon = new IndividuoHormiga(this.map, this.stepsLimit);
         this.copyToClone(clon);
         return clon;
     }

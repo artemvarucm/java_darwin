@@ -17,6 +17,10 @@ public class Prog2Node extends AbstractNode {
     }
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
+        if (hormiga.shouldStop()) {
+            return new LinkedList<>();
+        }
+
         List<Coord> path = new LinkedList<>();
 
         path.addAll(this.childNodes.get(0).walkAndReturnCoords(hormiga));

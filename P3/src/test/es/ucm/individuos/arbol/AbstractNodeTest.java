@@ -86,7 +86,7 @@ public class AbstractNodeTest {
                                   Coord endCoord, DirectionEnum endDir) {
         // Crear hormiga con mapa mock (simplificado para pruebas)
         SantaFeMap map = new SantaFeMap();
-        Hormiga h = new Hormiga(map);
+        Hormiga h = new Hormiga(map, 400);
         h.setPosition(startCoord);
         h.setDir(startDir);
         
@@ -120,7 +120,7 @@ public class AbstractNodeTest {
             map.addFood(next);
         }
         
-        Hormiga h = new Hormiga(map);
+        Hormiga h = new Hormiga(map, 400);
         h.setPosition(startCoord);
         h.setDir(startDir);
         
