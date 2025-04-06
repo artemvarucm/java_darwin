@@ -23,12 +23,18 @@ public class Prog3Node extends AbstractNode {
 
         List<Coord> path = new LinkedList<>();
 
-        path.addAll(this.childNodes.get(0).walkAndReturnCoords(hormiga));
-
-        path.addAll(this.childNodes.get(1).walkAndReturnCoords(hormiga));
-
-        path.addAll(this.childNodes.get(2).walkAndReturnCoords(hormiga));
-
+        if (childNodes.get(0) != null) {
+            path.addAll(childNodes.get(0).walkAndReturnCoords(hormiga));
+        }
+        
+        if (childNodes.get(1) != null) {
+            path.addAll(childNodes.get(1).walkAndReturnCoords(hormiga));
+        }
+        
+        if (childNodes.get(2) != null) {
+            path.addAll(childNodes.get(2).walkAndReturnCoords(hormiga));
+        }
+        
         return path;
     }
 

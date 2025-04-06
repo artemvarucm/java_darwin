@@ -113,9 +113,14 @@ public abstract class AbstractNode {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(start);
         stringBuilder.append(getNodeName());
+        
         for (AbstractNode child: childNodes) {
             stringBuilder.append("\n");
-            stringBuilder.append(child.toStringStartWith(start + "\t"));
+            if (child != null) {
+                stringBuilder.append(child.toStringStartWith(start + "\t"));
+            } else {
+                stringBuilder.append(start + "\t").append("NULL");
+            }
         }
 
         return stringBuilder.toString();
