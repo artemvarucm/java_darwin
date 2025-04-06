@@ -94,31 +94,6 @@ public class Main extends JFrame {
         stepsLimitField = new JTextField("400");
         bloatingField = new JTextField("0");
 
-        maxTreeDepthField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                warn();
-            }
-            public void removeUpdate(DocumentEvent e) {
-                warn();
-            }
-            public void insertUpdate(DocumentEvent e) {
-                warn();
-            }
-
-            public void warn() {
-                if (!maxTreeDepthField.getText().isEmpty() &&
-                        Integer.parseInt(maxTreeDepthField.getText()) < 2){
-                    Runnable setDefault = new Runnable() {
-                        @Override
-                        public void run() {
-                            maxTreeDepthField.setText("2");
-                        }
-                    };
-                    SwingUtilities.invokeLater(setDefault);
-                }
-            }
-        });
-
         initMethodComboBox = new JComboBox<>(new String[]{
                 "Full",
                 "Grow",
@@ -247,6 +222,9 @@ public class Main extends JFrame {
             double crossoverRate = Double.parseDouble(crossoverRateField.getText());
             double elitismRate = Double.parseDouble(elitismRateField.getText());
             int maxDepth = Integer.parseInt(maxTreeDepthField.getText());
+            if (maxDepth < 2) {
+                throw new RuntimeException("MAX DEPTH should be greater than 1 (>= 2)");
+            }
             int stepsLimit = Integer.parseInt(stepsLimitField.getText());
 
             this.mapa = getSelectedMapa();
@@ -273,7 +251,7 @@ public class Main extends JFrame {
                     mapPanelGraphics.updateAntData(
                         bestAnt.getCurrentPosition(),
                         bestAnt.getCurrentDirection(),
-                        bestAnt.getFoodCollected(),
+                        (int) bestAnt.getOriginalFitness(),
                         bestAnt.getStepsTaken(),
                         bestAnt.getPathHistory()
                     );
@@ -293,7 +271,7 @@ public class Main extends JFrame {
             mapPanelGraphics.updateAntData(
                 bestIndividual.getCurrentPosition(),
                 bestIndividual.getCurrentDirection(),
-                bestIndividual.getFoodCollected(),
+                (int) bestIndividual.getOriginalFitness(),
                 bestIndividual.getStepsTaken(),
                 bestIndividual.getPathHistory()
             );
@@ -301,8 +279,9 @@ public class Main extends JFrame {
             // Mostrar resultados en el área de texto
             StringBuilder sb = new StringBuilder();
             sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
-            sb.append("Comida recolectada: ").append(bestIndividual.getFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
+            sb.append("Comida recolectada: ").append((int) bestIndividual.getOriginalFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
             sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+            sb.append("Fitness (incluye bloating): ").append(bestIndividual.getFitness()).append("\n");
             sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
             sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
             sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");

@@ -25,7 +25,7 @@ public class AlgoritmoGenetico {
     private int maxGeneraciones;
     private double probCruce;
     private int tamElite;
-    private double bloatingFactor;
+    private double bloatingFactor = 0;
 
     // Métodos de selección, cruce y mutación
     private AbstractSelection selectionMethod;
@@ -100,9 +100,6 @@ public class AlgoritmoGenetico {
         // Evolución del algoritmo
         for (int generacion = 0; generacion < maxGeneraciones; generacion++) {
             System.out.printf("GENERACION: %d%n", generacion);
-            // Aplicar control de bloating fixme
-            //this.applyBloatingControl();
-
             // guardamos la élite
             this.saveElite();
 
@@ -207,37 +204,6 @@ public class AlgoritmoGenetico {
             } else if (!individuo.getMaximizar() && fit < mejorFitness) {
                 mejor = individuo.copy();
                 mejorFitness = fit;
-            }
-        }
-    }
-    
-    public void setBloatingFactor(double factor) {
-        this.bloatingFactor = factor;
-    }
-    
-    private void applyBloatingControl() {
-        if(bloatingFactor <= 0) return;
-        
-        // Calcular tamaño promedio de los árboles
-        double avgSize = poblacion.stream()
-            .mapToInt(ind -> {
-                AbstractNode root = ((IndividuoHormiga)ind).getRootNode();
-                return root != null ? root.getTreeSize() : 0;
-            })
-            .average()
-            .orElse(0);
-            
-        // Aplicar penalización a individuos demasiado grandes
-        for(Individuo ind : poblacion) {
-            IndividuoHormiga ih = (IndividuoHormiga)ind;
-            AbstractNode root = ih.getRootNode();
-            if(root == null) continue;
-            
-            int size = root.getTreeSize();
-            if(size > avgSize * (1 + bloatingFactor)) {
-                double penaltyFactor = 1 - ((size - avgSize) / (double)size);
-                double newFitness = ih.getFitness() * penaltyFactor;
-                ih.setFitness(newFitness);
             }
         }
     }

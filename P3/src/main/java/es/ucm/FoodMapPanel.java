@@ -182,8 +182,8 @@ public class FoodMapPanel extends JPanel {
         // Texto de estado
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
-        String status = String.format("Comida recolectada: %d/90",
-                                    foodCollected);
+        String status = String.format("Comida recolectada: %d/%d",
+                                    foodCollected, mapa.getAllFoodCount());
         g2d.drawString(status, x + 10, y + 20);      
         
     } 

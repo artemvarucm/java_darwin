@@ -24,6 +24,7 @@ public class IndividuoHormiga extends Individuo {
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
+    protected double bloatingFactor = -0.1; // se actualiza en cada generación
 
     public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit) {
         this(map, stepsLimit, null);
@@ -44,17 +45,15 @@ public class IndividuoHormiga extends Individuo {
     private transient Coord lastPosition;
     private transient DirectionEnum lastDirection;
 
-    @Override
-    public double getFitness() {
+    public double getOriginalFitness() {
         if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
             return this.fitnessCache;
         }
 
-        
         Hormiga hormiga = new Hormiga(this.map, stepsLimit);
         lastPath = new LinkedList<>();
         lastPath.add(hormiga.getPosition()); // Posición inicial
-        
+
         while (!hormiga.shouldStop()) {
             List<Coord> newPositions = this.getRootNode().walkAndReturnCoords(hormiga);
             lastPath.addAll(newPositions);
@@ -64,11 +63,22 @@ public class IndividuoHormiga extends Individuo {
         this.lastSteps = hormiga.getSteps();
         this.lastPosition = hormiga.getPosition();
         this.lastDirection = hormiga.getDir();
-        
+
         this.fitnessCache = (double) hormiga.getEatenFood();
+
         this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;
+    }
+
+    @Override
+    public double getFitness() {
+        double fitness = getOriginalFitness();
+        if (bloatingFactor != 0) {
+            fitness += bloatingFactor * this.getRootNode().getTreeSize();
+        }
+
+        return fitness;
     }
 
     // Métodos para la visualización
@@ -87,11 +97,6 @@ public class IndividuoHormiga extends Individuo {
         return new LinkedList<>(lastPath);
     }
 
-    public int getFoodCollected() {
-        if (lastPath == null) getFitness();
-        return (int) getFitness(); // Usamos el fitness que ya es la comida recolectada
-    }
-
     public int getStepsTaken() {
         if (lastPath == null) getFitness();
         return lastSteps;
@@ -102,15 +107,6 @@ public class IndividuoHormiga extends Individuo {
         Individuo clon = new IndividuoHormiga(this.map, this.stepsLimit);
         this.copyToClone(clon);
         return clon;
-    }
-    
-    /**
-     * Establece el valor de fitness (usado para el control de bloating)
-     */
-    public void setFitness(double fitness) {
-        this.fitnessCache = fitness;
-        // Invalida la caché del genotipo para forzar recálculo
-        this.genotipoStrCache = null; 
     }
     
     public int getTreeDepth() {
