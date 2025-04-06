@@ -2,17 +2,10 @@ package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
-import es.ucm.individuos.arbol.IfFoodNode;
-import es.ucm.individuos.arbol.Prog2Node;
-import es.ucm.individuos.arbol.Prog3Node;
-
+import es.ucm.individuos.arbol.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Reemplaza un nodo funcional por otro del mismo aridad
- */
 public class FunctionalMutate extends AbstractMutate {
     public FunctionalMutate(double mutateProbability) {
         super(mutateProbability);
@@ -23,23 +16,57 @@ public class FunctionalMutate extends AbstractMutate {
         IndividuoHormiga indMutado = (IndividuoHormiga) ind.copy();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
-            List<AbstractNode> funcNodes = indMutado.getRootNode().getAllFunctionalNodes();
-            if(!funcNodes.isEmpty()) {
+            AbstractNode root = indMutado.getRootNode();
+            List<AbstractNode> funcNodes = root.getAllFunctionalNodes();
+            
+            if (!funcNodes.isEmpty()) {
                 int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());
                 AbstractNode toReplace = funcNodes.get(selected);
+                AbstractNode newNode = selectRandomFunction(toReplace.getChildrenSize());
                 
-                AbstractNode replacement;
-                if(toReplace.getChildrenSize() == 2) {
-                    replacement = new Prog2Node();
-                } else if(toReplace.getChildrenSize() == 3) {
-                    replacement = new Prog3Node();
-                } else {
-                    replacement = new IfFoodNode();
+                // Copiar los hijos del nodo original al nuevo
+                for (int i = 0; i < toReplace.getChildrenSize(); i++) {
+                    newNode.setChildNode(i, toReplace.getChildNode(i).clone());
                 }
                 
-                replacement.copyToClone(toReplace);
+                // Reemplazar en el padre
+                if (toReplace != root) {
+                    AbstractNode parent = findParent(root, toReplace);
+                    int childIndex = getChildIndex(parent, toReplace);
+                    parent.setChildNode(childIndex, newNode);
+                } else {
+                    indMutado.getRootNode().getChildNodes().clear();
+                    indMutado.getRootNode().getChildNodes().addAll(newNode.getChildNodes());
+                }
             }
         }
         return indMutado;
+    }
+
+    private AbstractNode selectRandomFunction(int requiredArgs) {
+        List<AbstractNode> candidates = List.of(
+            new Prog2Node(),
+            new Prog3Node(),
+            new IfFoodNode()
+        ).stream()
+         .filter(n -> n.getChildrenSize() == requiredArgs)
+         .toList();
+         
+        return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size())).clone();
+    }
+
+    private AbstractNode findParent(AbstractNode root, AbstractNode child) {
+        if (root.getChildNodes().contains(child)) return root;
+        for (AbstractNode node : root.getChildNodes()) {
+            if (!node.isTerminal()) {
+                AbstractNode found = findParent(node, child);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    private int getChildIndex(AbstractNode parent, AbstractNode child) {
+        return parent.getChildNodes().indexOf(child);
     }
 }

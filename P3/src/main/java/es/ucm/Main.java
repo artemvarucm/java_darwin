@@ -8,6 +8,7 @@ import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.initializer.GrowInitializer;
+import es.ucm.initializer.RampedHalfInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.mapa.SantaFeMap;
 import es.ucm.mutation.*;
@@ -343,6 +344,8 @@ public class Main extends JFrame {
                 return new FULLInitializer(maxDepth);
             case 1:
                 return new GrowInitializer(maxDepth);
+            case 2:
+                return new RampedHalfInitializer(maxDepth);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
@@ -394,6 +397,17 @@ public class Main extends JFrame {
         switch (mutationType) {
             case 0:
                 return new TerminalMutate(mutationRate);
+            case 1: 
+            	return new FunctionalMutate(mutationRate);
+            case 2: 
+            	return new TreeMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+            case 3: 
+            	return new PermutationMutate(mutationRate);
+            case 4: 
+            	return new HoistMutate(mutationRate);
+            //case 5: return new ExpansionMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+            case 5: 
+            	return new ContractionMutate(mutationRate);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }

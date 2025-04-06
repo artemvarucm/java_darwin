@@ -3,17 +3,13 @@ package es.ucm.mutation;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
 import es.ucm.individuos.arbol.*;
-import es.ucm.initializer.GrowInitializer;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class TreeMutate extends AbstractMutate {
-    private final int maxDepth;
-    
-    public TreeMutate(double mutateProbability, int maxDepth) {
+public class ContractionMutate extends AbstractMutate {
+    public ContractionMutate(double mutateProbability) {
         super(mutateProbability);
-        this.maxDepth = maxDepth;
     }
 
     @Override
@@ -22,21 +18,21 @@ public class TreeMutate extends AbstractMutate {
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
-            List<AbstractNode> allNodes = root.getAllFunctionalNodes();
-            allNodes.add(root);
+            List<AbstractNode> funcNodes = root.getAllFunctionalNodes();
             
-            if (!allNodes.isEmpty()) {
-                int selected = ThreadLocalRandom.current().nextInt(0, allNodes.size());
-                AbstractNode toReplace = allNodes.get(selected);
-                AbstractNode newSubtree = new GrowInitializer(maxDepth).initialize();
+            if (!funcNodes.isEmpty()) {
+                int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());
+                AbstractNode toContract = funcNodes.get(selected);
                 
-                if (toReplace != root) {
-                    AbstractNode parent = findParent(root, toReplace);
-                    int childIndex = getChildIndex(parent, toReplace);
-                    parent.setChildNode(childIndex, newSubtree);
-                } else {
-                    indMutado.getRootNode().getChildNodes().clear();
-                    indMutado.getRootNode().getChildNodes().addAll(newSubtree.getChildNodes());
+                if (!toContract.getChildNodes().isEmpty()) {
+                    int childSelected = ThreadLocalRandom.current().nextInt(0, toContract.getChildrenSize());
+                    AbstractNode child = toContract.getChildNode(childSelected);
+                    
+                    if (toContract != root) {
+                        AbstractNode parent = findParent(root, toContract);
+                        int parentIndex = getChildIndex(parent, toContract);
+                        parent.setChildNode(parentIndex, child.clone());
+                    }
                 }
             }
         }

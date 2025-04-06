@@ -26,6 +26,22 @@ public abstract class AbstractNode {
     public AbstractNode getChildNode(int i) {
         return this.childNodes.get(i);
     }
+    
+    public List<AbstractNode> getAllTerminalNodes() {
+        List<AbstractNode> terminals = new ArrayList<>();
+        if (isTerminal()) {
+            terminals.add(this);
+        } else {
+            for (AbstractNode child : childNodes) {
+                terminals.addAll(child.getAllTerminalNodes());
+            }
+        }
+        return terminals;
+    }
+
+    public List<AbstractNode> getChildNodes() {
+        return new ArrayList<>(childNodes);
+    }
 
     /**
      * Devuelve la profundidad total del árbol (número de nodos)

@@ -1,0 +1,61 @@
+package es.ucm.mutation;
+
+import es.ucm.individuos.Individuo;
+import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.arbol.*;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class HoistMutate extends AbstractMutate {
+    public HoistMutate(double mutateProbability) {
+        super(mutateProbability);
+    }
+
+    @Override
+    public Individuo mutate(Individuo ind) {
+        IndividuoHormiga indMutado = (IndividuoHormiga) ind.copy();
+        double p = ThreadLocalRandom.current().nextDouble();
+        if (p < mutateProbability) {
+            AbstractNode root = indMutado.getRootNode();
+            List<AbstractNode> funcNodes = root.getAllFunctionalNodes();
+            
+            if (!funcNodes.isEmpty()) {
+                // Seleccionar un nodo funcional aleatorio (que no sea la raíz)
+                AbstractNode selected = funcNodes.get(
+                    ThreadLocalRandom.current().nextInt(funcNodes.size())
+                );
+                
+                // Seleccionar un subárbol funcional dentro del nodo seleccionado
+                List<AbstractNode> subFuncNodes = selected.getAllFunctionalNodes();
+                if (!subFuncNodes.isEmpty()) {
+                    AbstractNode subTree = subFuncNodes.get(
+                        ThreadLocalRandom.current().nextInt(subFuncNodes.size())
+                    );
+                    
+                    // Reemplazar el nodo seleccionado con el subárbol
+                    if (selected != root) {
+                        AbstractNode parent = findParent(root, selected);
+                        int childIndex = getChildIndex(parent, selected);
+                        parent.setChildNode(childIndex, subTree.clone());
+                    }
+                }
+            }
+        }
+        return indMutado;
+    }
+    
+    private AbstractNode findParent(AbstractNode root, AbstractNode child) {
+        if (root.getChildNodes().contains(child)) return root;
+        for (AbstractNode node : root.getChildNodes()) {
+            if (!node.isTerminal()) {
+                AbstractNode found = findParent(node, child);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    private int getChildIndex(AbstractNode parent, AbstractNode child) {
+        return parent.getChildNodes().indexOf(child);
+    }
+}
