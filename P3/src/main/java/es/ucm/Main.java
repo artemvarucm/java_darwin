@@ -345,7 +345,7 @@ public class Main extends JFrame {
             case 1:
                 return new GrowInitializer(maxDepth);
             case 2:
-                return new RampedHalfInitializer(maxDepth);
+            	return new RampedHalfInitializer(maxDepth, maxDepth, false);
             default:
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
