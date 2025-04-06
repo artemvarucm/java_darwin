@@ -3,11 +3,7 @@ package es.ucm.individuos;
 import es.ucm.genes.TreeGen;
 import es.ucm.individuos.arbol.AbstractNode;
 import es.ucm.individuos.arbol.Hormiga;
-import es.ucm.individuos.arbol.ForwardNode;
-import es.ucm.individuos.arbol.LeftNode;
-import es.ucm.initializer.AbstractInitializer;
 import es.ucm.mapa.AbstractFoodMap;
-import es.ucm.mapa.SantaFeMap;
 import es.ucm.individuos.arbol.Coord;
 import es.ucm.individuos.arbol.DirectionEnum;
 
@@ -30,13 +26,13 @@ public class IndividuoHormiga extends Individuo {
         this(map, stepsLimit, null);
     }
 
-    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, AbstractInitializer initializer) {
+    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, AbstractNode node) {
         super(null, true);
         this.map = map;
         this.stepsLimit = stepsLimit;
 
-        if (!isNull(initializer)) {
-            this.addTreeGen(initializer.initialize());
+        if (!isNull(node)) {
+            this.addTreeGen(node);
         }
     }
 

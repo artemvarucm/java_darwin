@@ -15,7 +15,10 @@ public abstract class AbstractInitializer {
         this.terminals = List.of(new LeftNode(), new RightNode(), new ForwardNode());
     }
 
-    public abstract AbstractNode initialize();
+    public AbstractNode initialize() {
+        return initializeN(1).get(0);
+    }
+    public abstract List<AbstractNode> initializeN(int N);
 
     public int getMaxDepth() {
         return this.maxDepth;

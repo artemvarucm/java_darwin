@@ -2,15 +2,24 @@ package es.ucm.initializer;
 
 import es.ucm.individuos.arbol.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FULLInitializer extends AbstractInitializer{
     public FULLInitializer(int maxDepth) {
         super(maxDepth);
     }
 
-    public AbstractNode initialize() {
-        return initializeRecursive(1);
+    public List<AbstractNode> initializeN(int N) {
+        List<AbstractNode> result = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            result.add(initializeRecursive(1));
+        }
+
+        return result;
     }
+
     private AbstractNode initializeRecursive(int depth) {
         if (depth < maxDepth) {
             AbstractNode func = selectRandomFunction();

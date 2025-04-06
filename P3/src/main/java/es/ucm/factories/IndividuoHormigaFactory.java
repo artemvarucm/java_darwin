@@ -25,30 +25,20 @@ public class IndividuoHormigaFactory extends IndividuoFactory {
     }
 
     public Individuo createOne() {
-        return new IndividuoHormiga(this.map, stepsLimit, initializer);
+        AbstractNode node = initializer.initialize();
+
+        return new IndividuoHormiga(this.map, this.stepsLimit, node);
     }
     
     @Override
     public List<Individuo> createMany(int tamPoblacion) {
         List<Individuo> individuos = new ArrayList<>(tamPoblacion);
-        
-        if (initializer instanceof RampedHalfInitializer) {
-            // Usar el método especial para Ramped Half-and-Half
-            List<AbstractNode> arboles = RampedHalfInitializer.createInitialPopulation(
-                tamPoblacion, initializer.getMaxDepth());
-            
-            for (AbstractNode arbol : arboles) {
-                IndividuoHormiga individuo = new IndividuoHormiga(this.map, this.stepsLimit);
-                individuo.addTreeGen(arbol);
-                individuos.add(individuo);
-            }
-        } else {
-            // Método normal para otros inicializadores
-            for (int i = 0; i < tamPoblacion; i++) {
-                individuos.add(createOne());
-            }
+
+        for (AbstractNode node : initializer.initializeN(tamPoblacion)) {
+            IndividuoHormiga individuo = new IndividuoHormiga(this.map, this.stepsLimit, node);
+            individuos.add(individuo);
         }
-        
+
         return individuos;
     }
 }

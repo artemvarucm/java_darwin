@@ -1,5 +1,7 @@
 package es.ucm.initializer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import es.ucm.individuos.arbol.AbstractNode;
@@ -10,10 +12,15 @@ public class GrowInitializer extends AbstractInitializer {
         super(maxDepth);
     }
 
-    public AbstractNode initialize() {
-        return initializeRecursive(1);
+    public List<AbstractNode> initializeN(int N) {
+        List<AbstractNode> result = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            result.add(initializeRecursive(1));
+        }
+
+        return result;
     }
-    
+
     private AbstractNode initializeRecursive(int depth) {
         if (
                 depth > (MIN_DEPTH - 1) && // el nodo raiz no puede ser terminal
