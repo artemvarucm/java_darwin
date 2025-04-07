@@ -11,7 +11,7 @@ import org.junit.Test;
 public class IndividuoHormigaFactoryTest {
     @Test
     public void test1() {
-        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, new FULLInitializer(2));
+        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, 0., new FULLInitializer(2));
         for (Individuo ind: facktory.createMany(10)) {
             System.out.println(((IndividuoHormiga) ind).getRootNode().toString());
         }
@@ -19,7 +19,7 @@ public class IndividuoHormigaFactoryTest {
 
     @Test
     public void test2() {
-        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, new FULLInitializer(5));
+        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, 0., new FULLInitializer(5));
         for (Individuo ind: facktory.createMany(10)) {
             System.out.println(((IndividuoHormiga) ind).getRootNode().toString());
         }
@@ -27,7 +27,7 @@ public class IndividuoHormigaFactoryTest {
 
     @Test
     public void test3() {
-        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, new GrowInitializer(5));
+        IndividuoHormigaFactory facktory = new IndividuoHormigaFactory(new SantaFeMap(), 400, 0., new GrowInitializer(5));
         for (Individuo ind: facktory.createMany(10)) {
             System.out.println(((IndividuoHormiga) ind).getRootNode().toString());
         }

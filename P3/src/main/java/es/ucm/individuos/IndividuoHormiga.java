@@ -20,16 +20,16 @@ public class IndividuoHormiga extends Individuo {
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
-    protected double bloatingFactor = -0.1; // se actualiza en cada generación
-
-    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit) {
-        this(map, stepsLimit, null);
+    protected double bloatingFactor;
+    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor) {
+        this(map, stepsLimit, bloatingFactor, null);
     }
 
-    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, AbstractNode node) {
+    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor, AbstractNode node) {
         super(null, true);
         this.map = map;
         this.stepsLimit = stepsLimit;
+        this.bloatingFactor = bloatingFactor;
 
         if (!isNull(node)) {
             this.addTreeGen(node);
@@ -71,7 +71,8 @@ public class IndividuoHormiga extends Individuo {
     public double getFitness() {
         double fitness = getOriginalFitness();
         if (bloatingFactor != 0) {
-            fitness += bloatingFactor * this.getRootNode().getTreeSize();
+            // penalizamos el fitness restando
+            fitness -= bloatingFactor * this.getRootNode().getTreeSize();
         }
 
         return fitness;
@@ -100,7 +101,7 @@ public class IndividuoHormiga extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new IndividuoHormiga(this.map, this.stepsLimit);
+        Individuo clon = new IndividuoHormiga(this.map, this.stepsLimit, this.bloatingFactor);
         this.copyToClone(clon);
         return clon;
     }

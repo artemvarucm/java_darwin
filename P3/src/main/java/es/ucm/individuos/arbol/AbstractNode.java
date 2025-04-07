@@ -6,6 +6,7 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 public abstract class AbstractNode {
+    private AbstractNode parentNode;
     protected List<AbstractNode> childNodes;
     public AbstractNode() {
         this.childNodes = new ArrayList<>();
@@ -20,23 +21,34 @@ public abstract class AbstractNode {
     }
 
     public void setChildNode(int i, AbstractNode node) {
+        node.setParentNode(this);
         this.childNodes.set(i, node);
     }
 
     public AbstractNode getChildNode(int i) {
         return this.childNodes.get(i);
     }
-    
-    public List<AbstractNode> getAllTerminalNodes() {
-        List<AbstractNode> terminals = new ArrayList<>();
-        if (isTerminal()) {
-            terminals.add(this);
+
+    /**
+     * Devuelve la lista con todos los nodos que son
+     * Si terminal = true - terminales
+     * Si terminal = false - funcionales
+     * que engloba tanto al nodo mismo y a todos sus descendientes
+     */
+    public List<AbstractNode> getNodesOfType(boolean terminal) {
+        List<AbstractNode> result = new ArrayList<>();
+        if (terminal && isTerminal()) {
+            result.add(this);
+        } else if (!terminal && !isTerminal()) {
+            result.add(this);
         } else {
             for (AbstractNode child : childNodes) {
-                terminals.addAll(child.getAllTerminalNodes());
+                if (child != null)
+                    result.addAll(child.getNodesOfType(terminal));
             }
         }
-        return terminals;
+
+        return result;
     }
 
     public List<AbstractNode> getChildNodes() {
@@ -80,28 +92,26 @@ public abstract class AbstractNode {
     /**
      * Copia recursiva de los hijos al clon del parametro
      */
-    public void copyToClone(AbstractNode clone) {
+    public void copyChildrenToClone(AbstractNode clone) {
+        this.parentNode = null; // en caso contrario, más abajo
         clone.childNodes.clear();
-        for (AbstractNode child: childNodes)
-            clone.childNodes.add(
-                    isNull(child) ? null : child.clone()
-            );
-    }
-
-    /**
-     * Devuelve la lista con todos los nodos que son funciones del conjunto
-     * que engloba tanto al nodo mismo y a todos sus descendientes
-     */
-    public List<AbstractNode> getAllFunctionalNodes() {
-        List<AbstractNode> funcNodes = new ArrayList<>();
-        if (!isTerminal()) {
-            funcNodes.add(this);
-            for (AbstractNode child : childNodes) {
-                funcNodes.addAll(child.getAllFunctionalNodes());
+        for (AbstractNode child: childNodes) {
+            if (isNull(child)) {
+                clone.childNodes.add(null);
+            } else {
+                AbstractNode childClone = child.clone();
+                childClone.setParentNode(clone);
+                clone.childNodes.add(childClone);
             }
         }
+    }
 
-        return funcNodes;
+    public AbstractNode getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(AbstractNode parentNode) {
+        this.parentNode = parentNode;
     }
 
     public abstract String getNodeName();

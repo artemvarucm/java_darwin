@@ -3,6 +3,8 @@ package es.ucm.individuos.arbol;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 /**
  * Acepta 2 nodos (terminales o no)
  * Si hay comida en la posicion de delante expande el primero,
@@ -13,6 +15,9 @@ public class IfFoodNode extends AbstractNode {
         this(null, null);
     }
     public IfFoodNode(AbstractNode node1, AbstractNode node2) {
+        if (!isNull(node1)) node1.setParentNode(this);
+        if (!isNull(node2)) node2.setParentNode(this);
+
         this.childNodes.add(node1);
         this.childNodes.add(node2);
     }
@@ -33,7 +38,7 @@ public class IfFoodNode extends AbstractNode {
 
     public AbstractNode clone() {
         AbstractNode clon = new IfFoodNode();
-        this.copyToClone(clon);
+        this.copyChildrenToClone(clon);
         return clon;
     }
     

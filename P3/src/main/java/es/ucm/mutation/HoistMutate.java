@@ -17,7 +17,7 @@ public class HoistMutate extends AbstractMutate {
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
-            List<AbstractNode> funcNodes = root.getAllFunctionalNodes();
+            List<AbstractNode> funcNodes = root.getNodesOfType(false);
             
             if (!funcNodes.isEmpty()) {
                 // Seleccionar un nodo funcional aleatorio (que no sea la raíz)
@@ -26,7 +26,7 @@ public class HoistMutate extends AbstractMutate {
                 );
                 
                 // Seleccionar un subárbol funcional dentro del nodo seleccionado
-                List<AbstractNode> subFuncNodes = selected.getAllFunctionalNodes();
+                List<AbstractNode> subFuncNodes = selected.getNodesOfType(false);
                 if (!subFuncNodes.isEmpty()) {
                     AbstractNode subTree = subFuncNodes.get(
                         ThreadLocalRandom.current().nextInt(subFuncNodes.size())

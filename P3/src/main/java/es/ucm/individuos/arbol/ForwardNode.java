@@ -22,7 +22,7 @@ public class ForwardNode extends AbstractNode {
 
     public AbstractNode clone() {
         AbstractNode clon = new ForwardNode();
-        this.copyToClone(clon);
+        this.copyChildrenToClone(clon);
         return clon;
     }
 

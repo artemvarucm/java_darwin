@@ -22,7 +22,7 @@ public class TreeMutate extends AbstractMutate {
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
-            List<AbstractNode> allNodes = root.getAllFunctionalNodes();
+            List<AbstractNode> allNodes = root.getNodesOfType(false);
             allNodes.add(root);
             
             if (!allNodes.isEmpty()) {

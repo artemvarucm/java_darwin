@@ -17,7 +17,7 @@ public class FunctionalMutate extends AbstractMutate {
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
-            List<AbstractNode> funcNodes = root.getAllFunctionalNodes();
+            List<AbstractNode> funcNodes = root.getNodesOfType(false);
             
             if (!funcNodes.isEmpty()) {
                 int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());

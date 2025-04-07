@@ -18,16 +18,18 @@ import es.ucm.mapa.AbstractFoodMap;
 public class IndividuoHormigaFactory extends IndividuoFactory {
     private AbstractInitializer initializer;
     private Integer stepsLimit;
-    public IndividuoHormigaFactory(AbstractFoodMap map, Integer stepsLimit, AbstractInitializer initializer) {
+    private Double bloatingFactor;
+    public IndividuoHormigaFactory(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor, AbstractInitializer initializer) {
         super(map);
         this.initializer = initializer;
         this.stepsLimit = stepsLimit;
+        this.bloatingFactor = bloatingFactor;
     }
 
     public Individuo createOne() {
         AbstractNode node = initializer.initialize();
 
-        return new IndividuoHormiga(this.map, this.stepsLimit, node);
+        return new IndividuoHormiga(this.map, this.stepsLimit, bloatingFactor, node);
     }
     
     @Override
@@ -35,7 +37,7 @@ public class IndividuoHormigaFactory extends IndividuoFactory {
         List<Individuo> individuos = new ArrayList<>(tamPoblacion);
 
         for (AbstractNode node : initializer.initializeN(tamPoblacion)) {
-            IndividuoHormiga individuo = new IndividuoHormiga(this.map, this.stepsLimit, node);
+            IndividuoHormiga individuo = new IndividuoHormiga(this.map, this.stepsLimit, bloatingFactor, node);
             individuos.add(individuo);
         }
 

@@ -31,7 +31,7 @@ public class RightNode extends AbstractNode {
 
     public AbstractNode clone() {
         AbstractNode clon = new RightNode();
-        this.copyToClone(clon);
+        this.copyChildrenToClone(clon);
         return clon;
     }
 

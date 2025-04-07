@@ -3,6 +3,8 @@ package es.ucm.individuos.arbol;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 /**
  * Acepta 2 nodos (terminales o no)
  * expandiendo primero uno (en profundidad), luego otro
@@ -12,6 +14,9 @@ public class Prog2Node extends AbstractNode {
         this(null, null);
     }
     public Prog2Node(AbstractNode node1, AbstractNode node2) {
+        if (!isNull(node1)) node1.setParentNode(this);
+        if (!isNull(node2)) node2.setParentNode(this);
+
         this.childNodes.add(node1);
         this.childNodes.add(node2);
     }
@@ -36,7 +41,7 @@ public class Prog2Node extends AbstractNode {
 
     public AbstractNode clone() {
         AbstractNode clon = new Prog2Node();
-        this.copyToClone(clon);
+        this.copyChildrenToClone(clon);
         return clon;
     }
     @Override

@@ -39,6 +39,7 @@ public class Main extends JFrame {
     private JTextField crossoverRateField;
     private JTextField elitismRateField;
     private JTextField maxTreeDepthField;
+    private JTextField crossoverTerminalProbability;
     private JTextField stepsLimitField;
     private JTextField bloatingField;
 
@@ -90,9 +91,10 @@ public class Main extends JFrame {
         mutationRateField = new JTextField("0.2");
         crossoverRateField = new JTextField("0.6");
         elitismRateField = new JTextField("0.1");
-        maxTreeDepthField = new JTextField("2");
+        crossoverTerminalProbability = new JTextField("0.1");
+        maxTreeDepthField = new JTextField("6");
         stepsLimitField = new JTextField("400");
-        bloatingField = new JTextField("0");
+        bloatingField = new JTextField("0.1");
 
         initMethodComboBox = new JComboBox<>(new String[]{
                 "Full",
@@ -143,11 +145,13 @@ public class Main extends JFrame {
         controlPanel.add(mutationMethodComboBox);
         controlPanel.add(new JLabel("Problem Type:"));
         controlPanel.add(individualTypeComboBox);
+        controlPanel.add(new JLabel("Crossover terminal sel. probability:"));
+        controlPanel.add(crossoverTerminalProbability);
         controlPanel.add(new JLabel("Max tree depth (on initialization):"));
         controlPanel.add(maxTreeDepthField);
         controlPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
         controlPanel.add(stepsLimitField);
-        controlPanel.add(new JLabel("Bloating:"));
+        controlPanel.add(new JLabel("Bloating factor (per tree node):"));
         controlPanel.add(bloatingField);
 
         // Botones de control
@@ -225,14 +229,16 @@ public class Main extends JFrame {
             if (maxDepth < 2) {
                 throw new RuntimeException("MAX DEPTH should be greater than 1 (>= 2)");
             }
+            double crossTermProb = Double.parseDouble(crossoverTerminalProbability.getText());
+            double bloatingFactor = Double.parseDouble(bloatingField.getText());
             int stepsLimit = Integer.parseInt(stepsLimitField.getText());
 
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
             AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
-            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, stepsLimit, initializationMethod);
+            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, stepsLimit, bloatingFactor, initializationMethod);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
-            AbstractCross crossoverMethod = getCrossoverMethod(factory);
+            AbstractCross crossoverMethod = getCrossoverMethod(factory, crossTermProb);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
 
             AlgoritmoGenetico algorithm = new AlgoritmoGenetico(factory, populationSize);
@@ -358,11 +364,11 @@ public class Main extends JFrame {
     /**
      * Obtiene el método de cruce según la opción elegida.
      */
-    private AbstractCross getCrossoverMethod(IndividuoFactory factory) {
+    private AbstractCross getCrossoverMethod(IndividuoFactory factory, double crossTermProb) {
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
         switch (crossoverType) {
             case 0:
-                return new SubtreeSwapCross(factory);
+                return new SubtreeSwapCross(factory, crossTermProb);
             default:
                 throw new IllegalArgumentException("Método de cruce no válido");
         }
@@ -421,9 +427,9 @@ public class Main extends JFrame {
         mutationRateField.setText("0.2");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
-        maxTreeDepthField.setText("2");
+        maxTreeDepthField.setText("6");
         stepsLimitField.setText("400");
-        bloatingField.setText("0");
+        bloatingField.setText("0.1");
         initMethodComboBox.setSelectedIndex(0);
         selectionMethodComboBox.setSelectedIndex(0);
         crossoverMethodComboBox.setSelectedIndex(0);

@@ -10,8 +10,8 @@ import org.junit.Test;
 public class SubtreeSwapCrossTest extends AbstractCrossTest {
     @Test
     public void crossTest1() {
-        IndividuoFactory factory = new IndividuoHormigaFactory(new SantaFeMap(), 400, new FULLInitializer(3));
-        AbstractCross crosser = new SubtreeSwapCross(factory);
+        IndividuoFactory factory = new IndividuoHormigaFactory(new SantaFeMap(), 400, 0., new FULLInitializer(3));
+        AbstractCross crosser = new SubtreeSwapCross(factory, 0.5);
         this.crossTest(crosser, factory);
     }
 }

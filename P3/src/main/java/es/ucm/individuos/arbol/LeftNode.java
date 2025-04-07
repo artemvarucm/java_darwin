@@ -32,7 +32,7 @@ public class LeftNode extends AbstractNode {
 
     public AbstractNode clone() {
         AbstractNode clon = new LeftNode();
-        this.copyToClone(clon);
+        this.copyChildrenToClone(clon);
         return clon;
     }
 

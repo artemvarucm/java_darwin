@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SubtreeSwapCross extends AbstractCross {
-    public SubtreeSwapCross(IndividuoFactory factory) {
+    private double crossTermProb; // probabilidad de seleccionar un nodo terminal en vez del funcional
+
+    public SubtreeSwapCross(IndividuoFactory factory, double crossTermProb) {
         super(factory);
+        this.crossTermProb = crossTermProb;
     }
 
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
@@ -20,28 +23,65 @@ public class SubtreeSwapCross extends AbstractCross {
         AbstractNode rootNode1 = child1.getRootNode();
         AbstractNode rootNode2 = child2.getRootNode();
 
-        // Seleccionamos primero el nodo padre (reemplazaremos alguno de sus hijos)
-        List<AbstractNode> funcNodes1 = rootNode1.getAllFunctionalNodes();
-        List<AbstractNode> funcNodes2 = rootNode2.getAllFunctionalNodes();
-        int selParent1 = ThreadLocalRandom.current().nextInt(0, funcNodes1.size());
-        int selParent2 = ThreadLocalRandom.current().nextInt(0, funcNodes2.size());
+        // listas de indices de los nodos que podremos usar en la seleccion aleatoria
+        // (seran o todos terminales o todos funcionales)
+        boolean terminal1 = ThreadLocalRandom.current().nextDouble() < crossTermProb;
+        boolean terminal2 = ThreadLocalRandom.current().nextDouble() < crossTermProb;
+        List<AbstractNode> nodes1 = rootNode1.getNodesOfType(terminal1);
+        List<AbstractNode> nodes2 = rootNode2.getNodesOfType(terminal2);
+        if (nodes1.isEmpty() || (!terminal1 && nodes1.size() == 1))
+            nodes1 = rootNode1.getNodesOfType(!terminal1);
 
-        // De cada padre anterior seleccionamos el subarbol que reemplazaremos
-        // fixme cambiar de probabilidad si es un nodo terminal o no
-        int selChild1 = ThreadLocalRandom.current().nextInt(0, funcNodes1.get(selParent1).getChildrenSize());
-        int selChild2 = ThreadLocalRandom.current().nextInt(0, funcNodes2.get(selParent2).getChildrenSize());
+        if (nodes2.isEmpty() || (!terminal2 && nodes2.size() == 1))
+            nodes2 = rootNode2.getNodesOfType(!terminal2);
+
+
+        // terminal1 ? 0 : 1 para evitar seleccionar el nodo raiz
+        AbstractNode selNode1 = nodes1.get(ThreadLocalRandom.current().nextInt(terminal1 ? 0 : 1, nodes1.size()));
+        AbstractNode selNode2 = nodes2.get(ThreadLocalRandom.current().nextInt(terminal2 ? 0 : 1, nodes2.size()));
 
         // Intercambiamos
-        AbstractNode tempSubtree1 = funcNodes1.get(selParent1).getChildNode(selChild1).clone();
-        AbstractNode tempSubtree2 = funcNodes2.get(selParent2).getChildNode(selChild2).clone();
+        AbstractNode tempParent1 = selNode1.getParentNode();
+        AbstractNode tempParent2 = selNode2.getParentNode();
+        AbstractNode tempSubtree1 = selNode1.clone();
+        AbstractNode tempSubtree2 = selNode2.clone();
+        tempSubtree1.setParentNode(tempParent2);
+        tempSubtree2.setParentNode(tempParent1);
 
-        funcNodes1.get(selParent1).setChildNode(selChild1, tempSubtree2);
-        funcNodes2.get(selParent2).setChildNode(selChild2, tempSubtree1);
+        int index = tempParent1.getChildNodes().indexOf(selNode1);
+        tempParent1.setChildNode(index, tempSubtree2);
+
+        index = tempParent2.getChildNodes().indexOf(selNode2);
+        tempParent2.setChildNode(index, tempSubtree1);
 
         // Devolvemos
         List<Individuo> result = new ArrayList<>(2);
         result.add(child1);
         result.add(child2);
         return result;
+    }
+
+    /**
+     * Devuelve los indices de los hijos que son:
+     *  Si terminal = true -> terminales
+     *  Si terminal = false -> funcionales
+     * @param parNode
+     * @param terminal
+     * @return
+     */
+
+    private List<Integer> getFilteredIndices(AbstractNode parNode, boolean terminal) {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < parNode.getChildNodes().size(); i++) {
+            if (
+                    (terminal && parNode.getChildNodes().get(i).isTerminal())
+                    ||
+                    (!terminal && !parNode.getChildNodes().get(i).isTerminal())
+            ) {
+                indices.add(i);
+            }
+        }
+
+            return indices;
     }
 }
