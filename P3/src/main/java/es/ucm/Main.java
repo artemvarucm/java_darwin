@@ -17,15 +17,14 @@ import es.ucm.cross.*;
 import org.math.plot.Plot2DPanel;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * Interfaz gráfica para el simulador de algoritmos genéticos.
@@ -42,13 +41,15 @@ public class Main extends JFrame {
     private JTextField crossoverTerminalProbability;
     private JTextField stepsLimitField;
     private JTextField bloatingField;
+    private JTextField wrapField;
 
     // ComboBox para seleccionar métodos de inicializacion, selección, cruce, mutación y tipo de individuo
+    private JComboBox<String> internalRepresentationComboBox;
     private JComboBox<String> initMethodComboBox;
     private JComboBox<String> selectionMethodComboBox;
     private JComboBox<String> crossoverMethodComboBox;
     private JComboBox<String> mutationMethodComboBox;
-    private JComboBox<String> individualTypeComboBox;
+    //private JComboBox<String> individualTypeComboBox;
 
     // Área de texto para mostrar resultados
     private JTextArea resultsArea;
@@ -60,6 +61,9 @@ public class Main extends JFrame {
     // Panel para representar el mapa con gráficos
     private FoodMapPanel mapPanelGraphics;
 
+    // Panel para representar los parámetros
+    private JPanel paramsPanel;
+
     // Referencia al objeto FoodMap (para poder actualizar el panel cada vez que se calcule la ruta)
     private AbstractFoodMap mapa;
 
@@ -68,7 +72,7 @@ public class Main extends JFrame {
      */
     public Main() {
         setTitle("Genetic Algorithm Simulator");
-        setSize(1200, 800);
+        setSize(1200, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         initComponents();
@@ -82,10 +86,6 @@ public class Main extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panel de control para configurar parámetros
-        JPanel controlPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        controlPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
-
         populationSizeField = new JTextField("100");
         generationsField = new JTextField("300");
         mutationRateField = new JTextField("0.2");
@@ -95,6 +95,17 @@ public class Main extends JFrame {
         maxTreeDepthField = new JTextField("6");
         stepsLimitField = new JTextField("400");
         bloatingField = new JTextField("0.1");
+        wrapField = new JTextField("1");
+        internalRepresentationComboBox = new JComboBox<>(new String[]{
+                "TREE",
+                "GRAMMATICAL",
+        });
+        internalRepresentationComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaintParameters();
+            }
+        });
 
         initMethodComboBox = new JComboBox<>(new String[]{
                 "Full",
@@ -123,36 +134,7 @@ public class Main extends JFrame {
             "Expansion",
             "Contraction"
         });
-        individualTypeComboBox = new JComboBox<>(new String[]{"Santa Fe"});
-
-        controlPanel.add(new JLabel("Population Size:"));
-        controlPanel.add(populationSizeField);
-        controlPanel.add(new JLabel("Number of Generations:"));
-        controlPanel.add(generationsField);
-        controlPanel.add(new JLabel("Mutation Rate:"));
-        controlPanel.add(mutationRateField);
-        controlPanel.add(new JLabel("Crossover Rate:"));
-        controlPanel.add(crossoverRateField);
-        controlPanel.add(new JLabel("Elitism Rate:"));
-        controlPanel.add(elitismRateField);
-        controlPanel.add(new JLabel("Initialization Method:"));
-        controlPanel.add(initMethodComboBox);
-        controlPanel.add(new JLabel("Selection Method:"));
-        controlPanel.add(selectionMethodComboBox);
-        controlPanel.add(new JLabel("Crossover Method:"));
-        controlPanel.add(crossoverMethodComboBox);
-        controlPanel.add(new JLabel("Mutation Method:"));
-        controlPanel.add(mutationMethodComboBox);
-        controlPanel.add(new JLabel("Problem Type:"));
-        controlPanel.add(individualTypeComboBox);
-        controlPanel.add(new JLabel("Crossover terminal sel. probability:"));
-        controlPanel.add(crossoverTerminalProbability);
-        controlPanel.add(new JLabel("Max tree depth (on initialization):"));
-        controlPanel.add(maxTreeDepthField);
-        controlPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
-        controlPanel.add(stepsLimitField);
-        controlPanel.add(new JLabel("Bloating factor (per tree node):"));
-        controlPanel.add(bloatingField);
+        //individualTypeComboBox = new JComboBox<>(new String[]{"Santa Fe"});
 
         // Botones de control
         JButton startButton = new JButton("Start");
@@ -180,8 +162,13 @@ public class Main extends JFrame {
         plotPanel.setBorder(BorderFactory.createTitledBorder("Evolution Plot"));
         plotPanel.addLegend("SOUTH");
 
+        // Panel de control para configurar parámetros
+        paramsPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        paramsPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
+        repaintParameters(); // se rellena con parametros
+
         // Añadir paneles al principal
-        mainPanel.add(controlPanel, BorderLayout.NORTH);
+        mainPanel.add(paramsPanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(resultsPanel, BorderLayout.SOUTH);
 
@@ -231,6 +218,7 @@ public class Main extends JFrame {
             }
             double crossTermProb = Double.parseDouble(crossoverTerminalProbability.getText());
             double bloatingFactor = Double.parseDouble(bloatingField.getText());
+            int numWraps = Integer.parseInt(wrapField.getText());
             int stepsLimit = Integer.parseInt(stepsLimitField.getText());
 
             this.mapa = getSelectedMapa();
@@ -310,13 +298,8 @@ public class Main extends JFrame {
      * Obtiene el mapa seleccionado
      */
     private AbstractFoodMap getSelectedMapa() {
-        int individualType = individualTypeComboBox.getSelectedIndex();
-        switch (individualType) {
-            case 0:
-                return new SantaFeMap();
-            default:
-                throw new IllegalArgumentException("Mapa no válido");
-        }
+        //int individualType = individualTypeComboBox.getSelectedIndex();
+        return new SantaFeMap();
     }
 
     /**
@@ -427,20 +410,73 @@ public class Main extends JFrame {
         mutationRateField.setText("0.2");
         crossoverRateField.setText("0.6");
         elitismRateField.setText("0.1");
+        crossoverTerminalProbability.setText("0.1");
         maxTreeDepthField.setText("6");
         stepsLimitField.setText("400");
         bloatingField.setText("0.1");
+        wrapField.setText("1");
+        internalRepresentationComboBox.setSelectedIndex(0);
         initMethodComboBox.setSelectedIndex(0);
         selectionMethodComboBox.setSelectedIndex(0);
         crossoverMethodComboBox.setSelectedIndex(0);
         mutationMethodComboBox.setSelectedIndex(0);
-        individualTypeComboBox.setSelectedIndex(0);
+        //individualTypeComboBox.setSelectedIndex(0);
         resultsArea.setText("");
         treeExpressionArea.setText("");
         plotPanel.removeAllPlots();
         mapa = new SantaFeMap();
         mapPanelGraphics.setMansion(mapa);
         mapPanelGraphics.updateAntData(null, null, 0, 0, null);
+    }
+
+    /**
+     * Repinta los parámetros (por si cambia la representación arbol/gramatica)
+     */
+    public void repaintParameters() {
+        int internalRepr = internalRepresentationComboBox.getSelectedIndex();
+        paramsPanel.removeAll();
+        paramsPanel.add(new JLabel("Internal Representation:"));
+        paramsPanel.add(internalRepresentationComboBox);
+        paramsPanel.add(new JLabel("Population Size:"));
+        paramsPanel.add(populationSizeField);
+        paramsPanel.add(new JLabel("Number of Generations:"));
+        paramsPanel.add(generationsField);
+        paramsPanel.add(new JLabel("Mutation Rate:"));
+        paramsPanel.add(mutationRateField);
+        paramsPanel.add(new JLabel("Crossover Rate:"));
+        paramsPanel.add(crossoverRateField);
+        paramsPanel.add(new JLabel("Elitism Rate:"));
+        paramsPanel.add(elitismRateField);
+        paramsPanel.add(new JLabel("Initialization Method:"));
+        paramsPanel.add(initMethodComboBox);
+        paramsPanel.add(new JLabel("Selection Method:"));
+        paramsPanel.add(selectionMethodComboBox);
+        paramsPanel.add(new JLabel("Crossover Method:"));
+        paramsPanel.add(crossoverMethodComboBox);
+        paramsPanel.add(new JLabel("Mutation Method:"));
+        paramsPanel.add(mutationMethodComboBox);
+        //paramsPanel.add(new JLabel("Problem Type:"));
+        //paramsPanel.add(individualTypeComboBox);
+        if (internalRepr == 0) { // TREE
+            crossoverTerminalProbability.setText("0.1");
+            maxTreeDepthField.setText("6");
+            stepsLimitField.setText("400");
+            bloatingField.setText("0.1");
+            paramsPanel.add(new JLabel("Crossover terminal sel. probability:"));
+            paramsPanel.add(crossoverTerminalProbability);
+            paramsPanel.add(new JLabel("Max tree depth (on initialization):"));
+            paramsPanel.add(maxTreeDepthField);
+            paramsPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
+            paramsPanel.add(stepsLimitField);
+            paramsPanel.add(new JLabel("Bloating factor (per tree node):"));
+            paramsPanel.add(bloatingField);
+        } else { // GRAMMAR
+            wrapField.setText("1");
+            paramsPanel.add(new JLabel("Number of wraps"));
+            paramsPanel.add(wrapField);
+        }
+        paramsPanel.validate();
+        paramsPanel.repaint();
     }
 
     /**

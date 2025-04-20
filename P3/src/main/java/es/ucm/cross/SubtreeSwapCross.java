@@ -36,52 +36,28 @@ public class SubtreeSwapCross extends AbstractCross {
             nodes2 = rootNode2.getNodesOfType(!terminal2);
 
 
-        // terminal1 ? 0 : 1 para evitar seleccionar el nodo raiz
+        // terminal1 ? 0 : 1 para evitar seleccionar el nodo raiz (porque si terminal = false -> se incluye la raiz)
         AbstractNode selNode1 = nodes1.get(ThreadLocalRandom.current().nextInt(terminal1 ? 0 : 1, nodes1.size()));
         AbstractNode selNode2 = nodes2.get(ThreadLocalRandom.current().nextInt(terminal2 ? 0 : 1, nodes2.size()));
 
-        // Intercambiamos
+        // Los padres (cuyos hijos intercambiaremos)
         AbstractNode tempParent1 = selNode1.getParentNode();
         AbstractNode tempParent2 = selNode2.getParentNode();
+        // Clonamos los hijos
         AbstractNode tempSubtree1 = selNode1.clone();
         AbstractNode tempSubtree2 = selNode2.clone();
-        tempSubtree1.setParentNode(tempParent2);
-        tempSubtree2.setParentNode(tempParent1);
 
-        int index = tempParent1.getChildNodes().indexOf(selNode1);
-        tempParent1.setChildNode(index, tempSubtree2);
+        // Reemplazamos el hijo existente con el intercambiado en cada padre
+        int index1 = tempParent1.getChildNodes().indexOf(selNode1);
+        int index2 = tempParent2.getChildNodes().indexOf(selNode2);
 
-        index = tempParent2.getChildNodes().indexOf(selNode2);
-        tempParent2.setChildNode(index, tempSubtree1);
+        tempParent1.setChildNode(index1, tempSubtree2);
+        tempParent2.setChildNode(index2, tempSubtree1);
 
         // Devolvemos
         List<Individuo> result = new ArrayList<>(2);
         result.add(child1);
         result.add(child2);
         return result;
-    }
-
-    /**
-     * Devuelve los indices de los hijos que son:
-     *  Si terminal = true -> terminales
-     *  Si terminal = false -> funcionales
-     * @param parNode
-     * @param terminal
-     * @return
-     */
-
-    private List<Integer> getFilteredIndices(AbstractNode parNode, boolean terminal) {
-        List<Integer> indices = new ArrayList<>();
-        for (int i = 0; i < parNode.getChildNodes().size(); i++) {
-            if (
-                    (terminal && parNode.getChildNodes().get(i).isTerminal())
-                    ||
-                    (!terminal && !parNode.getChildNodes().get(i).isTerminal())
-            ) {
-                indices.add(i);
-            }
-        }
-
-            return indices;
     }
 }

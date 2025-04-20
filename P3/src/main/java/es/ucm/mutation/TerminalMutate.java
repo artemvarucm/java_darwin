@@ -25,17 +25,14 @@ public class TerminalMutate extends AbstractMutate {
         IndividuoHormiga indMutado = (IndividuoHormiga) ind.copy();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
-            AbstractNode parent = null;
-            int replaceIndex = -1;
-            AbstractNode current = indMutado.getRootNode();
-            while (!current.isTerminal()) {
-                int selectedChild = ThreadLocalRandom.current().nextInt(0, current.getChildrenSize());
-                parent = current;
-                replaceIndex = selectedChild;
-                current = current.getChildNode(selectedChild);
-            }
+            List<AbstractNode> terminals = indMutado.getRootNode().getNodesOfType(true);
 
-            parent.setChildNode(replaceIndex, selectRandomTerminal(current.getNodeName()));
+            int selectedChild = ThreadLocalRandom.current().nextInt(0, terminals.size());
+            AbstractNode selected = terminals.get(selectedChild);
+            AbstractNode parent = selected.getParentNode();
+            int indexInParent = parent.getChildNodes().indexOf(selected);
+
+            parent.setChildNode(indexInParent, selectRandomTerminal(selected.getNodeName()));
         }
 
         return indMutado;

@@ -22,18 +22,13 @@ public class ExpansionMutate extends AbstractMutate {
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
             
-            // Verificar que el árbol no sea nulo
-            if (root == null) {
-                return indMutado;
-            }
-            
-            List<AbstractNode> terminals = getAllTerminalNodes(root);
+            List<AbstractNode> terminals = root.getNodesOfType(true);
             
             if (!terminals.isEmpty() && root.getDepth() < maxDepth) {
                 // Seleccionar un terminal aleatorio para expandir
                 int selected = ThreadLocalRandom.current().nextInt(0, terminals.size());
                 AbstractNode terminal = terminals.get(selected);
-                AbstractNode parent = findParent(root, terminal);
+                AbstractNode parent = terminal.getParentNode();
                 
                 if (parent != null) {
                     int childIndex = getChildIndex(parent, terminal);
@@ -48,38 +43,6 @@ public class ExpansionMutate extends AbstractMutate {
             }
         }
         return indMutado;
-    }
-
-    private List<AbstractNode> getAllTerminalNodes(AbstractNode root) {
-        List<AbstractNode> terminals = new java.util.ArrayList<>();
-        collectTerminals(root, terminals);
-        return terminals;
-    }
-
-    private void collectTerminals(AbstractNode node, List<AbstractNode> terminals) {
-        if (node.isTerminal()) {
-            terminals.add(node);
-        } else {
-            for (AbstractNode child : node.getChildNodes()) {
-                collectTerminals(child, terminals);
-            }
-        }
-    }
-
-    private AbstractNode findParent(AbstractNode root, AbstractNode target) {
-        if (root.getChildNodes().contains(target)) {
-            return root;
-        }
-        
-        for (AbstractNode child : root.getChildNodes()) {
-            if (!child.isTerminal()) {
-                AbstractNode found = findParent(child, target);
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-        return null;
     }
 
     private int getChildIndex(AbstractNode parent, AbstractNode child) {

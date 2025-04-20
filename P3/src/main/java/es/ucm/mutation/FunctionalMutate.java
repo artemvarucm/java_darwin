@@ -31,7 +31,7 @@ public class FunctionalMutate extends AbstractMutate {
                 
                 // Reemplazar en el padre
                 if (toReplace != root) {
-                    AbstractNode parent = findParent(root, toReplace);
+                    AbstractNode parent = toReplace.getParentNode();
                     int childIndex = getChildIndex(parent, toReplace);
                     parent.setChildNode(childIndex, newNode);
                 } else {
@@ -53,17 +53,6 @@ public class FunctionalMutate extends AbstractMutate {
          .toList();
          
         return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size())).clone();
-    }
-
-    private AbstractNode findParent(AbstractNode root, AbstractNode child) {
-        if (root.getChildNodes().contains(child)) return root;
-        for (AbstractNode node : root.getChildNodes()) {
-            if (!node.isTerminal()) {
-                AbstractNode found = findParent(node, child);
-                if (found != null) return found;
-            }
-        }
-        return null;
     }
 
     private int getChildIndex(AbstractNode parent, AbstractNode child) {

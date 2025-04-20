@@ -29,7 +29,7 @@ public class ContractionMutate extends AbstractMutate {
                     AbstractNode child = toContract.getChildNode(childSelected);
                     
                     if (toContract != root) {
-                        AbstractNode parent = findParent(root, toContract);
+                        AbstractNode parent = toContract.getParentNode();
                         int parentIndex = getChildIndex(parent, toContract);
                         parent.setChildNode(parentIndex, child.clone());
                     }
@@ -37,17 +37,6 @@ public class ContractionMutate extends AbstractMutate {
             }
         }
         return indMutado;
-    }
-    
-    private AbstractNode findParent(AbstractNode root, AbstractNode child) {
-        if (root.getChildNodes().contains(child)) return root;
-        for (AbstractNode node : root.getChildNodes()) {
-            if (!node.isTerminal()) {
-                AbstractNode found = findParent(node, child);
-                if (found != null) return found;
-            }
-        }
-        return null;
     }
 
     private int getChildIndex(AbstractNode parent, AbstractNode child) {
