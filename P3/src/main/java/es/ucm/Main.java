@@ -1,10 +1,10 @@
 package es.ucm;
 
+import es.ucm.cross.grammar.SinglePointCross;
+import es.ucm.cross.grammar.UniformCross;
+import es.ucm.cross.tree.SubtreeSwapCross;
 import es.ucm.factories.*;
-import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.Coord;
-import es.ucm.individuos.arbol.Hormiga;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.initializer.GrowInitializer;
@@ -12,6 +12,8 @@ import es.ucm.initializer.RampedHalfInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.mapa.SantaFeMap;
 import es.ucm.mutation.*;
+import es.ucm.mutation.grammar.BasicMutate;
+import es.ucm.mutation.tree.*;
 import es.ucm.selection.*;
 import es.ucm.cross.*;
 import org.math.plot.Plot2DPanel;
@@ -121,18 +123,6 @@ public class Main extends JFrame {
             "Truncation", 
             "Remainder + Roulette", 
             "Ranking"
-        });
-        crossoverMethodComboBox = new JComboBox<>(new String[]{
-            "Subtrees swap"
-        });
-        mutationMethodComboBox = new JComboBox<>(new String[]{
-            "Terminal",
-            "Functional",
-            "Tree",
-            "Permutation",
-            "Hoist",
-            "Expansion",
-            "Contraction"
         });
         //individualTypeComboBox = new JComboBox<>(new String[]{"Santa Fe"});
 
@@ -348,12 +338,24 @@ public class Main extends JFrame {
      * Obtiene el método de cruce según la opción elegida.
      */
     private AbstractCross getCrossoverMethod(IndividuoFactory factory, double crossTermProb) {
+        int internalRepr = internalRepresentationComboBox.getSelectedIndex();
         int crossoverType = crossoverMethodComboBox.getSelectedIndex();
-        switch (crossoverType) {
-            case 0:
-                return new SubtreeSwapCross(factory, crossTermProb);
-            default:
-                throw new IllegalArgumentException("Método de cruce no válido");
+        if (internalRepr == 0) {// TREE
+            switch (crossoverType) {
+                case 0:
+                    return new SubtreeSwapCross(factory, crossTermProb);
+                default:
+                    throw new IllegalArgumentException("Método de cruce no válido");
+            }
+        } else {  // GRAMMAR
+            switch (crossoverType) {
+                case 0:
+                    return new SinglePointCross(factory);
+                case 1:
+                    return new UniformCross(factory, 0.5);
+                default:
+                    throw new IllegalArgumentException("Método de cruce no válido");
+            }
         }
     }
 
@@ -361,24 +363,34 @@ public class Main extends JFrame {
      * Obtiene el método de mutación según la opción elegida.
      */
     private AbstractMutate getMutationMethod(double mutationRate) {
+        int internalRepr = internalRepresentationComboBox.getSelectedIndex();
         int mutationType = mutationMethodComboBox.getSelectedIndex();
-        switch (mutationType) {
-            case 0:
-                return new TerminalMutate(mutationRate);
-            case 1: 
-            	return new FunctionalMutate(mutationRate);
-            case 2: 
-            	return new TreeMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
-            case 3: 
-            	return new PermutationMutate(mutationRate);
-            case 4: 
-            	return new HoistMutate(mutationRate);
-            case 5: 
-            	return new ExpansionMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
-            case 6: 
-            	return new ContractionMutate(mutationRate);
-            default:
-                throw new IllegalArgumentException("Método de mutación no válido");
+        if (internalRepr == 0) {// TREE
+            switch (mutationType) {
+                case 0:
+                    return new TerminalMutate(mutationRate);
+                case 1:
+                    return new FunctionalMutate(mutationRate);
+                case 2:
+                    return new TreeMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+                case 3:
+                    return new PermutationMutate(mutationRate);
+                case 4:
+                    return new HoistMutate(mutationRate);
+                case 5:
+                    return new ExpansionMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+                case 6:
+                    return new ContractionMutate(mutationRate);
+                default:
+                    throw new IllegalArgumentException("Método de mutación no válido");
+            }
+        } else { // GRAMMAR
+            switch (mutationType) {
+                case 0:
+                    return new BasicMutate(mutationRate);
+                default:
+                    throw new IllegalArgumentException("Método de mutación no válido");
+            }
         }
     }
 
@@ -451,12 +463,36 @@ public class Main extends JFrame {
         paramsPanel.add(initMethodComboBox);
         paramsPanel.add(new JLabel("Selection Method:"));
         paramsPanel.add(selectionMethodComboBox);
+        if (internalRepr == 0) { // TREE
+            crossoverMethodComboBox = new JComboBox<>(new String[]{
+                    "Subtrees swap"
+            });
+            mutationMethodComboBox = new JComboBox<>(new String[]{
+                    "Terminal",
+                    "Functional",
+                    "Tree",
+                    "Permutation",
+                    "Hoist",
+                    "Expansion",
+                    "Contraction"
+            });
+        } else { // GRAMMAR
+            crossoverMethodComboBox = new JComboBox<>(new String[]{
+                    "Single Point",
+                    "Uniform (50% swap)"
+            });
+            mutationMethodComboBox = new JComboBox<>(new String[]{
+                    "Basic"
+            });
+        }
+
         paramsPanel.add(new JLabel("Crossover Method:"));
         paramsPanel.add(crossoverMethodComboBox);
         paramsPanel.add(new JLabel("Mutation Method:"));
         paramsPanel.add(mutationMethodComboBox);
         //paramsPanel.add(new JLabel("Problem Type:"));
         //paramsPanel.add(individualTypeComboBox);
+
         if (internalRepr == 0) { // TREE
             crossoverTerminalProbability.setText("0.1");
             maxTreeDepthField.setText("6");

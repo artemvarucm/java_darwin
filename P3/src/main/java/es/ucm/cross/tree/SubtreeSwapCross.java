@@ -1,5 +1,6 @@
-package es.ucm.cross;
+package es.ucm.cross.tree;
 
+import es.ucm.cross.AbstractCross;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
