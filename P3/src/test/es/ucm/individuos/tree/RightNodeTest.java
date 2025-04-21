@@ -1,7 +1,6 @@
-package es.ucm.individuos.arbol;
+package es.ucm.individuos.tree;
 
 import org.junit.Test;
-import org.w3c.dom.Node;
 
 public class RightNodeTest extends AbstractNodeTest{
 

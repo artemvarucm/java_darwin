@@ -1,8 +1,6 @@
 package es.ucm.mapa;
 
-import es.ucm.individuos.arbol.Coord;
-import java.util.ArrayList;
-import java.util.List;
+import es.ucm.individuos.tree.Coord;
 
 public class SantaFeMap extends AbstractFoodMap {
     private static final int N_ROWS = 32;

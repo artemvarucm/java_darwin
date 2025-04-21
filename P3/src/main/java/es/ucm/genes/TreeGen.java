@@ -1,7 +1,7 @@
 package es.ucm.genes;
 
 
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 
 /**
  * El gen que representa un arbol

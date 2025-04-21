@@ -1,6 +1,6 @@
 package es.ucm.initializer;
 
-import es.ucm.individuos.arbol.*;
+import es.ucm.individuos.tree.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 

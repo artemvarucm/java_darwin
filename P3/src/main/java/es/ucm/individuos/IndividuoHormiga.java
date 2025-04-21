@@ -1,11 +1,11 @@
 package es.ucm.individuos;
 
 import es.ucm.genes.TreeGen;
-import es.ucm.individuos.arbol.AbstractNode;
-import es.ucm.individuos.arbol.Hormiga;
+import es.ucm.individuos.tree.AbstractNode;
+import es.ucm.individuos.tree.Hormiga;
 import es.ucm.mapa.AbstractFoodMap;
-import es.ucm.individuos.arbol.Coord;
-import es.ucm.individuos.arbol.DirectionEnum;
+import es.ucm.individuos.tree.Coord;
+import es.ucm.individuos.tree.DirectionEnum;
 
 import static java.util.Objects.isNull;
 

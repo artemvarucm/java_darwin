@@ -2,11 +2,9 @@ package es.ucm.individuos;
 
 
 import es.ucm.genes.Gen;
-import es.ucm.genes.IntegerGen;
 import es.ucm.genes.TreeGen;
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

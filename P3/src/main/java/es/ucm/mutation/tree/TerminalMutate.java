@@ -2,10 +2,10 @@ package es.ucm.mutation.tree;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
-import es.ucm.individuos.arbol.ForwardNode;
-import es.ucm.individuos.arbol.LeftNode;
-import es.ucm.individuos.arbol.RightNode;
+import es.ucm.individuos.tree.AbstractNode;
+import es.ucm.individuos.tree.ForwardNode;
+import es.ucm.individuos.tree.LeftNode;
+import es.ucm.individuos.tree.RightNode;
 import es.ucm.mutation.AbstractMutate;
 
 import java.util.List;

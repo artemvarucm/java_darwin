@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 
 public class GrowInitializer extends AbstractInitializer {
     private static double MIN_DEPTH = 2; // profundidad minima

@@ -1,4 +1,4 @@
-package es.ucm.individuos.arbol;
+package es.ucm.individuos.tree;
 
 import java.util.LinkedList;
 import java.util.List;

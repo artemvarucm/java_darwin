@@ -2,7 +2,7 @@ package es.ucm.mutation.tree;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.*;
+import es.ucm.individuos.tree.*;
 import es.ucm.initializer.GrowInitializer;
 import es.ucm.mutation.AbstractMutate;
 

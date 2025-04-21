@@ -4,9 +4,8 @@ import java.util.*;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.initializer.AbstractInitializer;
-import es.ucm.initializer.RampedHalfInitializer;
 import es.ucm.mapa.AbstractFoodMap;
 
 

@@ -1,6 +1,6 @@
 package es.ucm.initializer;
 
-import es.ucm.individuos.arbol.*;
+import es.ucm.individuos.tree.*;
 
 import java.util.ArrayList;
 import java.util.List;

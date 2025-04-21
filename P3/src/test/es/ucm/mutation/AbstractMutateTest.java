@@ -2,7 +2,7 @@ package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.mapa.SantaFeMap;
 

@@ -1,4 +1,4 @@
-package es.ucm.individuos.arbol;
+package es.ucm.individuos.tree;
 
 public enum DirectionEnum {
     NORTH,

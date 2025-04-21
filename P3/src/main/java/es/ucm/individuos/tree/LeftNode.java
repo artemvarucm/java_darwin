@@ -1,14 +1,12 @@
-package es.ucm.individuos.arbol;
-
-import org.w3c.dom.Node;
+package es.ucm.individuos.tree;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Gira a la derecha 90 grados
+ * Gira a la izquierda 90 grados
  */
-public class RightNode extends AbstractNode {
+public class LeftNode extends AbstractNode {
     @Override
     public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
         if (hormiga.shouldStop()) {
@@ -16,27 +14,28 @@ public class RightNode extends AbstractNode {
         }
 
         if (hormiga.getDir().equals(DirectionEnum.NORTH)) {
-            hormiga.setDir(DirectionEnum.EAST);
-        } else if (hormiga.getDir().equals(DirectionEnum.EAST)) {
-            hormiga.setDir(DirectionEnum.SOUTH);
-        } else if (hormiga.getDir().equals(DirectionEnum.SOUTH)) {
             hormiga.setDir(DirectionEnum.WEST);
-        } else {
+        } else if (hormiga.getDir().equals(DirectionEnum.EAST)) {
             hormiga.setDir(DirectionEnum.NORTH);
+        } else if (hormiga.getDir().equals(DirectionEnum.SOUTH)) {
+            hormiga.setDir(DirectionEnum.EAST);
+        } else {
+            hormiga.setDir(DirectionEnum.SOUTH);
         }
 
         hormiga.step();
+
         return new LinkedList<>(); // no se ha movido
     }
 
     public AbstractNode clone() {
-        AbstractNode clon = new RightNode();
+        AbstractNode clon = new LeftNode();
         this.copyChildrenToClone(clon);
         return clon;
     }
 
     @Override
     public String getNodeName() {
-        return "RIGHT";
+        return "LEFT";
     }
 }

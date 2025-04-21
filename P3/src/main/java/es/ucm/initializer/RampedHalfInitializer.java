@@ -1,9 +1,8 @@
 package es.ucm.initializer;
 
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RampedHalfInitializer extends AbstractInitializer {
     public RampedHalfInitializer(int maxDepth) {

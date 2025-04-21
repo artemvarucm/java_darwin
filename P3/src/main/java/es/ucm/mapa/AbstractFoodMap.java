@@ -1,11 +1,9 @@
 package es.ucm.mapa;
 
-import es.ucm.individuos.arbol.Coord;
+import es.ucm.individuos.tree.Coord;
 
 
 import java.util.*;
-
-import static java.util.Objects.isNull;
 
 /**
  * Clase abstract que se utiliza para representar una mansión, con comandos utiles como calcular el fitness.

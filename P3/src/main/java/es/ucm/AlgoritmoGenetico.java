@@ -3,8 +3,6 @@ package es.ucm;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 import es.ucm.selection.AbstractSelection;
-import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
 import es.ucm.cross.AbstractCross;
 import es.ucm.mutation.AbstractMutate;
 

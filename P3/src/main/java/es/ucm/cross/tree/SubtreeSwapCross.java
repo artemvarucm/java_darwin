@@ -4,7 +4,7 @@ import es.ucm.cross.AbstractCross;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.individuos.arbol.AbstractNode;
+import es.ucm.individuos.tree.AbstractNode;
 
 import java.util.ArrayList;
 import java.util.List;

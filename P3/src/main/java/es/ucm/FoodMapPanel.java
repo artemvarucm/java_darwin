@@ -1,7 +1,7 @@
 package es.ucm;
 
-import es.ucm.individuos.arbol.Coord;
-import es.ucm.individuos.arbol.DirectionEnum;
+import es.ucm.individuos.tree.Coord;
+import es.ucm.individuos.tree.DirectionEnum;
 import es.ucm.mapa.AbstractFoodMap;
 
 import javax.swing.*;
