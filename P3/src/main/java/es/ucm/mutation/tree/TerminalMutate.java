@@ -1,7 +1,7 @@
 package es.ucm.mutation.tree;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.individuos.tree.ForwardNode;
 import es.ucm.individuos.tree.LeftNode;
@@ -23,7 +23,7 @@ public class TerminalMutate extends AbstractMutate {
 
     @Override
     public Individuo mutate(Individuo ind) {
-        IndividuoHormiga indMutado = (IndividuoHormiga) ind.copy();
+        IndividuoHormigaArbol indMutado = (IndividuoHormigaArbol) ind.copy();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             List<AbstractNode> terminals = indMutado.getRootNode().getNodesOfType(true);

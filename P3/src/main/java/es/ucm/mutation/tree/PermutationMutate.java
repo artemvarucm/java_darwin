@@ -1,7 +1,7 @@
 package es.ucm.mutation.tree;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.*;
 import es.ucm.mutation.AbstractMutate;
 
@@ -16,7 +16,7 @@ public class PermutationMutate extends AbstractMutate {
 
     @Override
     public Individuo mutate(Individuo ind) {
-        IndividuoHormiga indMutado = (IndividuoHormiga) ind.copy();
+        IndividuoHormigaArbol indMutado = (IndividuoHormigaArbol) ind.copy();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();

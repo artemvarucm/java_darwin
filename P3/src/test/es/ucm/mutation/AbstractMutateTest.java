@@ -1,7 +1,7 @@
 package es.ucm.mutation;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.mapa.SantaFeMap;
@@ -16,7 +16,7 @@ public abstract class AbstractMutateTest {
 
     private void oneMutate(AbstractMutate mutator) {
         AbstractNode node = new FULLInitializer(4).initialize();
-        Individuo ind1 = new IndividuoHormiga(new SantaFeMap(), 400, 0., node);
+        Individuo ind1 = new IndividuoHormigaArbol(new SantaFeMap(), 400, 0., node);
         System.out.println("GENOTIPO INICIAL");
         ind1.printGenotipo();
         Individuo indMutado = mutator.mutate(ind1);

@@ -2,46 +2,51 @@ package es.ucm.individuos;
 
 import es.ucm.genes.TreeGen;
 import es.ucm.individuos.tree.AbstractNode;
-import es.ucm.individuos.tree.Hormiga;
-import es.ucm.mapa.AbstractFoodMap;
 import es.ucm.individuos.tree.Coord;
 import es.ucm.individuos.tree.DirectionEnum;
-
-import static java.util.Objects.isNull;
+import es.ucm.individuos.tree.Hormiga;
+import es.ucm.mapa.AbstractFoodMap;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.util.Objects.isNull;
 
 /**
  * Maximizamos el número de trozos comidos
  */
-public class IndividuoHormiga extends Individuo {
+public class IndividuoHormigaGramatica extends Individuo {
+    private static Integer NUM_CODONES = 20; // el numero de genes
     protected AbstractFoodMap map;
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
-    protected double bloatingFactor;
-    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor) {
-        this(map, stepsLimit, bloatingFactor, null);
-    }
-
-    public IndividuoHormiga(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor, AbstractNode node) {
+    protected Integer nWraps;
+    public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer nWraps) {
         super(null, true);
         this.map = map;
+        this.nWraps = nWraps;
         this.stepsLimit = stepsLimit;
-        this.bloatingFactor = bloatingFactor;
+        initialize();
+    }
 
-        if (!isNull(node)) {
-            this.addTreeGen(node);
+    /**
+     * Inicialización aleatoria (cada gen vale entre 0 y 255)
+     */
+    private void initialize() {
+        for (int i = 0; i < NUM_CODONES; i++) {
+            this.addIntegerGen(ThreadLocalRandom.current().nextInt(256));
         }
     }
 
-    private transient List<Coord> lastPath; // Para guardar el último camino simulado
-    private transient int lastSteps;
-    private transient Coord lastPosition;
-    private transient DirectionEnum lastDirection;
+    private List<Coord> lastPath; // Para guardar el último camino simulado
+    private int lastSteps;
+    private Coord lastPosition;
+    private DirectionEnum lastDirection;
 
-    public double getOriginalFitness() {
+    @Override
+    public double getFitness() {
         if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
             return this.fitnessCache;
         }
@@ -50,10 +55,10 @@ public class IndividuoHormiga extends Individuo {
         lastPath = new LinkedList<>();
         lastPath.add(hormiga.getPosition()); // Posición inicial
 
-        while (!hormiga.shouldStop()) {
+        /*while (!hormiga.shouldStop()) {
             List<Coord> newPositions = this.getRootNode().walkAndReturnCoords(hormiga);
             lastPath.addAll(newPositions);
-        }
+        }*/
 
         // Guardar resultados de la simulación
         this.lastSteps = hormiga.getSteps();
@@ -68,17 +73,14 @@ public class IndividuoHormiga extends Individuo {
     }
 
     @Override
-    public double getFitness() {
-        double fitness = getOriginalFitness();
-        if (bloatingFactor != 0) {
-            // penalizamos el fitness restando
-            fitness -= bloatingFactor * this.getRootNode().getTreeSize();
-        }
-
-        return fitness;
+    public Individuo copy() {
+        Individuo clon = new IndividuoHormigaGramatica(this.map, this.stepsLimit, this.nWraps);
+        this.copyToClone(clon);
+        return clon;
     }
 
     // Métodos para la visualización
+    /*
     public Coord getCurrentPosition() {
         if (lastPath == null) getFitness(); // Fuerza simulación si es necesario
         return lastPosition;
@@ -99,26 +101,19 @@ public class IndividuoHormiga extends Individuo {
         return lastSteps;
     }
 
-    @Override
-    public Individuo copy() {
-        Individuo clon = new IndividuoHormiga(this.map, this.stepsLimit, this.bloatingFactor);
-        this.copyToClone(clon);
-        return clon;
-    }
-    
     public int getTreeDepth() {
         return getRootNode().getDepth();
     }
-    
+
     public int getNodeCount() {
         return getRootNode().getTreeSize();
     }
-    
+
     public String getExpressionString() {
         return getRootNode().toString();
     }
 
     public AbstractNode getRootNode() {
         return ((TreeGen) this.genes.get(0)).getFenotipo();
-    }
+    }*/
 }

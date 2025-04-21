@@ -3,7 +3,7 @@ package es.ucm.cross.tree;
 import es.ucm.cross.AbstractCross;
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.AbstractNode;
 
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ public class SubtreeSwapCross extends AbstractCross {
     }
 
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
-        IndividuoHormiga child1 = (IndividuoHormiga) parent1.copy();
-        IndividuoHormiga child2 = (IndividuoHormiga) parent2.copy();
+        IndividuoHormigaArbol child1 = (IndividuoHormigaArbol) parent1.copy();
+        IndividuoHormigaArbol child2 = (IndividuoHormigaArbol) parent2.copy();
         AbstractNode rootNode1 = child1.getRootNode();
         AbstractNode rootNode2 = child2.getRootNode();
 

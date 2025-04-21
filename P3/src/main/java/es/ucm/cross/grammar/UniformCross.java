@@ -17,21 +17,19 @@ public class UniformCross extends AbstractCross {
     @Override
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
         List<Individuo> result = new ArrayList<>();
-        Individuo child1 = factory.createOne();
-        Individuo child2 = factory.createOne();
+        Individuo child1 = parent1.copy();
+        Individuo child2 = parent2.copy();
 
-        /*for (int i = 0; i < parent1.getGenotipoLength(); i++) {
+        for (int i = 0; i < parent1.getIntGenes().size(); i++) {
             double randomVal = ThreadLocalRandom.current().nextDouble();
+            Integer parent1Gen = parent1.getIntGenes().get(i).getFenotipo();
+            Integer parent2Gen = parent2.getIntGenes().get(i).getFenotipo();
             if (randomVal < swap_probability) {
                 // intercambiamos
-                child1.fillGenotypeElem(i, parent2);
-                child2.fillGenotypeElem(i, parent1);
-            } else {
-                // dejamos igual
-                child1.fillGenotypeElem(i, parent1);
-                child2.fillGenotypeElem(i, parent2);
+                child1.getIntGenes().get(i).set(0, parent2Gen);
+                child2.getIntGenes().get(i).set(0, parent1Gen);
             }
-        }*/
+        }
 
         result.add(child1);
         result.add(child2);

@@ -13,13 +13,12 @@ public class BasicMutate extends AbstractMutate {
     @Override
     public Individuo mutate(Individuo ind) {
 
-        /*for (int i = 0; i < ind.getGenotipoLength(); i++) {
+        for (int i = 0; i < ind.getIntGenes().size(); i++) {
             double p = ThreadLocalRandom.current().nextDouble();
             if (p < mutateProbability) {
-                // System.out.println("MUTACION DEL INDICE " + i);
-                //ind.mutateGenotypeElem(i);
+                ind.getIntGenes().get(i).set(0, ThreadLocalRandom.current().nextInt(256));
             }
-        }*/
+        }
         return ind.copy();
     }
 }

@@ -3,6 +3,7 @@ package es.ucm.cross.grammar;
 import es.ucm.cross.AbstractCross;
 import es.ucm.individuos.Individuo;
 import es.ucm.factories.IndividuoFactory;
+import es.ucm.individuos.IndividuoHormigaGramatica;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,24 +35,20 @@ public class SinglePointCross extends AbstractCross {
     public List<Individuo> cross(Individuo parent1, Individuo parent2) {
         List<Individuo> result = new ArrayList<>(2);
 
-        Individuo child1 = this.factory.createOne();
-        Individuo child2 = this.factory.createOne();
+        Individuo child1 = parent1.copy();
+        Individuo child2 = parent2.copy();
 
-        /*int nCrossPts = parent1.getNumberOfCrossPoints();
+        int nCrossPts = parent1.getIntGenes().size() - 1;
         int selectedPoint = ThreadLocalRandom.current().nextInt(0, nCrossPts);
 
         //System.out.println("PUNTO DE CRUCE: " + selectedPoint);
 
-        for (int i = 0; i <= selectedPoint; i++) {
-            child1.fillGenotypeElem(i, parent1);
-            child2.fillGenotypeElem(i, parent2);
+        for (int i = selectedPoint + 1; i <= nCrossPts; i++) {
+            // invertimos genes
+            child1.getIntGenes().get(i).set(0, parent2.getIntGenes().get(i).getFenotipo());
+            child2.getIntGenes().get(i).set(0, parent1.getIntGenes().get(i).getFenotipo());
         }
 
-        for (int i = selectedPoint + 1; i <= nCrossPts; i++) {
-            child1.fillGenotypeElem(i, parent2);
-            child2.fillGenotypeElem(i, parent1);
-        }
-        */
         result.add(child1);
         result.add(child2);
         return result;

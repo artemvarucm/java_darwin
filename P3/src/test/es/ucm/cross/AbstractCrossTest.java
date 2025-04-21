@@ -2,12 +2,8 @@ package es.ucm.cross;
 
 import es.ucm.factories.IndividuoFactory;
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
-import es.ucm.mapa.SantaFeMap;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class AbstractCrossTest {
     public void crossTest(AbstractCross crosser, IndividuoFactory factory) {

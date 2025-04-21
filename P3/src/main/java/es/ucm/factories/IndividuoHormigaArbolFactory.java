@@ -3,7 +3,7 @@ package es.ucm.factories;
 import java.util.*;
 
 import es.ucm.individuos.Individuo;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.mapa.AbstractFoodMap;
@@ -14,11 +14,11 @@ import es.ucm.mapa.AbstractFoodMap;
  *
  * Se usa en el opeardor cruce y al crear la población inicial
  */
-public class IndividuoHormigaFactory extends IndividuoFactory {
+public class IndividuoHormigaArbolFactory extends IndividuoFactory {
     private AbstractInitializer initializer;
     private Integer stepsLimit;
     private Double bloatingFactor;
-    public IndividuoHormigaFactory(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor, AbstractInitializer initializer) {
+    public IndividuoHormigaArbolFactory(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor, AbstractInitializer initializer) {
         super(map);
         this.initializer = initializer;
         this.stepsLimit = stepsLimit;
@@ -28,7 +28,7 @@ public class IndividuoHormigaFactory extends IndividuoFactory {
     public Individuo createOne() {
         AbstractNode node = initializer.initialize();
 
-        return new IndividuoHormiga(this.map, this.stepsLimit, bloatingFactor, node);
+        return new IndividuoHormigaArbol(this.map, this.stepsLimit, bloatingFactor, node);
     }
     
     @Override
@@ -36,7 +36,7 @@ public class IndividuoHormigaFactory extends IndividuoFactory {
         List<Individuo> individuos = new ArrayList<>(tamPoblacion);
 
         for (AbstractNode node : initializer.initializeN(tamPoblacion)) {
-            IndividuoHormiga individuo = new IndividuoHormiga(this.map, this.stepsLimit, bloatingFactor, node);
+            IndividuoHormigaArbol individuo = new IndividuoHormigaArbol(this.map, this.stepsLimit, bloatingFactor, node);
             individuos.add(individuo);
         }
 

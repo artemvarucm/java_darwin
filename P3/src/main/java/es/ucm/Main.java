@@ -4,7 +4,8 @@ import es.ucm.cross.grammar.SinglePointCross;
 import es.ucm.cross.grammar.UniformCross;
 import es.ucm.cross.tree.SubtreeSwapCross;
 import es.ucm.factories.*;
-import es.ucm.individuos.IndividuoHormiga;
+import es.ucm.individuos.IndividuoHormigaArbol;
+import es.ucm.individuos.IndividuoHormigaGramatica;
 import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.FULLInitializer;
 import es.ucm.initializer.GrowInitializer;
@@ -213,8 +214,7 @@ public class Main extends JFrame {
 
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
-            AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
-            IndividuoFactory factory = new IndividuoHormigaFactory(this.mapa, stepsLimit, bloatingFactor, initializationMethod);
+            IndividuoFactory factory = getSelectedFactory(stepsLimit, bloatingFactor, numWraps, maxDepth);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory, crossTermProb);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -227,8 +227,8 @@ public class Main extends JFrame {
             algorithm.setCrossoverMethod(crossoverMethod);
             algorithm.setMutationMethod(mutationMethod);
             
-            algorithm.setProgressListener((generation, bestIndividual) -> {
-                IndividuoHormiga bestAnt = (IndividuoHormiga) bestIndividual;
+            /*algorithm.setProgressListener((generation, bestIndividual) -> {
+                IndividuoHormigaArbol bestAnt = (IndividuoHormigaArbol) bestIndividual;
                 
                 SwingUtilities.invokeLater(() -> {
                     // Actualizar panel con el mejor individuo de cada generación
@@ -243,37 +243,64 @@ public class Main extends JFrame {
                     // Actualizar gráficas de progreso
                     plotAlgorithmResults(algorithm, generation + 1);
                 });
-            });
+            });*/
             Instant start = Instant.now();
             algorithm.optimize();
             Instant end = Instant.now();
             Duration timeElapsed = Duration.between(start, end);
 
-            IndividuoHormiga bestIndividual = (IndividuoHormiga) algorithm.getMejor();
-            
-            // Actualizar visualización con la mejor solución
-            mapPanelGraphics.updateAntData(
-                bestIndividual.getCurrentPosition(),
-                bestIndividual.getCurrentDirection(),
-                (int) bestIndividual.getOriginalFitness(),
-                bestIndividual.getStepsTaken(),
-                bestIndividual.getPathHistory()
-            );
+            if (internalRepresentationComboBox.getSelectedIndex() == 0) { // TREE
+                IndividuoHormigaArbol bestIndividual = (IndividuoHormigaArbol) algorithm.getMejor();
 
-            // Mostrar resultados en el área de texto
-            StringBuilder sb = new StringBuilder();
-            sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
-            sb.append("Comida recolectada: ").append((int) bestIndividual.getOriginalFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
-            sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
-            sb.append("Fitness (incluye bloating): ").append(bestIndividual.getFitness()).append("\n");
-            sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
-            sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
-            sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
-            
-            resultsArea.setText(sb.toString());
+                // Actualizar visualización con la mejor solución
+                mapPanelGraphics.updateAntData(
+                        bestIndividual.getCurrentPosition(),
+                        bestIndividual.getCurrentDirection(),
+                        (int) bestIndividual.getOriginalFitness(),
+                        bestIndividual.getStepsTaken(),
+                        bestIndividual.getPathHistory()
+                );
 
-            // Actualizar panel del árbol con la expresión
-            treeExpressionArea.setText(bestIndividual.getExpressionString());
+                // Mostrar resultados en el área de texto
+                StringBuilder sb = new StringBuilder();
+                sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
+                sb.append("Comida recolectada: ").append((int) bestIndividual.getOriginalFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
+                sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+                sb.append("Fitness (incluye bloating): ").append(bestIndividual.getFitness()).append("\n");
+                sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
+                sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
+                sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
+                resultsArea.setText(sb.toString());
+
+                // Actualizar panel del árbol con la expresión
+                treeExpressionArea.setText(bestIndividual.getExpressionString());
+            } else { // GRAMMAR
+                IndividuoHormigaGramatica bestIndividual = (IndividuoHormigaGramatica) algorithm.getMejor();
+
+                // Actualizar visualización con la mejor solución
+                /*mapPanelGraphics.updateAntData(
+                        bestIndividual.getCurrentPosition(),
+                        bestIndividual.getCurrentDirection(),
+                        (int) bestIndividual.getOriginalFitness(),
+                        bestIndividual.getStepsTaken(),
+                        bestIndividual.getPathHistory()
+                );*/
+
+                // Mostrar resultados en el área de texto
+                StringBuilder sb = new StringBuilder();
+                sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
+                sb.append("Comida recolectada (fitness): ").append(bestIndividual.getFitness()).append("\n");
+                //sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+                sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
+                //sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
+                //sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
+                resultsArea.setText(sb.toString());
+
+                // Actualizar panel del árbol con la expresión
+                //treeExpressionArea.setText(bestIndividual.getExpressionString());
+            }
+
+
 
             // Graficar resultados finales
             plotAlgorithmResults(algorithm, generations);
@@ -308,6 +335,20 @@ public class Main extends JFrame {
                 throw new IllegalArgumentException("Método de mutación no válido");
         }
     }
+
+    private IndividuoFactory getSelectedFactory(Integer stepsLimit, Double bloatingFactor, Integer numWraps, Integer maxDepth) {
+        Integer selectedRepr = internalRepresentationComboBox.getSelectedIndex();
+        IndividuoFactory factory;
+        if (selectedRepr == 0) { // TREE
+            AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
+            factory = new IndividuoHormigaArbolFactory(this.mapa, stepsLimit, bloatingFactor, initializationMethod);
+        } else { //GRAMMAR
+            factory = new IndividuoHormigaGramaticaFactory(this.mapa, stepsLimit, numWraps);
+        }
+
+        return factory;
+    }
+
 
     /**
      * Obtiene el método de selección según la opción elegida.
