@@ -417,7 +417,7 @@ public class Main extends JFrame {
                 case 3:
                     return new PermutationMutate(mutationRate);
                 case 4:
-                    return new ExpansionMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+                    return new ExpansionMutate(mutationRate, 3);
                 case 5:
                     return new ContractionMutate(mutationRate);
                 default:
@@ -511,7 +511,7 @@ public class Main extends JFrame {
                     "Functional",
                     "Tree",
                     "Permutation",
-                    "Expansion",
+                    "Expansion (subtree depth = 3)",
                     "Contraction"
             });
         } else { // GRAMMAR
