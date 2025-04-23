@@ -41,11 +41,11 @@ public abstract class AbstractNode {
             result.add(this);
         } else if (!terminal && !isTerminal()) {
             result.add(this);
-        } else {
-            for (AbstractNode child : childNodes) {
-                if (child != null)
-                    result.addAll(child.getNodesOfType(terminal));
-            }
+        }
+
+        for (AbstractNode child : childNodes) {
+            if (child != null)
+                result.addAll(child.getNodesOfType(terminal));
         }
 
         return result;
