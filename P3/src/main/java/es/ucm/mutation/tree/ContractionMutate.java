@@ -8,6 +8,10 @@ import es.ucm.mutation.AbstractMutate;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Reduce un subárbol a un terminal
+ * (no muta el nodo raiz porque necesitamos profundidad minima de 2)
+ */
 public class ContractionMutate extends AbstractMutate {
     public ContractionMutate(double mutateProbability) {
         super(mutateProbability);
@@ -20,27 +24,31 @@ public class ContractionMutate extends AbstractMutate {
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
             List<AbstractNode> funcNodes = root.getNodesOfType(false);
-            
-            if (!funcNodes.isEmpty()) {
-                int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());
+            // NO muta el nodo raiz
+            if (funcNodes.size() > 1) {
+                int selected = ThreadLocalRandom.current().nextInt(1, funcNodes.size());
                 AbstractNode toContract = funcNodes.get(selected);
-                
-                if (!toContract.getChildNodes().isEmpty()) {
-                    int childSelected = ThreadLocalRandom.current().nextInt(0, toContract.getChildrenSize());
-                    AbstractNode child = toContract.getChildNode(childSelected);
-                    
-                    if (toContract != root) {
-                        AbstractNode parent = toContract.getParentNode();
-                        int parentIndex = getChildIndex(parent, toContract);
-                        parent.setChildNode(parentIndex, child.clone());
-                    }
-                }
+
+                AbstractNode parent = toContract.getParentNode();
+                int parentIndex = getChildIndex(parent, toContract);
+                // reemplazamos nodo funcional por uno terminal aleatorio
+                parent.setChildNode(parentIndex, selectRandomTerminal());
             }
         }
+
         return indMutado;
     }
 
     private int getChildIndex(AbstractNode parent, AbstractNode child) {
         return parent.getChildNodes().indexOf(child);
+    }
+
+    /**
+     * Seleccionar aleatoriamente un nodo terminal
+     */
+    private AbstractNode selectRandomTerminal() {
+        List<AbstractNode> terminalSet = List.of(new LeftNode(), new RightNode(), new ForwardNode());
+        int selected = ThreadLocalRandom.current().nextInt(terminalSet.size());
+        return terminalSet.get(selected);
     }
 }

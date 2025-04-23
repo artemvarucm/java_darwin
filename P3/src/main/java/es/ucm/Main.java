@@ -417,10 +417,8 @@ public class Main extends JFrame {
                 case 3:
                     return new PermutationMutate(mutationRate);
                 case 4:
-                    return new HoistMutate(mutationRate);
-                case 5:
                     return new ExpansionMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
-                case 6:
+                case 5:
                     return new ContractionMutate(mutationRate);
                 default:
                     throw new IllegalArgumentException("Método de mutación no válido");
@@ -513,7 +511,6 @@ public class Main extends JFrame {
                     "Functional",
                     "Tree",
                     "Permutation",
-                    "Hoist",
                     "Expansion",
                     "Contraction"
             });
