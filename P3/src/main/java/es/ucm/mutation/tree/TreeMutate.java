@@ -3,18 +3,22 @@ package es.ucm.mutation.tree;
 import es.ucm.individuos.Individuo;
 import es.ucm.individuos.IndividuoHormigaArbol;
 import es.ucm.individuos.tree.*;
+import es.ucm.initializer.AbstractInitializer;
 import es.ucm.initializer.GrowInitializer;
 import es.ucm.mutation.AbstractMutate;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Parecido al expansion mutate, solo que reemplaza un nodo funcional (puede reducir el árbol)
+ */
 public class TreeMutate extends AbstractMutate {
-    private final int maxDepth;
-    
-    public TreeMutate(double mutateProbability, int maxDepth) {
+    private AbstractInitializer initializer;
+
+    public TreeMutate(double mutateProbability, int subtreeDepth) {
         super(mutateProbability);
-        this.maxDepth = maxDepth;
+        this.initializer = new GrowInitializer(subtreeDepth);
     }
 
     @Override
@@ -23,19 +27,14 @@ public class TreeMutate extends AbstractMutate {
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
-            List<AbstractNode> allNodes = root.getNodesOfType(false);
-
-            int selected = ThreadLocalRandom.current().nextInt(0, allNodes.size());
-            AbstractNode toReplace = allNodes.get(selected);
-            AbstractNode newSubtree = new GrowInitializer(maxDepth).initialize();
-
-            if (toReplace != root) {
-                AbstractNode parent = toReplace.getParentNode();
-                int childIndex = getChildIndex(parent, toReplace);
-                parent.setChildNode(childIndex, newSubtree);
-            } else {
-                indMutado.getRootNode().getChildNodes().clear();
-                indMutado.getRootNode().getChildNodes().addAll(newSubtree.getChildNodes());
+            List<AbstractNode> functional = root.getNodesOfType(false);
+            if (functional.size() > 1) {
+                // NO muta el nodo raiz
+                int selected = ThreadLocalRandom.current().nextInt(1, functional.size());
+                AbstractNode selFunc = functional.get(selected);
+                AbstractNode parent = selFunc.getParentNode();
+                // reemplazamos con un arbol aleatorio
+                parent.setChildNode(getChildIndex(parent, selFunc), initializer.initialize());
             }
         }
         return indMutado;

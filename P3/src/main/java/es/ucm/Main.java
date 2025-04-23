@@ -413,7 +413,7 @@ public class Main extends JFrame {
                 case 1:
                     return new FunctionalMutate(mutationRate);
                 case 2:
-                    return new TreeMutate(mutationRate, Integer.parseInt(maxTreeDepthField.getText()));
+                    return new TreeMutate(mutationRate, 3);
                 case 3:
                     return new PermutationMutate(mutationRate);
                 case 4:
