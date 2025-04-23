@@ -30,4 +30,9 @@ public class ForwardNode extends AbstractNode {
     public String getNodeName() {
         return "FORWARD";
     }
+
+    @Override
+    public Integer getChildrenSize() {
+        return 0;
+    }
 }

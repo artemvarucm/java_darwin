@@ -12,11 +12,10 @@ import static java.util.Objects.isNull;
  */
 public class IfFoodNode extends AbstractNode {
     public IfFoodNode() {
-        this(null, null);
     }
     public IfFoodNode(AbstractNode node1, AbstractNode node2) {
-        if (!isNull(node1)) node1.setParentNode(this);
-        if (!isNull(node2)) node2.setParentNode(this);
+        node1.setParentNode(this);
+        node2.setParentNode(this);
 
         this.childNodes.add(node1);
         this.childNodes.add(node2);
@@ -45,5 +44,10 @@ public class IfFoodNode extends AbstractNode {
     @Override
     public String getNodeName() {
         return "IF_FOOD";
+    }
+
+    @Override
+    public Integer getChildrenSize() {
+        return 2;
     }
 }

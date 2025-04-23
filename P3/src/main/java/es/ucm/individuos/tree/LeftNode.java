@@ -38,4 +38,9 @@ public class LeftNode extends AbstractNode {
     public String getNodeName() {
         return "LEFT";
     }
+
+    @Override
+    public Integer getChildrenSize() {
+        return 0;
+    }
 }

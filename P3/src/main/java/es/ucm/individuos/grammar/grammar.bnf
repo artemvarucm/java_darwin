@@ -1,4 +1,0 @@
-<start> ::= <func>
-<node> ::= <func> | <action>
-<func> ::= "prog2" <node> <node> | "prog3" <node> <node> <node> | "if_food" <node> <node>
-<action> ::= "left" | "right" | "forward"

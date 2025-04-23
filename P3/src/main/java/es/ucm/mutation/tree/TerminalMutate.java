@@ -26,6 +26,7 @@ public class TerminalMutate extends AbstractMutate {
         IndividuoHormigaArbol indMutado = (IndividuoHormigaArbol) ind.copy();
         double p = ThreadLocalRandom.current().nextDouble();
         if (p < mutateProbability) {
+            // todos los nodos terminales del arbol
             List<AbstractNode> terminals = indMutado.getRootNode().getNodesOfType(true);
 
             int selectedChild = ThreadLocalRandom.current().nextInt(0, terminals.size());

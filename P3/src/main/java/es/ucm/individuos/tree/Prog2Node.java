@@ -11,11 +11,11 @@ import static java.util.Objects.isNull;
  */
 public class Prog2Node extends AbstractNode {
     public Prog2Node() {
-        this(null, null);
     }
+
     public Prog2Node(AbstractNode node1, AbstractNode node2) {
-        if (!isNull(node1)) node1.setParentNode(this);
-        if (!isNull(node2)) node2.setParentNode(this);
+        node1.setParentNode(this);
+        node2.setParentNode(this);
 
         this.childNodes.add(node1);
         this.childNodes.add(node2);
@@ -47,5 +47,10 @@ public class Prog2Node extends AbstractNode {
     @Override
     public String getNodeName() {
         return "PROG_2";
+    }
+
+    @Override
+    public Integer getChildrenSize() {
+        return 2;
     }
 }

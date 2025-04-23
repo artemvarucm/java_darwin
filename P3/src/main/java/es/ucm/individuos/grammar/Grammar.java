@@ -112,5 +112,9 @@ public class Grammar {
         public String getNodeName() {
             return name.toUpperCase();
         }
+        @Override
+        public Integer getChildrenSize() {
+            return 0;
+        }
     }
 }

@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Intercambia el orden de la lista de argumentos de una función
+ */
 public class PermutationMutate extends AbstractMutate {
     public PermutationMutate(double mutateProbability) {
         super(mutateProbability);
@@ -21,12 +24,9 @@ public class PermutationMutate extends AbstractMutate {
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
             List<AbstractNode> funcNodes = root.getNodesOfType(false);
-            
-            if (!funcNodes.isEmpty()) {
-                int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());
-                AbstractNode toPermute = funcNodes.get(selected);
-                Collections.shuffle(toPermute.getChildNodes());
-            }
+            int selectedChild = ThreadLocalRandom.current().nextInt(funcNodes.size());
+            AbstractNode toPermute = funcNodes.get(selectedChild);
+            toPermute.shuffleChildNodes();
         }
         return indMutado;
     }

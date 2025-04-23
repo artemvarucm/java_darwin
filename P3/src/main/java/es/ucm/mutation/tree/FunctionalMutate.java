@@ -8,6 +8,15 @@ import es.ucm.mutation.AbstractMutate;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.Objects.isNull;
+
+/**
+ * Se selecciona al azar un símbolo functional dentro del individuo,
+ * y se sustituye (PROG_2 por IF_FOOD, IF_FOOD por PROG_2)
+ *
+ * - NO muta el nodo Prog3Node (tiene 3 nodos)
+ * - NO muta el nodo raiz
+ */
 public class FunctionalMutate extends AbstractMutate {
     public FunctionalMutate(double mutateProbability) {
         super(mutateProbability);
@@ -20,41 +29,30 @@ public class FunctionalMutate extends AbstractMutate {
         if (p < mutateProbability) {
             AbstractNode root = indMutado.getRootNode();
             List<AbstractNode> funcNodes = root.getNodesOfType(false);
-            
-            if (!funcNodes.isEmpty()) {
-                int selected = ThreadLocalRandom.current().nextInt(0, funcNodes.size());
-                AbstractNode toReplace = funcNodes.get(selected);
-                AbstractNode newNode = selectRandomFunction(toReplace.getChildrenSize());
-                
-                // Copiar los hijos del nodo original al nuevo
-                for (int i = 0; i < toReplace.getChildrenSize(); i++) {
-                    newNode.setChildNode(i, toReplace.getChildNode(i).clone());
-                }
-                
-                // Reemplazar en el padre
-                if (toReplace != root) {
-                    AbstractNode parent = toReplace.getParentNode();
-                    int childIndex = getChildIndex(parent, toReplace);
-                    parent.setChildNode(childIndex, newNode);
-                } else {
-                    indMutado.getRootNode().getChildNodes().clear();
-                    indMutado.getRootNode().getChildNodes().addAll(newNode.getChildNodes());
+
+            // NO muta el nodo raiz
+            if (funcNodes.size() > 1) {
+                int selectedChild = ThreadLocalRandom.current().nextInt(1, funcNodes.size());
+                AbstractNode selected = funcNodes.get(selectedChild);
+                // NO muta el nodo Prog3Node (tiene 3 nodos)
+                if (!selected.getNodeName().equals("PROG_3")) {
+
+                    AbstractNode parent = selected.getParentNode();
+                    AbstractNode newFunc = null;
+                    // switcheamos función
+                    if (selected.getNodeName().equals("PROG_2")) {
+                        newFunc = new IfFoodNode();
+                    } else {
+                        newFunc = new Prog2Node();
+                    }
+
+                    // copiamos los nodos a la nueva función
+                    selected.copyChildrenToClone(newFunc);
+                    parent.setChildNode(getChildIndex(parent, selected), newFunc);
                 }
             }
         }
         return indMutado;
-    }
-
-    private AbstractNode selectRandomFunction(int requiredArgs) {
-        List<AbstractNode> candidates = List.of(
-            new Prog2Node(),
-            new Prog3Node(),
-            new IfFoodNode()
-        ).stream()
-         .filter(n -> n.getChildrenSize() == requiredArgs)
-         .toList();
-         
-        return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size())).clone();
     }
 
     private int getChildIndex(AbstractNode parent, AbstractNode child) {

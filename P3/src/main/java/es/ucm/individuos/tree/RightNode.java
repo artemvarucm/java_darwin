@@ -37,4 +37,9 @@ public class RightNode extends AbstractNode {
     public String getNodeName() {
         return "RIGHT";
     }
+
+    @Override
+    public Integer getChildrenSize() {
+        return 0;
+    }
 }

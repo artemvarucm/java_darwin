@@ -1,6 +1,7 @@
 package es.ucm.individuos.tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -16,13 +17,17 @@ public abstract class AbstractNode {
         return childNodes.isEmpty();
     }
 
-    public Integer getChildrenSize() {
-        return this.childNodes.size();
-    }
+    // numero de hijos que tiene el nodo (como es estatico se establece en cada objeto)
+    public abstract Integer getChildrenSize();
 
     public void setChildNode(int i, AbstractNode node) {
         node.setParentNode(this);
-        this.childNodes.set(i, node);
+        // si el hijo se asigna durante la inicialización, añadimos
+        if (i == this.childNodes.size() && i < getChildrenSize()) {
+            this.childNodes.add(node);
+        } else {
+            this.childNodes.set(i, node);
+        }
     }
 
     public AbstractNode getChildNode(int i) {
@@ -52,11 +57,18 @@ public abstract class AbstractNode {
     }
 
     public List<AbstractNode> getChildNodes() {
-        return new ArrayList<>(childNodes);
+        return childNodes;
     }
 
     /**
-     * Devuelve la profundidad total del árbol (número de nodos)
+     * Mezcla los hijos (para PermutationMutate)
+     */
+    public void shuffleChildNodes() {
+        Collections.shuffle(childNodes);
+    }
+
+    /**
+     * Devuelve la profundidad total del árbol
      */
     public int getDepth() {
         if (isTerminal()) return 1;
@@ -114,7 +126,14 @@ public abstract class AbstractNode {
         this.parentNode = parentNode;
     }
 
+    /**
+     * Como etiquetar el nodo al mostrarlo en el arbol
+     */
     public abstract String getNodeName();
+
+    /**
+     * Para mostrar el árbol como un string formateado
+     */
     public String toString() {
         return toStringStartWith("");
     }
