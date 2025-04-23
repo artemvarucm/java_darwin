@@ -1,68 +1,116 @@
 package es.ucm.individuos.grammar;
 
-import es.ucm.individuos.tree.AbstractNode;
-import es.ucm.individuos.tree.ForwardNode;
-import es.ucm.individuos.tree.LeftNode;
-import es.ucm.individuos.tree.RightNode;
+import es.ucm.individuos.tree.*;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Grammar {
     private final List<String> grammarBNFClauses = List.of(
-    "<start> ::= <code>",
-    "<code> ::= <line> | <code> <line>",
-    "<line> ::= <if_food> | <action>",
-    "<if_food> ::= <line> <line>",
-    "<action> ::= left | right | forward"
+        "<start> ::= <code>",
+        "<code> ::= <line> | <code> <line>",
+        "<line> ::= <if_food> | <action>",
+        "<if_food> ::= if_food <line> <line>",
+        "<action> ::= left | right | forward"
     );
 
-    private Map<String, List<List<String>>> grammarBNFMap; // lo anterior, pero guardado en una estructura optimizada
+    private final Map<String, List<List<String>>> grammarBNFMap;
+    private int wrapsUsed = 0;
 
     public Grammar() {
         grammarBNFMap = new HashMap<>();
-        for (String clause: grammarBNFClauses) {
+        for (String clause : grammarBNFClauses) {
             String[] equalSep = clause.split(" ::= ");
             List<String> orSep = List.of(equalSep[1].split(" \\| "));
-            grammarBNFMap.put(equalSep[0], orSep.stream().map((String el) -> List.of(el.split(" "))).toList());
+            grammarBNFMap.put(equalSep[0], orSep.stream()
+                    .map(el -> List.of(el.trim().split(" ")))
+                    .toList());
         }
     }
 
-    public List<AbstractNode> decode(List<Integer> integerList) {
-        return decode(integerList, 0, "<start>");
+    public AbstractNode decode(List<Integer> codons, int nWraps) {
+        wrapsUsed = 0;
+        IndexWrapper index = new IndexWrapper(0);
+        return decodeRecursive(codons, "<start>", index, nWraps);
     }
 
-    /**
-     * Funcioón recursiva para decodificar el cromosoma usando la gramática
-     * @param integerList
-     * @param currentPos
-     * @param currentNode
-     */
-    public List<AbstractNode> decode(List<Integer> integerList, Integer currentPos, String currentNode) {
-        List<AbstractNode> result = new LinkedList<>();
-        // Object -> Action and IfFood (Action, Action)
-        // Num wraps -> aplicar modulo %
-        if (currentNode.equals("left")) {
-            result.add(new LeftNode());
-        } else if (currentNode.equals("right")) {
-            result.add(new RightNode());
-        } else if (currentNode.equals("forward")) {
-            result.add(new ForwardNode());
-        } else {
-            // NO es terminal
+    private AbstractNode decodeRecursive(List<Integer> codons, String symbol, IndexWrapper index, int nWraps) {
+        if (symbol.equals("left")) return new LeftNode();
+        if (symbol.equals("right")) return new RightNode();
+        if (symbol.equals("forward")) return new ForwardNode();
 
-            List<List<String>> orClauses = grammarBNFMap.get(currentNode);
-            // nos quedamos una clausula (de todas las que hay juntadas por ORs)
-            List<String> decodedClause = orClauses.get(integerList.get(currentPos) % orClauses.size());
-            currentPos++;
-            for (String op : decodedClause) {
-                result.addAll(decode(integerList, currentPos, op));
+        // No terminal
+        List<List<String>> productions = grammarBNFMap.get(symbol);
+        if (productions == null || productions.isEmpty()) return null;
+
+        if (index.get() >= codons.size()) {
+            if (wrapsUsed < nWraps) {
+                wrapsUsed++;
+                index.set(0);
+            } else {
+                return null;
             }
         }
 
+        int choice = codons.get(index.get()) % productions.size();
+        List<String> chosenProd = productions.get(choice);
+        index.increment();
 
-        return result;
+        // Crear nodo funcional o lista de nodos
+        if (symbol.equals("<if_food>")) {
+            // Esperamos: [if_food, <line>, <line>]
+            AbstractNode cond1 = decodeRecursive(codons, chosenProd.get(1), index, nWraps);
+            AbstractNode cond2 = decodeRecursive(codons, chosenProd.get(2), index, nWraps);
+            return new IfFoodNode(cond1, cond2);
+        } else if (symbol.equals("<code>") || symbol.equals("<start>") || symbol.equals("<line>")) {
+            AbstractNode codeNode = new CompositeNode(symbol);
+            for (String sym : chosenProd) {
+                AbstractNode child = decodeRecursive(codons, sym, index, nWraps);
+                if (child != null) {
+                    codeNode.getChildNodes().add(child);
+                    child.setParentNode(codeNode);
+                }
+            }
+            return codeNode;
+        }
+
+        return null;
+    }
+
+    // Wrapper para índice mutable
+    private static class IndexWrapper {
+        private int i;
+        public IndexWrapper(int i) { this.i = i; }
+        public int get() { return i; }
+        public void set(int value) { i = value; }
+        public void increment() { i++; }
+    }
+
+    // Nodo para varios hijos si no es funcional específico
+    private static class CompositeNode extends AbstractNode {
+        private final String name;
+        public CompositeNode(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
+            List<Coord> coords = new LinkedList<>();
+            for (AbstractNode child : childNodes) {
+                coords.addAll(child.walkAndReturnCoords(hormiga));
+            }
+            return coords;
+        }
+
+        @Override
+        public AbstractNode clone() {
+            CompositeNode clone = new CompositeNode(name);
+            this.copyChildrenToClone(clone);
+            return clone;
+        }
+
+        @Override
+        public String getNodeName() {
+            return name.toUpperCase();
+        }
     }
 }
