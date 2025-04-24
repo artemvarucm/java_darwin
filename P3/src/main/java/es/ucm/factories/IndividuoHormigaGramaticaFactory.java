@@ -17,14 +17,16 @@ import java.util.List;
 public class IndividuoHormigaGramaticaFactory extends IndividuoFactory {
     private Integer stepsLimit;
     private Integer nWraps;
-    public IndividuoHormigaGramaticaFactory(AbstractFoodMap map, Integer stepsLimit, Integer nWraps) {
+    private Integer numCodones;
+    public IndividuoHormigaGramaticaFactory(AbstractFoodMap map, Integer stepsLimit, Integer nWraps, Integer numCodones) {
         super(map);
         this.stepsLimit = stepsLimit;
         this.nWraps = nWraps;
+        this.numCodones = numCodones;
     }
 
     public Individuo createOne() {
-        return new IndividuoHormigaGramatica(this.map, this.stepsLimit, nWraps);
+        return new IndividuoHormigaGramatica(this.map, this.stepsLimit, nWraps, numCodones);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class IndividuoHormigaGramaticaFactory extends IndividuoFactory {
         List<Individuo> individuos = new ArrayList<>(tamPoblacion);
 
         for (int i = 0; i < tamPoblacion; i++) {
-            IndividuoHormigaGramatica individuo = new IndividuoHormigaGramatica(this.map, this.stepsLimit, nWraps);
+            IndividuoHormigaGramatica individuo = new IndividuoHormigaGramatica(this.map, this.stepsLimit, nWraps, numCodones);
             individuos.add(individuo);
         }
 

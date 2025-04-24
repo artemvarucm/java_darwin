@@ -43,6 +43,7 @@ public class Main extends JFrame {
     private JTextField maxTreeDepthField;
     private JTextField crossoverTerminalProbability;
     private JTextField stepsLimitField;
+    private JTextField numCodonesField;
     private JTextField bloatingField;
     private JTextField wrapField;
 
@@ -99,6 +100,7 @@ public class Main extends JFrame {
         stepsLimitField = new JTextField("400");
         bloatingField = new JTextField("0.1");
         wrapField = new JTextField("1");
+        numCodonesField = new JTextField("40");
         internalRepresentationComboBox = new JComboBox<>(new String[]{
                 "TREE",
                 "GRAMMATICAL",
@@ -211,10 +213,11 @@ public class Main extends JFrame {
             double bloatingFactor = Double.parseDouble(bloatingField.getText());
             int numWraps = Integer.parseInt(wrapField.getText());
             int stepsLimit = Integer.parseInt(stepsLimitField.getText());
+            int numCodones = Integer.parseInt(numCodonesField.getText());
 
             this.mapa = getSelectedMapa();
             mapPanelGraphics.setMansion(mapa);
-            IndividuoFactory factory = getSelectedFactory(stepsLimit, bloatingFactor, numWraps, maxDepth);
+            IndividuoFactory factory = getSelectedFactory(stepsLimit, bloatingFactor, numWraps, maxDepth, numCodones);
             AbstractSelection selectionMethod = getSelectionMethod(factory);
             AbstractCross crossoverMethod = getCrossoverMethod(factory, crossTermProb);
             AbstractMutate mutationMethod = getMutationMethod(mutationRate);
@@ -333,14 +336,14 @@ public class Main extends JFrame {
         }
     }
 
-    private IndividuoFactory getSelectedFactory(Integer stepsLimit, Double bloatingFactor, Integer numWraps, Integer maxDepth) {
+    private IndividuoFactory getSelectedFactory(Integer stepsLimit, Double bloatingFactor, Integer numWraps, Integer maxDepth, Integer numCodones) {
         Integer selectedRepr = internalRepresentationComboBox.getSelectedIndex();
         IndividuoFactory factory;
         if (selectedRepr == 0) { // TREE
             AbstractInitializer initializationMethod = getInitializationMethod(maxDepth);
             factory = new IndividuoHormigaArbolFactory(this.mapa, stepsLimit, bloatingFactor, initializationMethod);
         } else { //GRAMMAR
-            factory = new IndividuoHormigaGramaticaFactory(this.mapa, stepsLimit, numWraps);
+            factory = new IndividuoHormigaGramaticaFactory(this.mapa, stepsLimit, numWraps, numCodones);
         }
 
         return factory;
@@ -463,6 +466,7 @@ public class Main extends JFrame {
         stepsLimitField.setText("400");
         bloatingField.setText("0.1");
         wrapField.setText("1");
+        numCodonesField.setText("40");
         internalRepresentationComboBox.setSelectedIndex(0);
         initMethodComboBox.setSelectedIndex(0);
         selectionMethodComboBox.setSelectedIndex(0);
@@ -545,8 +549,11 @@ public class Main extends JFrame {
             paramsPanel.add(bloatingField);
         } else { // GRAMMAR
             wrapField.setText("1");
+            numCodonesField.setText("40");
             paramsPanel.add(new JLabel("Number of wraps"));
             paramsPanel.add(wrapField);
+            paramsPanel.add(new JLabel("Num. codones"));
+            paramsPanel.add(numCodonesField);
         }
         paramsPanel.validate();
         paramsPanel.repaint();

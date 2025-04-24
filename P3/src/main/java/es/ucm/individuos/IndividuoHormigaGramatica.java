@@ -21,15 +21,16 @@ import static java.util.Objects.isNull;
  * Maximizamos el número de trozos comidos
  */
 public class IndividuoHormigaGramatica extends Individuo {
-    private static Integer NUM_CODONES = 20; // el numero de genes
+    private Integer numCodones; // el numero de genes
     protected AbstractFoodMap map;
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
     protected Integer maxWraps;
-    public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer maxWraps) {
+    public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer maxWraps, Integer numCodones) {
         super(null, true);
         this.map = map;
+        this.numCodones = numCodones;
         this.maxWraps = maxWraps;
         this.stepsLimit = stepsLimit;
         initialize();
@@ -39,7 +40,7 @@ public class IndividuoHormigaGramatica extends Individuo {
      * Inicialización aleatoria (cada gen vale entre 0 y 255)
      */
     private void initialize() {
-        for (int i = 0; i < NUM_CODONES; i++) {
+        for (int i = 0; i < numCodones; i++) {
             this.addIntegerGen(ThreadLocalRandom.current().nextInt(256));
         }
     }
@@ -89,7 +90,7 @@ public class IndividuoHormigaGramatica extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new IndividuoHormigaGramatica(this.map, this.stepsLimit, this.maxWraps);
+        Individuo clon = new IndividuoHormigaGramatica(this.map, this.stepsLimit, this.maxWraps, this.numCodones);
         this.copyToClone(clon);
         return clon;
     }
