@@ -23,7 +23,7 @@ public class AlgoritmoGenetico {
     private int maxGeneraciones;
     private double probCruce;
     private int tamElite;
-    private double bloatingFactor = 0;
+    private int totalCruces;
 
     // Métodos de selección, cruce y mutación
     private AbstractSelection selectionMethod;
@@ -70,18 +70,10 @@ public class AlgoritmoGenetico {
     public void setMutationMethod(AbstractMutate mutationMethod) {
         this.mutationMethod = mutationMethod;
     }
-    
-    public interface ProgressListener {
-        void onProgress(int generation, Individuo bestIndividual);
-    }
-    
-    private ProgressListener progressListener;
-    
-    public void setProgressListener(ProgressListener listener) {
-        this.progressListener = listener;
-    }
 
     public void optimize() {
+        totalCruces = 0;
+        mutationMethod.resetNumMutation();
         // Inicializar la población
         poblacion = random_sample();
         // Inicializar mejor individuo
@@ -112,6 +104,7 @@ public class AlgoritmoGenetico {
                 double randomVal = ThreadLocalRandom.current().nextDouble(); // entre 0 y 1
 
                 if (randomVal < probCruce) {
+                    totalCruces++;
                     List<Individuo> hijos = crossoverMethod.cross(parent1, parent2);
                     descendientes.addAll(hijos);
                 } else {
@@ -141,10 +134,6 @@ public class AlgoritmoGenetico {
 
             // Registrar datos históricos
             registrarHistorial(generacion);
-            
-            if (progressListener != null) {
-                progressListener.onProgress(generacion, getMejor());
-            }
         }
     }
 
@@ -237,5 +226,13 @@ public class AlgoritmoGenetico {
 
     public double[] getAbsoluteBestHistory() {
         return absoluteBestHistory;
+    }
+
+    public int getTotalCruces() {
+        return totalCruces;
+    }
+
+    public int getTotalMutaciones() {
+        return mutationMethod.getNumMutations();
     }
 }

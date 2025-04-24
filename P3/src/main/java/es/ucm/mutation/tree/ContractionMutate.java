@@ -33,6 +33,7 @@ public class ContractionMutate extends AbstractMutate {
                 int parentIndex = getChildIndex(parent, toContract);
                 // reemplazamos nodo funcional por uno terminal aleatorio
                 parent.setChildNode(parentIndex, selectRandomTerminal());
+                this.successfulMutate();
             }
         }
 

@@ -49,6 +49,7 @@ public class FunctionalMutate extends AbstractMutate {
                     // copiamos los nodos a la nueva función
                     selected.copyChildrenToClone(newFunc);
                     parent.setChildNode(getChildIndex(parent, selected), newFunc);
+                    this.successfulMutate();
                 }
             }
         }

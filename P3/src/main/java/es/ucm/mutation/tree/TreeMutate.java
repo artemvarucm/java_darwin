@@ -35,6 +35,7 @@ public class TreeMutate extends AbstractMutate {
                 AbstractNode parent = selFunc.getParentNode();
                 // reemplazamos con un arbol aleatorio
                 parent.setChildNode(getChildIndex(parent, selFunc), initializer.initialize());
+                this.successfulMutate();
             }
         }
         return indMutado;

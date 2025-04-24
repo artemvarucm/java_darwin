@@ -229,24 +229,7 @@ public class Main extends JFrame {
             algorithm.setSelectionMethod(selectionMethod);
             algorithm.setCrossoverMethod(crossoverMethod);
             algorithm.setMutationMethod(mutationMethod);
-            
-            /*algorithm.setProgressListener((generation, bestIndividual) -> {
-                IndividuoHormigaArbol bestAnt = (IndividuoHormigaArbol) bestIndividual;
-                
-                SwingUtilities.invokeLater(() -> {
-                    // Actualizar panel con el mejor individuo de cada generación
-                    mapPanelGraphics.updateAntData(
-                        bestAnt.getCurrentPosition(),
-                        bestAnt.getCurrentDirection(),
-                        (int) bestAnt.getOriginalFitness(),
-                        bestAnt.getStepsTaken(),
-                        bestAnt.getPathHistory()
-                    );
-                    
-                    // Actualizar gráficas de progreso
-                    plotAlgorithmResults(algorithm, generation + 1);
-                });
-            });*/
+
             Instant start = Instant.now();
             algorithm.optimize();
             Instant end = Instant.now();
@@ -273,6 +256,8 @@ public class Main extends JFrame {
                 sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
                 sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
                 sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
+                sb.append("\nTotal cruces: ").append(algorithm.getTotalCruces());
+                sb.append(", Total mutaciones: ").append(algorithm.getTotalMutaciones()).append("\n");
                 resultsArea.setText(sb.toString());
 
                 // Actualizar panel del árbol con la expresión
@@ -296,6 +281,8 @@ public class Main extends JFrame {
                 sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
                 sb.append("Numero de línas de codigo: ").append(bestIndividual.numLinesOfCode()).append("\n");
                 sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
+                sb.append("\nTotal cruces: ").append(algorithm.getTotalCruces());
+                sb.append(", Total mutaciones: ").append(algorithm.getTotalMutaciones()).append("\n");
                 resultsArea.setText(sb.toString());
                 treeExpressionArea.setText(bestIndividual.getExpressionString());
             }

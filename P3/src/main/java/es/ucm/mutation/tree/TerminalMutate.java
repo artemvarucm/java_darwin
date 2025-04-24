@@ -35,6 +35,7 @@ public class TerminalMutate extends AbstractMutate {
             int indexInParent = parent.getChildNodes().indexOf(selected);
 
             parent.setChildNode(indexInParent, selectRandomTerminal(selected.getNodeName()));
+            this.successfulMutate();
         }
 
         return indMutado;

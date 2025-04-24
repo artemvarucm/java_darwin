@@ -37,6 +37,7 @@ public class ExpansionMutate extends AbstractMutate {
             AbstractNode parent = terminal.getParentNode();
             // reemplazamos con un arbol aleatorio
             parent.setChildNode(getChildIndex(parent, terminal), initializer.initialize());
+            this.successfulMutate();
         }
         return indMutado;
     }

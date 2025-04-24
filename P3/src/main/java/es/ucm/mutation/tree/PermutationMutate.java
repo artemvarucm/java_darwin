@@ -27,6 +27,7 @@ public class PermutationMutate extends AbstractMutate {
             int selectedChild = ThreadLocalRandom.current().nextInt(funcNodes.size());
             AbstractNode toPermute = funcNodes.get(selectedChild);
             toPermute.shuffleChildNodes();
+            this.successfulMutate();
         }
         return indMutado;
     }
