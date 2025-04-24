@@ -182,11 +182,11 @@ public class Main extends JFrame {
         treeExpressionArea.setEditable(false);
         treeExpressionArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane treeScrollPane = new JScrollPane(treeExpressionArea);
-        treeScrollPane.setBorder(BorderFactory.createTitledBorder("Solution Tree Expression"));
+        treeScrollPane.setBorder(BorderFactory.createTitledBorder("Solution Rules Expression"));
 
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(treeScrollPane, BorderLayout.CENTER);
-        tabPane.addTab("ÁRBOL", treePanel);
+        tabPane.addTab("RULES", treePanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, tabPane);
         splitPane.setResizeWeight(0.5);
@@ -278,26 +278,23 @@ public class Main extends JFrame {
                 IndividuoHormigaGramatica bestIndividual = (IndividuoHormigaGramatica) algorithm.getMejor();
 
                 // Actualizar visualización con la mejor solución
-                /*mapPanelGraphics.updateAntData(
+                mapPanelGraphics.updateAntData(
                         bestIndividual.getCurrentPosition(),
                         bestIndividual.getCurrentDirection(),
-                        (int) bestIndividual.getOriginalFitness(),
+                        (int) bestIndividual.getFitness(),
                         bestIndividual.getStepsTaken(),
                         bestIndividual.getPathHistory()
-                );*/
+                );
 
                 // Mostrar resultados en el área de texto
                 StringBuilder sb = new StringBuilder();
                 sb.append("=== MEJOR SOLUCIÓN ENCONTRADA ===\n");
-                sb.append("Comida recolectada (fitness): ").append(bestIndividual.getFitness()).append("\n");
-                //sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+                sb.append("Comida recolectada (fitness): ").append((int) bestIndividual.getFitness()).append("/").append(mapa.getAllFoodCount()).append("\n");
+                sb.append("Pasos utilizados: ").append(bestIndividual.getStepsTaken()).append("/").append(stepsLimit).append("\n");
+                sb.append("Numero de línas de codigo: ").append(bestIndividual.numLinesOfCode()).append("\n");
                 sb.append("Tiempo de ejecución: ").append(timeElapsed.toMillis() / 1000.0).append(" segundos\n");
-                //sb.append("Profundidad del árbol: ").append(bestIndividual.getTreeDepth()).append("\n");
-                //sb.append("Nodos del árbol: ").append(bestIndividual.getNodeCount()).append("\n");
                 resultsArea.setText(sb.toString());
-
-                // Actualizar panel del árbol con la expresión
-                //treeExpressionArea.setText(bestIndividual.getExpressionString());
+                treeExpressionArea.setText(bestIndividual.getExpressionString());
             }
 
 
@@ -498,8 +495,10 @@ public class Main extends JFrame {
         paramsPanel.add(crossoverRateField);
         paramsPanel.add(new JLabel("Elitism Rate:"));
         paramsPanel.add(elitismRateField);
-        paramsPanel.add(new JLabel("Initialization Method:"));
-        paramsPanel.add(initMethodComboBox);
+        if (internalRepr == 0) { // TREE
+            paramsPanel.add(new JLabel("Initialization Method:"));
+            paramsPanel.add(initMethodComboBox);
+        }
         paramsPanel.add(new JLabel("Selection Method:"));
         paramsPanel.add(selectionMethodComboBox);
         if (internalRepr == 0) { // TREE

@@ -1,12 +1,16 @@
 package es.ucm.individuos;
 
+import es.ucm.genes.IntegerGen;
 import es.ucm.genes.TreeGen;
+import es.ucm.individuos.grammar.AbstractGrammarElem;
+import es.ucm.individuos.grammar.Grammar;
 import es.ucm.individuos.tree.AbstractNode;
 import es.ucm.individuos.tree.Coord;
 import es.ucm.individuos.tree.DirectionEnum;
 import es.ucm.individuos.tree.Hormiga;
 import es.ucm.mapa.AbstractFoodMap;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,11 +26,11 @@ public class IndividuoHormigaGramatica extends Individuo {
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
     protected String genotipoStrCache;
-    protected Integer nWraps;
-    public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer nWraps) {
+    protected Integer maxWraps;
+    public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer maxWraps) {
         super(null, true);
         this.map = map;
-        this.nWraps = nWraps;
+        this.maxWraps = maxWraps;
         this.stepsLimit = stepsLimit;
         initialize();
     }
@@ -44,6 +48,7 @@ public class IndividuoHormigaGramatica extends Individuo {
     private int lastSteps;
     private Coord lastPosition;
     private DirectionEnum lastDirection;
+    private List<AbstractGrammarElem> decodedCode; // solucion decodificada
 
     @Override
     public double getFitness() {
@@ -55,10 +60,20 @@ public class IndividuoHormigaGramatica extends Individuo {
         lastPath = new LinkedList<>();
         lastPath.add(hormiga.getPosition()); // Posición inicial
 
-        /*while (!hormiga.shouldStop()) {
-            List<Coord> newPositions = this.getRootNode().walkAndReturnCoords(hormiga);
-            lastPath.addAll(newPositions);
-        }*/
+        List<Integer> intValues = new ArrayList<>();
+        for (IntegerGen gen: this.getIntGenes()) {
+            intValues.add(gen.getFenotipo());
+        }
+
+        decodedCode = (new Grammar(maxWraps)).decode(intValues);
+        if (decodedCode != null) {
+            while (!hormiga.shouldStop()) {
+                for (AbstractGrammarElem el : decodedCode) {
+                    List<Coord> newPositions = el.walkAndReturnCoords(hormiga);
+                    lastPath.addAll(newPositions);
+                }
+            }
+        }
 
         // Guardar resultados de la simulación
         this.lastSteps = hormiga.getSteps();
@@ -74,13 +89,13 @@ public class IndividuoHormigaGramatica extends Individuo {
 
     @Override
     public Individuo copy() {
-        Individuo clon = new IndividuoHormigaGramatica(this.map, this.stepsLimit, this.nWraps);
+        Individuo clon = new IndividuoHormigaGramatica(this.map, this.stepsLimit, this.maxWraps);
         this.copyToClone(clon);
         return clon;
     }
 
     // Métodos para la visualización
-    /*
+
     public Coord getCurrentPosition() {
         if (lastPath == null) getFitness(); // Fuerza simulación si es necesario
         return lastPosition;
@@ -101,19 +116,16 @@ public class IndividuoHormigaGramatica extends Individuo {
         return lastSteps;
     }
 
-    public int getTreeDepth() {
-        return getRootNode().getDepth();
-    }
-
-    public int getNodeCount() {
-        return getRootNode().getTreeSize();
-    }
-
     public String getExpressionString() {
-        return getRootNode().toString();
+        StringBuilder res = new StringBuilder();
+        for (AbstractGrammarElem el: decodedCode) {
+            res.append(el.toString());
+        }
+
+        return res.toString();
     }
 
-    public AbstractNode getRootNode() {
-        return ((TreeGen) this.genes.get(0)).getFenotipo();
-    }*/
+    public Integer numLinesOfCode() {
+        return getExpressionString().split("\r\n|\r|\n").length;
+    }
 }

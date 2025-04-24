@@ -1,120 +1,121 @@
 package es.ucm.individuos.grammar;
 
-import es.ucm.individuos.tree.*;
+import es.ucm.individuos.tree.AbstractNode;
+import es.ucm.individuos.tree.IfFoodNode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 public class Grammar {
     private final List<String> grammarBNFClauses = List.of(
-        "<start> ::= <code>",
-        "<code> ::= <line> | <code> <line>",
-        "<line> ::= <if_food> | <action>",
-        "<if_food> ::= if_food <line> <line>",
-        "<action> ::= left | right | forward"
+            "<start> ::= <code>",
+            "<code> ::= <line> | <code> <line>",
+            "<line> ::= <if_food> | <action>",
+            "<if_food> ::= <code> <code>",
+            "<action> ::= left | right | forward"
     );
 
-    private final Map<String, List<List<String>>> grammarBNFMap;
-    private int wrapsUsed = 0;
+    private Map<String, List<List<String>>> grammarBNFMap; // lo anterior, pero guardado en una estructura optimizada
 
-    public Grammar() {
+    private int nWraps = 0; // numero de wraps usados (se reinicia al decodificar)
+    private int currentPos = 0; // posicion del cromosoma que estamos leyendo (se reinicia al decodificar)
+
+    private int maxWraps; // numero maximo de wraps, si se pasa devuelve NULL el decode
+    public Grammar(int maxWraps) {
+        this.maxWraps = maxWraps;
         grammarBNFMap = new HashMap<>();
-        for (String clause : grammarBNFClauses) {
+        for (String clause: grammarBNFClauses) {
             String[] equalSep = clause.split(" ::= ");
             List<String> orSep = List.of(equalSep[1].split(" \\| "));
-            grammarBNFMap.put(equalSep[0], orSep.stream()
-                    .map(el -> List.of(el.trim().split(" ")))
-                    .toList());
+            grammarBNFMap.put(equalSep[0], orSep.stream().map((String el) -> List.of(el.split(" "))).toList());
         }
     }
 
-    public AbstractNode decode(List<Integer> codons, int nWraps) {
-        wrapsUsed = 0;
-        IndexWrapper index = new IndexWrapper(0);
-        return decodeRecursive(codons, "<start>", index, nWraps);
+    public List<AbstractGrammarElem> decode(List<Integer> integerList) {
+        // reiniciamos
+        nWraps = 0;
+        currentPos = 0;
+        return decode(integerList, "<start>");
     }
 
-    private AbstractNode decodeRecursive(List<Integer> codons, String symbol, IndexWrapper index, int nWraps) {
-        if (symbol.equals("left")) return new LeftNode();
-        if (symbol.equals("right")) return new RightNode();
-        if (symbol.equals("forward")) return new ForwardNode();
+    /**
+     * Funcioón recursiva para decodificar el cromosoma usando la gramática (USA WRAPPING)
+     * @param integerList - cromosoma
+     * @param currentNode - nombre (string) de la clausula de la gramatica
+     */
+    private List<AbstractGrammarElem> decode(List<Integer> integerList, String currentNode) {
+        List<AbstractGrammarElem> result = new LinkedList<>();
 
-        // No terminal
-        List<List<String>> productions = grammarBNFMap.get(symbol);
-        if (productions == null || productions.isEmpty()) return null;
-
-        if (index.get() >= codons.size()) {
-            if (wrapsUsed < nWraps) {
-                wrapsUsed++;
-                index.set(0);
-            } else {
-                return null;
-            }
-        }
-
-        int choice = codons.get(index.get()) % productions.size();
-        List<String> chosenProd = productions.get(choice);
-        index.increment();
-
-        // Crear nodo funcional o lista de nodos
-        if (symbol.equals("<if_food>")) {
-            // Esperamos: [if_food, <line>, <line>]
-            AbstractNode cond1 = decodeRecursive(codons, chosenProd.get(1), index, nWraps);
-            AbstractNode cond2 = decodeRecursive(codons, chosenProd.get(2), index, nWraps);
-            return new IfFoodNode(cond1, cond2);
-        } else if (symbol.equals("<code>") || symbol.equals("<start>") || symbol.equals("<line>")) {
-            AbstractNode codeNode = new CompositeNode(symbol);
-            for (String sym : chosenProd) {
-                AbstractNode child = decodeRecursive(codons, sym, index, nWraps);
-                if (child != null) {
-                    codeNode.getChildNodes().add(child);
-                    child.setParentNode(codeNode);
+        AbstractGrammarElem terminal = findTerminalById(currentNode);
+        if (!isNull(terminal)) {
+            // nodo terminal
+            result.add(terminal.clone());
+        } else {
+            // control de wrapping
+            if (currentPos == integerList.size()) {
+                nWraps++;
+                if (nWraps > maxWraps) {
+                    return null;
+                } else {
+                    currentPos = 0;
                 }
             }
-            return codeNode;
-        }
 
-        return null;
-    }
+            List<List<String>> orClauses = grammarBNFMap.get(currentNode);
+            // nos quedamos una clausula (de todas las que hay juntadas por ORs)
+            List<String> decodedClause = orClauses.get(integerList.get(currentPos) % orClauses.size());
+            currentPos++;
+            if (isIfFood(currentNode)) {
+                // si es la función if_food
+                IfFoodGrammarElem elem = new IfFoodGrammarElem();
+                List<AbstractGrammarElem> child1 = decode(integerList, decodedClause.get(0));
+                if (child1 == null) {
+                    // codigo invalido
+                    return null;
+                }
 
-    // Wrapper para índice mutable
-    private static class IndexWrapper {
-        private int i;
-        public IndexWrapper(int i) { this.i = i; }
-        public int get() { return i; }
-        public void set(int value) { i = value; }
-        public void increment() { i++; }
-    }
-
-    // Nodo para varios hijos si no es funcional específico
-    private static class CompositeNode extends AbstractNode {
-        private final String name;
-        public CompositeNode(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public List<Coord> walkAndReturnCoords(Hormiga hormiga) {
-            List<Coord> coords = new LinkedList<>();
-            for (AbstractNode child : childNodes) {
-                coords.addAll(child.walkAndReturnCoords(hormiga));
+                List<AbstractGrammarElem> child2 = decode(integerList, decodedClause.get(1));
+                if (child2 == null) {
+                    // codigo invalido
+                    return null;
+                }
+                elem.setActionsIfFood(child1);
+                elem.setActionsNoFood(child2);
+                result.add(elem);
+            } else {
+                for (String op : decodedClause) {
+                    List<AbstractGrammarElem> children = decode(integerList, op);
+                    if (children == null) {
+                        // codigo invalido
+                        return null;
+                    } else {
+                        result.addAll(children);
+                    }
+                }
             }
-            return coords;
         }
 
-        @Override
-        public AbstractNode clone() {
-            CompositeNode clone = new CompositeNode(name);
-            this.copyChildrenToClone(clone);
-            return clone;
-        }
 
-        @Override
-        public String getNodeName() {
-            return name.toUpperCase();
-        }
-        @Override
-        public Integer getChildrenSize() {
-            return 0;
-        }
+        return result;
+    }
+
+    public AbstractGrammarElem findTerminalById(String id) {
+        List<AbstractGrammarElem> terminales = List.of(
+                new LeftGrammarElem(),
+                new RightGrammarElem(),
+                new ForwardGrammarElem()
+        );
+
+        List<AbstractGrammarElem> matched = terminales.stream().filter((t) -> t.getFuncName().equals(id)).toList();
+        return matched.isEmpty() ? null : matched.get(0);
+    }
+
+    // devuelve true el id corresponde a la funcion if_food
+    public boolean isIfFood(String id) {
+        return (new IfFoodGrammarElem()).getFuncName().equals(id);
     }
 }
