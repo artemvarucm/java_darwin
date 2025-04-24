@@ -1,7 +1,5 @@
 package es.ucm.individuos.grammar;
 
-import es.ucm.individuos.tree.AbstractNode;
-import es.ucm.individuos.tree.IfFoodNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +8,10 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Clase que se encarga de decodificar la solución usando la gramática
+ * NO SE "CONSUME" un gen si solo hay una opción en el or
+ */
 public class Grammar {
     private final List<String> grammarBNFClauses = List.of(
             "<start> ::= <code>",
@@ -68,7 +70,11 @@ public class Grammar {
             List<List<String>> orClauses = grammarBNFMap.get(currentNode);
             // nos quedamos una clausula (de todas las que hay juntadas por ORs)
             List<String> decodedClause = orClauses.get(integerList.get(currentPos) % orClauses.size());
-            currentPos++;
+            if (orClauses.size() > 1) {
+                // NO SE CONSUME LA POSICIÓN si solo hay una opción en el or
+                currentPos++;
+            }
+
             if (isIfFood(currentNode)) {
                 // si es la función if_food
                 IfFoodGrammarElem elem = new IfFoodGrammarElem();
