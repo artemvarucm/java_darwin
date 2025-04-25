@@ -12,17 +12,18 @@ public class BasicMutate extends AbstractMutate {
 
     @Override
     public Individuo mutate(Individuo ind) {
-        double p = ThreadLocalRandom.current().nextDouble();
-        if (p < mutateProbability) {
-            for (int i = 0; i < ind.getIntGenes().size(); i++) {
-                p = ThreadLocalRandom.current().nextDouble();
-                if (p < mutateProbability) {
-                    ind.getIntGenes().get(i).set(0, ThreadLocalRandom.current().nextInt(256));
-                }
+        boolean mutated = false;
+        for (int i = 0; i < ind.getIntGenes().size(); i++) {
+            double p = ThreadLocalRandom.current().nextDouble();
+            if (p < mutateProbability) {
+                mutated = true;
+                ind.getIntGenes().get(i).set(0, ThreadLocalRandom.current().nextInt(256));
             }
-
-            this.successfulMutate();
         }
+
+        if (mutated)
+            this.successfulMutate();
+
         return ind.copy();
     }
 }

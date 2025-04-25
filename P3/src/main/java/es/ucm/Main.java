@@ -521,17 +521,17 @@ public class Main extends JFrame {
         //paramsPanel.add(new JLabel("Problem Type:"));
         //paramsPanel.add(individualTypeComboBox);
 
+        stepsLimitField.setText("400");
+        paramsPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
+        paramsPanel.add(stepsLimitField);
         if (internalRepr == 0) { // TREE
             crossoverTerminalProbability.setText("0.1");
             maxTreeDepthField.setText("6");
-            stepsLimitField.setText("400");
             bloatingField.setText("0.1");
             paramsPanel.add(new JLabel("Crossover terminal sel. probability:"));
             paramsPanel.add(crossoverTerminalProbability);
             paramsPanel.add(new JLabel("Max tree depth (on initialization):"));
             paramsPanel.add(maxTreeDepthField);
-            paramsPanel.add(new JLabel("Steps limit (actions from terminal nodes):"));
-            paramsPanel.add(stepsLimitField);
             paramsPanel.add(new JLabel("Bloating factor (per tree node):"));
             paramsPanel.add(bloatingField);
         } else { // GRAMMAR
