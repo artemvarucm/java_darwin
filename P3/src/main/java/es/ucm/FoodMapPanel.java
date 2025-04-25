@@ -3,6 +3,7 @@ package es.ucm;
 import es.ucm.individuos.tree.Coord;
 import es.ucm.individuos.tree.DirectionEnum;
 import es.ucm.mapa.AbstractFoodMap;
+import es.ucm.mapa.SantaFeMap;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,14 +17,13 @@ public class FoodMapPanel extends JPanel {
     private int foodCollected;
     private int totalFood;
     private int stepsTaken;
-    private List<Coord> bestSolutionPath;
 
     // Colores mejorados
-    private static final Color FOOD_COLOR = new Color(46, 125, 50); // Verde más oscuro
+    private static final Color EATEN_FOOD_COLOR = new Color(46, 125, 50); // Verde más oscuro
+    private static final Color FOOD_COLOR = new Color(198, 40, 40); // Rojo más intenso
     private static final Color TRAIL_COLOR = new Color(255, 152, 0, 180); // Naranja más vivo
-    private static final Color CURRENT_POS_COLOR = new Color(198, 40, 40); // Rojo más intenso
+    private static final Color CURRENT_POS_COLOR = new Color(63, 81, 181, 150); // Rojo más intenso
     private static final Color ANT_COLOR = new Color(33, 33, 33); // Negro puro
-    private static final Color BEST_SOLUTION_COLOR = new Color(63, 81, 181, 150); // Azul para mejor solución
     private static final Color GRID_COLOR = new Color(189, 189, 189); // Gris más claro
     private static final Color BACKGROUND_COLOR = new Color(250, 250, 250); // Fondo blanco suave
 
@@ -49,11 +49,6 @@ public class FoodMapPanel extends JPanel {
         repaint();
     }
 
-    public void setBestSolution(List<Coord> bestPath) {
-        this.bestSolutionPath = bestPath;
-        repaint();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -69,12 +64,7 @@ public class FoodMapPanel extends JPanel {
 
         drawGrid(g2d, offsetX, offsetY, cellSize);
         drawFood(g2d, offsetX, offsetY, cellSize);
-        
-        // Dibujar mejor solución si existe
-        if (bestSolutionPath != null && !bestSolutionPath.isEmpty()) {
-            drawPath(g2d, bestSolutionPath, BEST_SOLUTION_COLOR, offsetX, offsetY, cellSize, 3);
-        }
-        
+
         // Dibujar ruta actual
         if (pathHistory != null && !pathHistory.isEmpty()) {
             drawPath(g2d, pathHistory, TRAIL_COLOR, offsetX, offsetY, cellSize, 5);
@@ -126,8 +116,20 @@ public class FoodMapPanel extends JPanel {
 
     private void drawPath(Graphics2D g2d, List<Coord> path, Color color, 
                          int offsetX, int offsetY, int cellSize, int dotSize) {
-        g2d.setColor(color);
+
+        AbstractFoodMap mapaConComida = new SantaFeMap();
+        List<Coord> foodCoords = mapaConComida.getFoodCoords();
         for (Coord coord : path) {
+            if (foodCoords.contains(coord)) {
+                g2d.setColor(EATEN_FOOD_COLOR);
+                int x = offsetX + coord.getCol() * cellSize;
+                int y = offsetY + coord.getRow() * cellSize;
+                g2d.fillOval(x + 2, y + 2, cellSize - 4, cellSize - 4);
+                g2d.setColor(new Color(0, 0, 0, 50));
+                g2d.drawOval(x + 2, y + 2, cellSize - 4, cellSize - 4);
+            }
+
+            g2d.setColor(color);
             int x = offsetX + coord.getCol() * cellSize + (cellSize - dotSize)/2;
             int y = offsetY + coord.getRow() * cellSize + (cellSize - dotSize)/2;
             g2d.fillOval(x, y, dotSize, dotSize);
