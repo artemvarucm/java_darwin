@@ -1,2 +1,0 @@
-- Añadir cosas que faltaron de la P2
-- Mejorar rendimiento (tanto velocidad como fitness)
