@@ -25,7 +25,7 @@ public class IndividuoHormigaGramatica extends Individuo {
     protected AbstractFoodMap map;
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
-    protected String genotipoStrCache;
+    // protected String genotipoStrCache; NO HACE FALTA, SIEMPRE SE HACEN COPIAS. MEJORA SUSTANCIALMENTE EL RENDIMIENTO
     protected Integer maxWraps;
     public IndividuoHormigaGramatica(AbstractFoodMap map, Integer stepsLimit, Integer maxWraps, Integer numCodones) {
         super(null, true);
@@ -53,7 +53,7 @@ public class IndividuoHormigaGramatica extends Individuo {
 
     @Override
     public double getFitness() {
-        if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
+        if (!isNull(fitnessCache)) {// && this.genotipoToString().equals(genotipoStrCache)) {
             return this.fitnessCache;
         }
 
@@ -83,7 +83,7 @@ public class IndividuoHormigaGramatica extends Individuo {
 
         this.fitnessCache = (double) hormiga.getEatenFood();
 
-        this.genotipoStrCache = this.genotipoToString();
+        //this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;
     }

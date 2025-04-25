@@ -19,7 +19,7 @@ public class IndividuoHormigaArbol extends Individuo {
     protected AbstractFoodMap map;
     protected Double fitnessCache;
     protected Integer stepsLimit; // numero maximo de pasos (giros o avances)
-    protected String genotipoStrCache;
+    // protected String genotipoStrCache; NO HACE FALTA, SIEMPRE SE HACEN COPIAS. MEJORA SUSTANCIALMENTE EL RENDIMIENTO
     protected double bloatingFactor;
     public IndividuoHormigaArbol(AbstractFoodMap map, Integer stepsLimit, Double bloatingFactor) {
         this(map, stepsLimit, bloatingFactor, null);
@@ -42,7 +42,7 @@ public class IndividuoHormigaArbol extends Individuo {
     private transient DirectionEnum lastDirection;
 
     public double getOriginalFitness() {
-        if (!isNull(fitnessCache) && this.genotipoToString().equals(genotipoStrCache)) {
+        if (!isNull(fitnessCache)) {
             return this.fitnessCache;
         }
 
@@ -61,8 +61,6 @@ public class IndividuoHormigaArbol extends Individuo {
         this.lastDirection = hormiga.getDir();
 
         this.fitnessCache = (double) hormiga.getEatenFood();
-
-        this.genotipoStrCache = this.genotipoToString();
 
         return this.fitnessCache;
     }
