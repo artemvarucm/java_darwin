@@ -100,7 +100,7 @@ public class Main extends JFrame {
         stepsLimitField = new JTextField("400");
         bloatingField = new JTextField("0.1");
         wrapField = new JTextField("1");
-        numCodonesField = new JTextField("40");
+        numCodonesField = new JTextField("50");
         internalRepresentationComboBox = new JComboBox<>(new String[]{
                 "TREE",
                 "GRAMMATICAL",
@@ -453,7 +453,7 @@ public class Main extends JFrame {
         stepsLimitField.setText("400");
         bloatingField.setText("0.1");
         wrapField.setText("1");
-        numCodonesField.setText("40");
+        numCodonesField.setText("50");
         internalRepresentationComboBox.setSelectedIndex(0);
         initMethodComboBox.setSelectedIndex(0);
         selectionMethodComboBox.setSelectedIndex(0);
@@ -536,7 +536,7 @@ public class Main extends JFrame {
             paramsPanel.add(bloatingField);
         } else { // GRAMMAR
             wrapField.setText("1");
-            numCodonesField.setText("40");
+            numCodonesField.setText("50");
             paramsPanel.add(new JLabel("Number of wraps"));
             paramsPanel.add(wrapField);
             paramsPanel.add(new JLabel("Num. codones"));

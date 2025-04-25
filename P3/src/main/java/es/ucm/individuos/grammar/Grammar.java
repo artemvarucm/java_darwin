@@ -15,7 +15,7 @@ import static java.util.Objects.isNull;
 public class Grammar {
     private final List<String> grammarBNFClauses = List.of(
             "<start> ::= <code>",
-            "<code> ::= <line> | <code> <line>",
+            "<code> ::= <line> | <line> <line>",
             "<line> ::= <if_food> | <action>",
             "<if_food> ::= <code> <code>",
             "<action> ::= left | right | forward"
